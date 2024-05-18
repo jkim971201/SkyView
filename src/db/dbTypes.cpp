@@ -9,11 +9,13 @@ namespace db
 dbTypes::dbTypes()
 {
   // Initialization
-	strToRoutingType_["CUT"    ] = RoutingType::CUT;
-	strToRoutingType_["ROUTING"] = RoutingType::ROUTING;
+  strToRoutingType_["CUT"        ] = RoutingType::CUT;
+  strToRoutingType_["ROUTING"    ] = RoutingType::ROUTING;
+  strToRoutingType_["MASTERSLICE"] = RoutingType::MASTERSLICE;
+  strToRoutingType_["OVERLAP"    ] = RoutingType::OVERLAP;
 
-	strToLayerDirection_["VERTICAL"  ] = LayerDirection::VERTICAL;
-	strToLayerDirection_["HORIZONTAL"] = LayerDirection::HORIZONTAL;
+  strToLayerDirection_["VERTICAL"  ] = LayerDirection::VERTICAL;
+  strToLayerDirection_["HORIZONTAL"] = LayerDirection::HORIZONTAL;
 
   strToMacroClass_["CORE"       ] = MacroClass::CORE;
   strToMacroClass_["CORE_SPACER"] = MacroClass::CORE_SPACER;
@@ -49,14 +51,14 @@ dbTypes::getRoutingType(const std::string& str) const
 {
   auto itr = strToRoutingType_.find(str);
   
-	if(itr == strToRoutingType_.end())
-	{
+  if(itr == strToRoutingType_.end())
+  {
     std::cout << "Error - ROUTING TYPE " << str;
     std::cout << " is unknown (or not supported yet)..." << std::endl;
     exit(0);
-	}
-	else
-		return itr->second;
+  }
+  else
+    return itr->second;
 }
 
 LayerDirection
@@ -64,14 +66,14 @@ dbTypes::getLayerDirection(const std::string& str) const
 {
   auto itr = strToLayerDirection_.find(str);
   
-	if(itr == strToLayerDirection_.end())
-	{
+  if(itr == strToLayerDirection_.end())
+  {
     std::cout << "Error - DIRECTION " << str;
     std::cout << " is unknown (or not supported yet)..." << std::endl;
     exit(0);
-	}
-	else
-		return itr->second;
+  }
+  else
+    return itr->second;
 }
 
 MacroClass
@@ -79,14 +81,14 @@ dbTypes::getMacroClass(const std::string& str) const
 {
   auto itr = strToMacroClass_.find(str);
   
-	if(itr == strToMacroClass_.end())
-	{
+  if(itr == strToMacroClass_.end())
+  {
     std::cout << "Error - MACRO CLASS " << str;
     std::cout << " is unknown (or not supported yet)..." << std::endl;
     exit(0);
-	}
-	else
-		return itr->second;
+  }
+  else
+    return itr->second;
 }
 
 SiteClass
@@ -94,14 +96,14 @@ dbTypes::getSiteClass(const std::string& str) const
 {
   auto itr = strToSiteClass_.find(str);
   
-	if(itr == strToSiteClass_.end())
-	{
+  if(itr == strToSiteClass_.end())
+  {
     std::cout << "Error - SITE CLASS " << str;
     std::cout << " is unknown (or not supported yet)..." << std::endl;
     exit(0);
-	}
-	else
-		return itr->second;
+  }
+  else
+    return itr->second;
 }
 
 PinDirection
@@ -109,14 +111,14 @@ dbTypes::getPinDrection(const std::string& str) const
 {
   auto itr = strToPinDirection_.find(str);
   
-	if(itr == strToPinDirection_.end())
-	{
+  if(itr == strToPinDirection_.end())
+  {
     std::cout << "Error - PIN DIRECTION " << str;
     std::cout << " is unknown (or not supported yet)..." << std::endl;
     exit(0);
-	}
-	else
-		return itr->second;
+  }
+  else
+    return itr->second;
 }
 
 PinUsage
@@ -124,14 +126,14 @@ dbTypes::getPinUsage(const std::string& str) const
 {
   auto itr = strToPinUsage_.find(str);
   
-	if(itr == strToPinUsage_.end())
-	{
-    std::cout << "Error - PIN	USAGE " << str;
+  if(itr == strToPinUsage_.end())
+  {
+    std::cout << "Error - PIN  USAGE " << str;
     std::cout << " is unknown (or not supported yet)..." << std::endl;
     exit(0);
-	}
-	else
-		return itr->second;
+  }
+  else
+    return itr->second;
 }
 
 Source
@@ -139,14 +141,14 @@ dbTypes::getSource(const std::string& str) const
 {
   auto itr = strToSource_.find(str);
   
-	if(itr == strToSource_.end())
-	{
+  if(itr == strToSource_.end())
+  {
     std::cout << "Error - SOURCE " << str;
     std::cout << " is unknown (or not supported yet)..." << std::endl;
     exit(0);
-	}
-	else
-		return itr->second;
+  }
+  else
+    return itr->second;
 }
 
 }

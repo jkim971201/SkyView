@@ -6,7 +6,14 @@
 namespace db
 {
 
-enum RoutingType    {ROUTING, CUT};
+enum RoutingType    {ROUTING, CUT, MASTERSLICE, OVERLAP};
+
+// MASTERSLICE layers are typically polysilicon layers 
+// and are only needed if the cell MACROs have pins on the polysilicon layer.
+
+// OVERLAP layer can be used in MACRO definitions to form rectilinear-shaped cells (and blocks)
+// e.g. L-shaped block
+
 enum LayerDirection {HORIZONTAL, VERTICAL};
 enum MacroClass     {CORE, CORE_SPACER, PAD, BLOCK, ENDCAP};
 enum SiteClass      {CORE_SITE};
@@ -26,7 +33,7 @@ class dbTypes
 
   public:
 
-    dbTypes(); // Initializey by default
+    dbTypes(); // Initialized by default constructor
 
 		RoutingType    getRoutingType    (const std::string& str) const;
 		LayerDirection getLayerDirection (const std::string& str) const;

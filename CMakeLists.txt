@@ -22,6 +22,8 @@ set(Viewer_SRC
 	src/db/dbDatabase.cpp
 	src/db/dbTech.cpp
 	src/db/dbTypes.cpp
+	src/db/dbLefReader.cpp
+	src/db/dbLayer.cpp
 	src/main.cpp
 )
 

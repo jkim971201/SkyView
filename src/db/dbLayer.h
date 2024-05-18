@@ -12,28 +12,51 @@ class dbLayer
 
   public:
 
-    dbLayer() {}
+    dbLayer();
+
+    void print() const;
+
+    // Setters
+    void setName      (const char*   name) { name_ = std::string(name); }
+    void setXPitch    (int            val) { xPitch_  = val;  }
+    void setYPitch    (int            val) { yPitch_  = val;  }
+    void setXOffset   (int            val) { xOffset_ = val;  }
+    void setYOffset   (int            val) { yOffset_ = val;  }
+    void setWidth     (int            val) { width_   = val;  }
+    void setSpacing   (int            val) { spacing_ = val;  }
+    void setArea      (double         val) { area_    = val;  }
+    void setType      (RoutingType   type) { type_    = type; }
+    void setDirection (LayerDirection dir) { dir_     = dir;  }
+
+    // Getters
+    int    xPitch()  const { return xPitch_;  }
+    int    yPitch()  const { return yPitch_;  }
+    int    xOffset() const { return xOffset_; }
+    int    yOffset() const { return yOffset_; }
+    int    width()   const { return width_;   }
+    int    spacing() const { return spacing_; }
+    int    area()    const { return area_;    }
+
+    RoutingType    type()      const { return type_; }
+    LayerDirection direction() const { return dir_;  }
 
     std::string name() const { return name_; }
-
-    int pitch()   const { return pitch_;   }
-    int offset()  const { return offset_;  }
-    int width()   const { return width_;   }
-    int spacing() const { return spacing_; }
-
-    double area() const { return area_; }
 
   private:
 
     // LEF Syntax
     std::string name_;
 
-    int pitch_;
-    int offset_;
+    int xPitch_;
+    int yPitch_;
+    int xOffset_;
+    int yOffset_;
     int width_;
     int spacing_;
+    int area_;
 
-    double area_;
+    RoutingType type_;
+    LayerDirection dir_;
 };
 
 }

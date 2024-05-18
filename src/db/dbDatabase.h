@@ -18,18 +18,18 @@ class dbDatabase
 
     dbDatabase();
 
-    void readLef(const std::filesystem::path& fileName);
+    void readLef(const std::filesystem::path& file);
 
-	private:
+  private:
 
-		// Parsing
-		std::shared_ptr<dbLefReader> lefReader_;
+    // Parsing
+    std::shared_ptr<dbLefReader> lefReader_;
     
-		// Technology (PDK) and Design
-		std::shared_ptr<dbTech>  tech_;
-		std::shared_ptr<dbTypes> types_;
+    // Technology (PDK) and Design
+    std::shared_ptr<dbTech>  tech_;
+    std::shared_ptr<dbTypes> types_;
 
-		std::set<std::string> lefList_;
+    std::set<std::string> lefList_;
 };
 
 }

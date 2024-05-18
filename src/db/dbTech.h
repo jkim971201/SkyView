@@ -5,7 +5,6 @@
 #include <unordered_map>
 
 #include "lef/lefrReader.hpp"
-
 #include "dbLayer.h"
 
 namespace db
@@ -13,29 +12,35 @@ namespace db
 
 class dbTech
 {
-	public:
+  public:
 
     dbTech(std::shared_ptr<dbTypes> types)
-			: types_ (types) 
-		{}
-
-    std::string name() const { return name_; }
+      : types_ (types),
+        dbu_   (    0)
+    {}
 
           dbLayer* getLayerByName(std::string& name);
     const dbLayer* getLayerByName(std::string& name) const
-		{
-			return getLayerByName(name);
-		};
+    {
+      return getLayerByName(name);
+    };
 
-	private:
+    void setUnits       (const lefiUnits* unit);
+    void createNewLayer (const lefiLayer*   la);
 
-    std::string name_;
+    int getDbuLength(double micron) const;
+    int getDbuArea  (double micron) const;
+
+  private:
+
+    // DBU per MICRON
+    int dbu_;
 
     std::shared_ptr<dbTypes> types_;
 
     std::unordered_map<std::string, dbLayer*> str2dbLayer_;
 
-		std::vector<dbLayer*> layers_;
+    std::vector<dbLayer> layers_;
 };
 
 }
