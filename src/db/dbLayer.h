@@ -40,7 +40,7 @@ class dbLayer
     RoutingType    type()      const { return type_; }
     LayerDirection direction() const { return dir_;  }
 
-    std::string name() const { return name_; }
+    const std::string& name() const { return name_; }
 
   private:
 

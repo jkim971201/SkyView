@@ -15,6 +15,7 @@ enum RoutingType    {ROUTING, CUT, MASTERSLICE, OVERLAP};
 // e.g. L-shaped block
 
 enum LayerDirection {HORIZONTAL, VERTICAL};
+
 enum MacroClass     {CORE, CORE_SPACER, PAD, BLOCK, ENDCAP};
 enum SiteClass      {CORE_SITE};
 enum PinDirection   {INPUT, OUTPUT, INOUT};
@@ -30,21 +31,20 @@ enum NetUsage     {ANALOG_NET, CLOCK_NET, GROUND_NET, POWER_NET, RESET_NET, SCAN
 
 class dbTypes
 {
-
   public:
 
     dbTypes(); // Initialized by default constructor
 
-		RoutingType    getRoutingType    (const std::string& str) const;
-		LayerDirection getLayerDirection (const std::string& str) const;
-		MacroClass     getMacroClass     (const std::string& str) const;
-		SiteClass      getSiteClass      (const std::string& str) const;
-		PinDirection   getPinDrection    (const std::string& str) const;
-		PinUsage       getPinUsage       (const std::string& str) const;
-		Orient         getOrient         (const std::string& str) const;
-		Source         getSource         (const std::string& str) const;
+    RoutingType    getRoutingType    (const std::string& str) const;
+    LayerDirection getLayerDirection (const std::string& str) const;
+    MacroClass     getMacroClass     (const std::string& str) const;
+    SiteClass      getSiteClass      (const std::string& str) const;
+    PinDirection   getPinDrection    (const std::string& str) const;
+    PinUsage       getPinUsage       (const std::string& str) const;
+    Orient         getOrient         (const std::string& str) const;
+    Source         getSource         (const std::string& str) const;
 
-	private:
+  private:
 
     std::unordered_map<std::string, RoutingType>    strToRoutingType_;     // String - enum RoutingType    Table
     std::unordered_map<std::string, LayerDirection> strToLayerDirection_;  // String - enum LayerDirection Table

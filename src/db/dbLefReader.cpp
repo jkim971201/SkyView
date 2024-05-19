@@ -23,7 +23,7 @@ dbLefReader::init()
   
   lefrSetUserData(tech_.get());
 
-	lefrSetUnitsCbk(this->lefUnitsCbk);
+  lefrSetUnitsCbk(this->lefUnitsCbk);
   lefrSetLayerCbk(this->lefLayerCbk);
   lefrSetSiteCbk(this->lefSiteCbk);
   lefrSetMacroBeginCbk(this->lefStartCbk);
@@ -62,8 +62,8 @@ int
 dbLefReader::lefUnitsCbk(lefrCallbackType_e c, lefiUnits* unit, lefiUserData ud)
 {
   dbTech* tech = (dbTech*) ud;
-	tech->setUnits(unit);
-	return 0;
+  tech->setUnits(unit);
+  return 0;
 }
 
 int 
@@ -77,21 +77,8 @@ dbLefReader::lefLayerCbk(lefrCallbackType_e c, lefiLayer* la, lefiUserData ud)
 int
 dbLefReader::lefSiteCbk(lefrCallbackType_e c, lefiSite* si, lefiUserData ud ) 
 {
-//  dbTech* tech = (dbTech*) ud;
-//  site* mySite = tech->locateOrCreateSite( si->name() );
-//  if(si->hasSize()) 
-//  {
-//    mySite->width = si->sizeX();
-//    mySite->height = si->sizeY();
-//  }
-//  if(si->hasClass()) 
-//    mySite->type = si->siteClass();
-//  if(si->hasXSymmetry()) 
-//    mySite->symmetries.push_back("X");
-//  if(si->hasYSymmetry()) 
-//    mySite->symmetries.push_back("Y");
-//  if(si->has90Symmetry()) 
-//    mySite->symmetries.push_back("R90");
+  dbTech* tech = (dbTech*) ud;
+  tech->createNewSite(si);
   return 0;
 }
 

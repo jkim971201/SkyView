@@ -6,6 +6,7 @@
 
 #include "lef/lefrReader.hpp"
 #include "dbLayer.h"
+#include "dbSite.h"
 
 namespace db
 {
@@ -25,8 +26,15 @@ class dbTech
       return getLayerByName(name);
     };
 
+          dbSite*  getSiteByName(std::string& name);
+    const dbLayer* getSiteByName(std::string& name) const
+    {
+      return getSiteByName(name);
+    };
+
     void setUnits       (const lefiUnits* unit);
     void createNewLayer (const lefiLayer*   la);
+    void createNewSite  (const lefiSite*    si);
 
     int getDbuLength(double micron) const;
     int getDbuArea  (double micron) const;
@@ -39,8 +47,10 @@ class dbTech
     std::shared_ptr<dbTypes> types_;
 
     std::unordered_map<std::string, dbLayer*> str2dbLayer_;
+    std::unordered_map<std::string, dbSite*>  str2dbSite_;
 
     std::vector<dbLayer> layers_;
+    std::vector<dbSite>  sites_;
 };
 
 }

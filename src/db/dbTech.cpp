@@ -21,6 +21,21 @@ dbTech::getLayerByName(std::string& name)
     return itr->second;
 }
 
+dbSite*
+dbTech::getSiteByName(std::string& name)
+{
+  auto itr = str2dbSite_.find(name);
+
+  if(itr == str2dbSite_.end())
+  {
+    std::cout << "Error - Site " << name;
+    std::cout << " does not exist in the database..." << std::endl;
+    exit(0);
+  }
+  else
+    return itr->second;
+}
+
 int
 dbTech::getDbuLength(double micron) const
 {
@@ -95,7 +110,7 @@ dbTech::createNewLayer(const lefiLayer* la)
     newLayer->setWidth(getDbuLength(la->width()));
 
   if(la->hasArea())
-		newLayer->setArea(getDbuArea(la->area()));
+    newLayer->setArea(getDbuArea(la->area()));
 
   //if(la->hasSpacing()) 
   //  newLayer->setSpacing(la->spacing());
@@ -103,4 +118,41 @@ dbTech::createNewLayer(const lefiLayer* la)
   newLayer->print();
 }
 
+void
+dbTech::createNewSite(const lefiSite* site)
+{
+  if(dbu_ == 0)
+  {
+    std::cout << "Database Unit is not defined!" << std::endl;
+    exit(1);
+  }
+
+  sites_.push_back(dbSite());
+  dbSite* newSite = &(sites_.back());
+  str2dbSite_[std::string(site->name())] = newSite;
+
+  newSite->setName(site->name());
+
+  if(site->hasSize())
+  {
+    newSite->setSizeX( getDbuLength(site->sizeX()) );
+    newSite->setSizeY( getDbuLength(site->sizeY()) );
+  }
+
+  if(site->hasClass())
+  {
+    auto siteClass = types_->getSiteClass(std::string(site->siteClass()));
+    newSite->setSiteClass( siteClass );
+  }
+
+  if(site->hasXSymmetry())
+    newSite->setSymmetryX(true);
+  if(site->hasYSymmetry())
+    newSite->setSymmetryY(true);
+  if(site->has90Symmetry())
+    newSite->setSymmetryR90(true);
+
+  newSite->print();
+}
+  
 }
