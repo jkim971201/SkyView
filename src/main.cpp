@@ -1,8 +1,55 @@
 #include <cstdio>
 #include <iostream>
-#include <filesystem>
+#include <string>
+#include <tcl.h>
 
-#include "db/dbDatabase.h"
+#include "SkyLine.h"
+
+extern "C" 
+{ 
+	extern int Skyline_Init(Tcl_Interp* interp); 
+}
+
+bool exit_mode = true;
+char** cmd_argv;
+
+void sourceTclFile(std::string& filename, Tcl_Interp *interp)
+{
+  std::string cmd = "source " + filename;
+  int code = Tcl_Eval(interp, cmd.c_str());
+
+  const char* result = Tcl_GetStringResult(interp);
+  if(result[0] != '\0')
+    std::cout << result << std::endl;
+  if(exit_mode)
+    exit(0);
+}
+
+int customTclInit(char** argv, Tcl_Interp* interp)
+{
+  interp = Tcl_CreateInterp();
+
+  if(Tcl_Init(interp) == TCL_ERROR)
+  {
+    std::cout << "ERROR - Cannot create Tcl interpreter" << std::endl;
+    return TCL_ERROR;
+  }
+  else
+  {
+    Skyline_Init(interp);
+
+    std::string filename = std::string(argv[1]);
+
+    sourceTclFile(filename, interp);
+
+    return TCL_OK;
+  }
+}
+
+int tclInitWrapper(Tcl_Interp* interp)
+{
+  return customTclInit(cmd_argv, interp);
+}
 
 int main(int argc, char** argv)
 {
@@ -12,10 +59,9 @@ int main(int argc, char** argv)
     exit(0);
   }
 
-  char* file_name = argv[1];
+  cmd_argv = argv;
 
-  db::dbDatabase _db;
-  _db.readLef(std::filesystem::path(std::string(file_name)));
+  Tcl_Main(1, argv, tclInitWrapper);
 
   return 0;
 }

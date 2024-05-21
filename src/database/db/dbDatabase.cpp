@@ -15,7 +15,7 @@ dbDatabase::dbDatabase()
 }
 
 void
-dbDatabase::readLef(const std::filesystem::path& fileName)
+dbDatabase::readLef(const char* fileName)
 {
   std::string filenameStr = std::string(fileName);
 

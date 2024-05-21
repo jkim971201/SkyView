@@ -18,7 +18,7 @@ class dbDatabase
 
     dbDatabase();
 
-    void readLef(const std::filesystem::path& file);
+    void readLef(const char* filename);
 
   private:
 
