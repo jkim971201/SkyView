@@ -38,6 +38,15 @@ int customTclInit(char** argv, Tcl_Interp* interp)
   {
     Skyline_Init(interp);
 
+    #ifdef SKYLINE_TCL
+		std::string init_cmd = "source " + std::string(SKYLINE_TCL);
+    #else
+		std::cout << "SkyLine.tcl is not defined" << std::endl;
+		exit(1);
+    #endif
+
+		Tcl_Eval(interp, init_cmd.c_str());
+
     std::string filename = std::string(argv[1]);
 
     sourceTclFile(filename, interp);
