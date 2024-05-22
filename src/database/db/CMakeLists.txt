@@ -8,6 +8,8 @@ target_sources(db
   dbLefReader.cpp
   dbLayer.cpp
   dbSite.cpp
+	dbPin.cpp
+	dbMacro.cpp
 )
 
 target_link_libraries(db

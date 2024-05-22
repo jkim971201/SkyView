@@ -26,7 +26,7 @@ class dbSite
     const std::string& name() const { return name_;      }
     SiteClass siteClass()     const { return siteClass_; }
     bool isSymmetryX()        const { return symX_;      }
-    bool isSymmetryY()        const { return symX_;      }
+    bool isSymmetryY()        const { return symY_;      }
     bool isSymmetryR90()      const { return symR90_;    }
 
     int sizeX() const { return sizeX_; }

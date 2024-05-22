@@ -9,9 +9,9 @@ dbSite::dbSite()
   : name_   (""),
     sizeX_  ( 0),
     sizeY_  ( 0),
-		symX_   (false),
-		symY_   (false),
-		symR90_ (false)
+    symX_   (false),
+    symY_   (false),
+    symR90_ (false)
 {
 }
 

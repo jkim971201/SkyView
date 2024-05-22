@@ -17,8 +17,14 @@ dbTypes::dbTypes()
   strToLayerDirection_["VERTICAL"  ] = LayerDirection::VERTICAL;
   strToLayerDirection_["HORIZONTAL"] = LayerDirection::HORIZONTAL;
 
-  strToMacroClass_["CORE"       ] = MacroClass::CORE;
-  strToMacroClass_["CORE_SPACER"] = MacroClass::CORE_SPACER;
+  strToMacroClass_["CORE"            ] = MacroClass::CORE;
+  strToMacroClass_["CORE FEEDTHRU"   ] = MacroClass::CORE_FEEDTHRU;
+  strToMacroClass_["CORE TIEHIGH"    ] = MacroClass::CORE_TIEHIGH;
+  strToMacroClass_["CORE TIELOW"     ] = MacroClass::CORE_TIELOW;
+  strToMacroClass_["CORE SPACER"     ] = MacroClass::CORE_SPACER;
+  strToMacroClass_["CORE WELLTAP"    ] = MacroClass::CORE_WELLTAP;
+  strToMacroClass_["CORE ANTENNACELL"] = MacroClass::CORE_ANTENNACELL;
+
   strToMacroClass_["PAD"        ] = MacroClass::PAD;
   strToMacroClass_["BLOCK"      ] = MacroClass::BLOCK;
   strToMacroClass_["ENDCAP"     ] = MacroClass::ENDCAP;
@@ -34,6 +40,10 @@ dbTypes::dbTypes()
   strToPinUsage_["POWER"  ] = PinUsage::POWER;
   strToPinUsage_["GROUND" ] = PinUsage::GROUND;
   strToPinUsage_["CLOCK"  ] = PinUsage::CLOCK;
+
+  strToPinShape_["ABUTMENT"] = PinShape::ABUTMENT;
+  strToPinShape_["RING"    ] = PinShape::RING;
+  strToPinShape_["FEEDTHRU"] = PinShape::FEEDTHRU;
 
   strToOrient_["N" ] = Orient::N;
   strToOrient_["S" ] = Orient::S;
@@ -107,7 +117,7 @@ dbTypes::getSiteClass(const std::string& str) const
 }
 
 PinDirection
-dbTypes::getPinDrection(const std::string& str) const
+dbTypes::getPinDirection(const std::string& str) const
 {
   auto itr = strToPinDirection_.find(str);
   
@@ -135,6 +145,22 @@ dbTypes::getPinUsage(const std::string& str) const
   else
     return itr->second;
 }
+
+PinShape
+dbTypes::getPinShape(const std::string& str) const
+{
+  auto itr = strToPinShape_.find(str);
+  
+  if(itr == strToPinShape_.end())
+  {
+    std::cout << "Error - PIN  SHAPE " << str;
+    std::cout << " is unknown (or not supported yet)..." << std::endl;
+    exit(0);
+  }
+  else
+    return itr->second;
+}
+
 
 Source
 dbTypes::getSource(const std::string& str) const
