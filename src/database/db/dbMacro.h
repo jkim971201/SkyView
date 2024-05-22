@@ -1,15 +1,19 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
-#include "dbTypes.h"
 #include "dbPin.h"
+#include "dbObs.h"
+#include "dbTypes.h"
+#include "dbRect.h"
 
 namespace db
 {
 
 class dbPin;
 class dbSite;
+class dbObs;
 
 class dbMacro
 {
@@ -17,9 +21,9 @@ class dbMacro
   public:
 
     dbMacro();
+    ~dbMacro();
 
     void print() const;
-    void addPin(dbPin pin);
 
     // Setters
     void setName(const char* name)       { name_ = std::string(name); }
@@ -32,6 +36,8 @@ class dbMacro
     void setSymmetryX   (bool sym)       { symX_   = sym;        }
     void setSymmetryY   (bool sym)       { symY_   = sym;        }
     void setSymmetryR90 (bool sym)       { symR90_ = sym;        }
+    void addRectToObs(dbRect rect)       { obs_.addRect(rect);   }
+    void addPin(dbPin* pin);
 
     // Getters
     MacroClass   macroClass() const { return macroClass_; }
@@ -47,9 +53,10 @@ class dbMacro
     bool isSymmetryY()   const { return symY_;   }
     bool isSymmetryR90() const { return symR90_; }
 
-    const std::vector<dbPin>& pins() const { return pins_; }
+    const std::vector<dbPin*>& pins() const { return pins_; }
+		const dbObs*               obs()  const { return &obs_; }
 
-    const dbPin* getPin(const std::string& pinName) const;
+    const dbPin* getPinByName(const std::string& pinName) const;
 
           std::unordered_map<std::string, dbPin*>& pinMap()       { return pinMap_; }
     const std::unordered_map<std::string, dbPin*>& pinMap() const { return pinMap_; }
@@ -57,11 +64,11 @@ class dbMacro
   private:
 
     // LEF Syntax
-    std::string  name_;
-    MacroClass   macroClass_;
-    dbSite*      site_;
-
-    std::vector<dbPin> pins_;
+    std::string         name_;
+    MacroClass          macroClass_;
+    dbSite*             site_;
+    std::vector<dbPin*> pins_;
+    dbObs               obs_;
 
     std::unordered_map<std::string, dbPin*> pinMap_;
 

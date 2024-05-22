@@ -5,21 +5,11 @@
 
 #include "dbTypes.h"
 #include "dbLayer.h"
+#include "dbMacro.h"
+#include "dbRect.h"
 
 namespace db
 {
-
-// This class is for describing the pin shape of LefPin
-struct dbRect
-{
-  int lx;
-  int ly;
-  int ux;
-  int uy;
-
-  dbRect(int lx, int ly, int ux, int uy)
-    : lx(lx), ly(ly), ux(ux), uy(uy) {}
-};
 
 class dbMacro;
 class dbLayer;
@@ -33,12 +23,12 @@ class dbPin
     void print() const;
 
     // Setters
-    void setMacro        (dbMacro*     lefMacro) { dbMacro_  = lefMacro;    }
-    void setLayer        (dbLayer*     lefLayer) { dbLayer_  = lefLayer;    }
+    void setName         (std::string  pinName ) { name_     = pinName;     }
+    void setMacro        (dbMacro*     lefMacro) { macro_    = lefMacro;    }
     void setPinUsage     (PinUsage     pinUsage) { pinUsage_ = pinUsage;    }
     void setPinDirection (PinDirection pinDir  ) { pinDir_   = pinDir;      }
     void setPinShape     (PinShape     pinShape) { pinShape  = pinShape_;   }
-    void addRect         (dbRect       rect    ) { dbRect_.push_back(rect); }
+    void addRect         (dbRect       rect    ) { rects_.push_back(rect);  }
 
     // Getters
     int lx() const { return lx_;             }
@@ -48,26 +38,24 @@ class dbPin
     int cx() const { return (ux_ + lx_) / 2; } // this works as offsetX
     int cy() const { return (uy_ + ly_) / 2; } // this works as offsetY
 
-    dbMacro*          macro() const { return dbMacro_;  }
-    dbLayer*          layer() const { return dbLayer_;  }
-    const std::string& name() const { return pinName_;  }
+    dbMacro*          macro() const { return macro_;    }
+    const std::string& name() const { return name_;     }
     PinUsage          usage() const { return pinUsage_; }
     PinDirection  direction() const { return pinDir_;   }
     PinShape          shape() const { return pinShape_; }
 
-    const std::vector<dbRect>& rects() const { return dbRect_; }
+    const std::vector<dbRect>& rects() const { return rects_; }
 
   private:
 
-    dbMacro* dbMacro_;
-    dbLayer* dbLayer_;
+    dbMacro* macro_;
 
-    std::string  pinName_;
+    std::string  name_;
     PinUsage     pinUsage_;
     PinDirection pinDir_;
     PinShape     pinShape_;
 
-    std::vector<dbRect> dbRect_;
+    std::vector<dbRect> rects_;
 
     int lx_;
     int ly_;

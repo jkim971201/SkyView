@@ -8,6 +8,26 @@
 namespace db
 {
 
+dbTech::dbTech(std::shared_ptr<dbTypes> types)
+  : types_ (types),
+    dbu_   (    0)
+{
+  str2dbLayer_.clear();
+  str2dbSite_.clear();
+  str2dbMacro_.clear();
+}
+
+dbTech::~dbTech()
+{
+  str2dbLayer_.clear();
+  str2dbSite_.clear();
+  str2dbMacro_.clear();
+
+  layers_.clear();
+  sites_.clear();
+  macros_.clear();
+}
+
 dbLayer*
 dbTech::getLayerByName(const std::string& name)
 {
@@ -68,11 +88,11 @@ dbTech::createNewLayer(const lefiLayer* la)
     exit(1);
   }
 
-  layers_.push_back(dbLayer());
-  dbLayer* newLayer = &(layers_.back());
-  str2dbLayer_[std::string(la->name())] = newLayer;
-
+  dbLayer* newLayer = new dbLayer;
+  layers_.push_back( newLayer );
   newLayer->setName(la->name());
+
+  str2dbLayer_[newLayer->name()] = newLayer;
 
   if(la->hasType())      
   {
@@ -129,11 +149,11 @@ dbTech::createNewSite(const lefiSite* site)
     exit(1);
   }
 
-  sites_.push_back(dbSite());
-  dbSite* newSite = &(sites_.back());
-  str2dbSite_[std::string(site->name())] = newSite;
+  dbSite* newSite = new dbSite;
+  sites_.push_back(newSite);
 
   newSite->setName(site->name());
+  str2dbSite_[newSite->name()] = newSite;
 
   if(site->hasSize())
   {
@@ -166,31 +186,35 @@ dbTech::addPinToMacro(const lefiPin* pi, dbMacro* topMacro)
     exit(1);
   }
 
-  dbPin newPin;
+  dbPin* newPin = new dbPin;
+  newPin->setName( std::string(pi->name()) );
+  newPin->setMacro( topMacro );
 
   if(pi->hasDirection() )
   {
     auto dir = types_->getPinDirection( std::string(pi->direction()) );
-    newPin.setPinDirection( dir );
+    newPin->setPinDirection( dir );
   }
 
   if(pi->hasUse())
   {
     auto use = types_->getPinUsage( std::string(pi->use()) );
-    newPin.setPinUsage(use);
+    newPin->setPinUsage(use);
   }
 
   if(pi->hasShape())
   {
     auto shape = types_->getPinShape( std::string(pi->shape()) );
-    newPin.setPinShape(shape);
+    newPin->setPinShape(shape);
   }
 
   int numPorts = pi->numPorts();
 
+
+  dbLayer* curLayer = nullptr;
   for(int i = 0; i < numPorts; i++)
   {
-    lefiGeometries*    geo = pi->port(i);
+    lefiGeometries* geo = pi->port(i);
     lefiGeomRect*    lrect = nullptr;
     lefiGeomPolygon* lpoly = nullptr;
 
@@ -200,27 +224,26 @@ dbTech::addPinToMacro(const lefiPin* pi, dbMacro* topMacro)
       switch(geo->itemType(j))
       {
         case lefiGeomLayerE:
-				{
-          dbLayer* layer = getLayerByName( geo->getLayer(j) );
-          newPin.setLayer( layer );
+        {
+          curLayer = getLayerByName( std::string(geo->getLayer(j)) );
           break;
-				}
+        }
 
         case lefiGeomRectE:
-				{
+        {
           lrect = geo->getRect(j);
 
-					int rectLx = getDbuLength( lrect->xl );
+          int rectLx = getDbuLength( lrect->xl );
           int rectLy = getDbuLength( lrect->yl );
           int rectUx = getDbuLength( lrect->xh );
           int rectUy = getDbuLength( lrect->yh );
 
-          newPin.addRect( dbRect(rectLx, rectLy, rectUx, rectUy) );
+          newPin->addRect( dbRect(rectLx, rectLy, rectUx, rectUy, curLayer) );
           break;
-				}
+        }
 
         case lefiGeomPolygonE:
-				{
+        {
           lpoly = geo->getPolygon(j);
 
           double polyLx = std::numeric_limits<double>::max();
@@ -237,19 +260,55 @@ dbTech::addPinToMacro(const lefiPin* pi, dbMacro* topMacro)
             polyUy = std::max(polyUy, lpoly->y[k]);
           }
 
-					int polyLxDbu = getDbuLength( polyLx );
-					int polyLyDbu = getDbuLength( polyLy );
-					int polyUxDbu = getDbuLength( polyUx );
-					int polyUyDbu = getDbuLength( polyUy );
+          int polyLxDbu = getDbuLength( polyLx );
+          int polyLyDbu = getDbuLength( polyLy );
+          int polyUxDbu = getDbuLength( polyUx );
+          int polyUyDbu = getDbuLength( polyUy );
 
-          newPin.addRect( dbRect(polyLxDbu, polyLyDbu, polyUxDbu, polyUyDbu) );
+          newPin->addRect( dbRect(polyLxDbu, polyLyDbu, polyUxDbu, polyUyDbu, curLayer) );
           break;
-				}
+        }
       }
     }
   }
 
   topMacro->addPin( newPin );
+}
+
+void
+dbTech::addObsToMacro(const lefiObstruction* obs, dbMacro* topMacro)
+{
+  lefiGeometries* geo = obs->geometries();
+
+  int numItems = geo->numItems();
+  dbLayer* curLayer = nullptr;
+  for(int i = 0; i < numItems; i++)
+  {
+    lefiGeomRect* lrect = nullptr;
+
+    switch(geo->itemType(i)) 
+    {
+      case lefiGeomLayerE:
+      {
+        curLayer = getLayerByName( std::string(geo->getLayer(i)) );
+        break;
+      }
+      case lefiGeomRectE:
+      {
+        lrect = geo->getRect(i);
+
+        int rectLx = getDbuLength( lrect->xl );
+        int rectLy = getDbuLength( lrect->yl );
+        int rectUx = getDbuLength( lrect->xh );
+        int rectUy = getDbuLength( lrect->yh );
+
+        topMacro->addRectToObs( dbRect(rectLx, rectLy, rectUx, rectUy, curLayer) );
+        break;
+      }
+      default: 
+        break;    
+    }
+  }
 }
 
 dbMacro*
@@ -261,11 +320,11 @@ dbTech::getNewMacro(const char* name)
     exit(1);
   }
 
-  macros_.push_back(dbMacro());
-  dbMacro* newMacro = &(macros_.back());
-  str2dbMacro_[std::string(name)] = newMacro;
+  dbMacro* newMacro = new dbMacro;
+  macros_.push_back(newMacro);
 
   newMacro->setName(name);
+  str2dbMacro_[newMacro->name()] = newMacro;
 
   return newMacro;
 }

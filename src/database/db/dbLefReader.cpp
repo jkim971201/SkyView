@@ -116,46 +116,11 @@ dbLefReader::lefMacroPinCbk(lefrCallbackType_e c, lefiPin* pi, lefiUserData ud )
   return 0; 
 }
 
-// Set macro's Obs
 int 
 dbLefReader::lefMacroObsCbk(lefrCallbackType_e c, lefiObstruction* obs, lefiUserData ud ) 
 {
-//  dbTech* tech = (dbTech*) ud;
-//  lefiGeometries* geom = obs->geometries();
-//
-//  bool isMeetMetalLayer1 = false;
-//  for(int i=0; i<geom->numItems(); i++) 
-//  {
-//    lefiGeomRect* lrect = NULL;
-//    opendp::rect tmpRect;
-//
-//    switch(geom->itemType(i)) 
-//    {
-//      // when meets metal1 segments.
-//      case lefiGeomLayerE:
-//        // HARD CODE
-//        // Need to be replaced layer. (metal1 name)
-//        isMeetMetalLayer1 =  (strcmp(geom->getLayer(i), "metal1") == 0)? true : false;
-//      break;
-//      // only metal1's obs should be pushed.
-//      case lefiGeomRectE:
-//        if(!isMeetMetalLayer1)
-//          break;
-//
-//        lrect = geom->getRect(i);
-//        tmpRect.xLL = lrect->xl;
-//        tmpRect.yLL = lrect->yl;
-//        tmpRect.xUR = lrect->xh;
-//        tmpRect.yUR = lrect->yh;
-//  
-//        topMacro_->obses.push_back(tmpRect);
-//        break;
-//      default: 
-//        break;    
-//    }
-//  }
-//
-////  cout << "obs: " << topMacro_->obses.size() << endl;
+  dbTech* tech = (dbTech*) ud;
+  tech->addObsToMacro(obs, topMacro_);
   return 0;
 }
 

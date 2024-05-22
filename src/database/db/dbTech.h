@@ -16,10 +16,8 @@ class dbTech
 {
   public:
 
-    dbTech(std::shared_ptr<dbTypes> types)
-      : types_ (types),
-        dbu_   (    0)
-    {}
+    dbTech(std::shared_ptr<dbTypes> types);
+    ~dbTech();
 
           dbLayer* getLayerByName(const std::string& name);
     const dbLayer* getLayerByName(const std::string& name) const
@@ -36,7 +34,8 @@ class dbTech
     void setUnits        (const lefiUnits* unit);
     void createNewLayer  (const lefiLayer*   la);
     void createNewSite   (const lefiSite*    si);
-    void addPinToMacro   (const lefiPin* pi, dbMacro* topMacro);
+    void addPinToMacro   (const lefiPin*         pi, dbMacro* topMacro);
+    void addObsToMacro   (const lefiObstruction* ob, dbMacro* topMacro);
 
     dbMacro* getNewMacro (const char* name);
     void fillNewMacro    (const lefiMacro* ma, dbMacro* newMacro); 
@@ -55,9 +54,9 @@ class dbTech
     std::unordered_map<std::string, dbSite*>  str2dbSite_;
     std::unordered_map<std::string, dbMacro*> str2dbMacro_;
 
-    std::vector<dbLayer> layers_;
-    std::vector<dbSite>  sites_;
-    std::vector<dbMacro> macros_;
+    std::vector<dbLayer*> layers_;
+    std::vector<dbSite*>  sites_;
+    std::vector<dbMacro*> macros_;
 };
 
 }
