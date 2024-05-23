@@ -1,4 +1,5 @@
-#pragma once
+#ifndef DB_DEF_READER
+#define DB_DEF_READER
 
 #include <string>
 #include <memory>
@@ -7,6 +8,7 @@
 #include "def/defiAlias.hpp"
 
 #include "dbTech.h"
+#include "dbDesign.h"
 
 namespace db
 {
@@ -15,8 +17,9 @@ class dbDefReader
 {
   public:
 
-    dbDefReader(std::shared_ptr<dbTypes> types, 
-                std::shared_ptr<dbTech> tech);
+    dbDefReader(std::shared_ptr<dbTypes>  types, 
+                std::shared_ptr<dbTech>   tech,
+								std::shared_ptr<dbDesign> design);
 
     void init();
 
@@ -61,8 +64,11 @@ class dbDefReader
   
   private:
 
-    std::shared_ptr<dbTypes> types_;
-    std::shared_ptr<dbTech>  tech_;
+    std::shared_ptr<dbTypes>  types_;
+    std::shared_ptr<dbTech>   tech_;
+    std::shared_ptr<dbDesign> design_;
 };
 
 }
+
+#endif

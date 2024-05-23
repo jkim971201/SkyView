@@ -1,4 +1,5 @@
-#pragma ocne
+#ifndef DB_SITE
+#define DB_SITE
 
 #include "dbTypes.h"
 
@@ -48,3 +49,5 @@ class dbSite
 };
 
 }
+
+#endif

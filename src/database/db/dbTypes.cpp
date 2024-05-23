@@ -153,7 +153,7 @@ dbTypes::getPinShape(const std::string& str) const
   
   if(itr == strToPinShape_.end())
   {
-    std::cout << "Error - PIN  SHAPE " << str;
+    std::cout << "Error - PIN SHAPE " << str;
     std::cout << " is unknown (or not supported yet)..." << std::endl;
     exit(0);
   }
@@ -161,6 +161,20 @@ dbTypes::getPinShape(const std::string& str) const
     return itr->second;
 }
 
+Orient
+dbTypes::getOrient(const std::string& str) const
+{
+  auto itr = strToOrient_.find(str);
+  
+  if(itr == strToOrient_.end())
+  {
+    std::cout << "Error - Orient " << str;
+    std::cout << " is unknown (or not supported yet)..." << std::endl;
+    exit(0);
+  }
+  else
+    return itr->second;
+}
 
 Source
 dbTypes::getSource(const std::string& str) const

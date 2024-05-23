@@ -1,4 +1,5 @@
-#pragma once
+#ifndef DB_PIN
+#define DB_PIN
 
 #include <string>
 #include <vector>
@@ -64,3 +65,5 @@ class dbPin
 };
 
 }
+
+#endif

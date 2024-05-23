@@ -3,21 +3,27 @@ add_library(db)
 target_sources(db
   PRIVATE
   dbDatabase.cpp
-  dbTech.cpp
   dbTypes.cpp
+	# LEF
+  dbTech.cpp
   dbLefReader.cpp
-	dbDefReader.cpp
   dbLayer.cpp
   dbSite.cpp
   dbPin.cpp
   dbMacro.cpp
   dbObs.cpp
+
+	# DEF
+  dbDesign.cpp
+  dbDefReader.cpp
+  dbDie.cpp
+	dbRow.cpp
 )
 
 target_link_libraries(db
   PRIVATE
   lef
-	def
+  def
 )
 
 target_include_directories(db

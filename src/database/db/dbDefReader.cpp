@@ -23,12 +23,13 @@ void checkType(defrCallbackType_e c)
     printf("ERROR: callback type is out of bounds!\n");
 }
 
-dbDefReader::dbDefReader(std::shared_ptr<dbTypes> types, 
-                         std::shared_ptr<dbTech> tech)
-  : types_          ( types),
-    tech_           (  tech)
+dbDefReader::dbDefReader(std::shared_ptr<dbTypes>  types, 
+                         std::shared_ptr<dbTech>   tech,
+                         std::shared_ptr<dbDesign> design)
+  : types_   ( types),
+    tech_    (  tech),
+    design_  (design)
 {
-  
 }
 
 void
@@ -38,7 +39,7 @@ dbDefReader::init()
 
   defrInitSession(0);
   
-  defrSetUserData(tech_.get());
+  defrSetUserData(design_.get());
 
   defrSetDesignCbk(this->defDesignCbk);
 
@@ -84,10 +85,10 @@ dbDefReader::parseDef(const std::string& filename)
   std::string filetype = filename.substr(dot + 1);
 
   if(filetype != "def")
-	{
+  {
     printf("Please give .def file!\n");
-		exit(1);
-	}
+    exit(1);
+  }
 
   FILE* file = fopen(filename.c_str(), "r");
 
@@ -97,7 +98,7 @@ dbDefReader::parseDef(const std::string& filename)
     exit(1);
   }
 
-  int res = defrRead(file, filename.c_str(), (void*) tech_.get(), 1);
+  int res = defrRead(file, filename.c_str(), (void*) design_.get(), 1);
   fclose(file);
 
   defrClear();
@@ -114,6 +115,8 @@ int
 dbDefReader::defDesignCbk(defrCallbackType_e c, const char* name, defiUserData ud)
 {
   checkType(c);
+  dbDesign* design = (dbDesign*) ud;
+  design->setName(name);
   return 0;
 }
 
@@ -122,6 +125,11 @@ int
 dbDefReader::defUnitsCbk(defrCallbackType_e c, double unit, defiUserData ud)
 {
   checkType(c);
+  
+  int defDbu = static_cast<int>(unit);
+  dbDesign* design = (dbDesign*) ud;
+  design->setDbu(defDbu);
+
   return 0;
 }
 
@@ -130,6 +138,8 @@ int
 dbDefReader::defDieAreaCbk(defrCallbackType_e c, defiBox* box, defiUserData ud)
 {
   checkType(c);
+  dbDesign* design = (dbDesign*) ud;
+  design->setDie(box);
   return 0;
 }
 
@@ -138,6 +148,8 @@ int
 dbDefReader::defRowCbk(defrCallbackType_e c, defiRow* ro, defiUserData ud)
 {
   checkType(c);
+  dbDesign* design = (dbDesign*) ud;
+	design->addNewRow(ro);
   return 0;
 }
 

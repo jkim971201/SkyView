@@ -1,4 +1,5 @@
-#pragma once
+#ifndef DB_TYPES
+#define DB_TYPES
 
 #include <string>
 #include <unordered_map>
@@ -72,3 +73,5 @@ class dbTypes
 };
 
 }
+
+#endif

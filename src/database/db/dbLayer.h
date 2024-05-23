@@ -1,4 +1,5 @@
-#pragma once
+#ifndef DB_LAYER
+#define DB_LAYER
 
 #include <string>
 
@@ -60,3 +61,5 @@ class dbLayer
 };
 
 }
+
+#endif

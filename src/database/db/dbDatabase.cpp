@@ -14,8 +14,10 @@ dbDatabase::dbDatabase()
   // Initialization order matters.
   types_     = std::make_shared<dbTypes>();
   tech_      = std::make_shared<dbTech>(types_);
+	design_    = std::make_shared<dbDesign>(types_, tech_);
+
   lefReader_ = std::make_shared<dbLefReader>(types_, tech_);
-  defReader_ = std::make_shared<dbDefReader>(types_, tech_);
+  defReader_ = std::make_shared<dbDefReader>(types_, tech_, design_);
 }
 
 void

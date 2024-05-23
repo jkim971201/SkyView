@@ -1,4 +1,5 @@
-#pragma once
+#ifndef DB_OBS
+#define DB_OBS
 
 #include <vector>
 
@@ -28,3 +29,5 @@ class dbObs
 };
 
 }
+
+#endif

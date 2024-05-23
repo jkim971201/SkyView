@@ -1,10 +1,12 @@
-#pragma once
+#ifndef DB_TECH
+#define DB_TECH
 
 #include <memory>
 #include <string>
 #include <unordered_map>
 
 #include "lef/lefrReader.hpp"
+#include "dbTypes.h"
 #include "dbLayer.h"
 #include "dbSite.h"
 #include "dbMacro.h"
@@ -20,8 +22,8 @@ class dbTech
     ~dbTech();
 
     void setUnits        (const lefiUnits* unit);
-		void setBusBit       (const char* busBit);
-  	void setDivider      (const char* divider);
+    void setBusBit       (const char* busBit);
+    void setDivider      (const char* divider);
     void createNewLayer  (const lefiLayer* la);
     void createNewSite   (const lefiSite* si);
     void addPinToMacro   (const lefiPin*         pi, dbMacro* topMacro);
@@ -30,6 +32,7 @@ class dbTech
     dbMacro* getNewMacro (const char* name);
     void fillNewMacro    (const lefiMacro* ma, dbMacro* newMacro); 
 
+    int getDbu() const { return dbu_; }
     int getDbuLength(double micron) const;
     int getDbuArea  (double micron) const;
 
@@ -55,7 +58,7 @@ class dbTech
 
     char left_bus_delimiter_;
     char right_bus_delimiter_;
-		char divider_;
+    char divider_;
 
     std::shared_ptr<dbTypes> types_;
 
@@ -69,3 +72,5 @@ class dbTech
 };
 
 }
+
+#endif

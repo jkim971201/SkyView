@@ -1,4 +1,5 @@
-#pragma once
+#ifndef DB_LEF_READER
+#define DB_LEF_READER
 
 #include <string>
 #include <memory>
@@ -53,3 +54,5 @@ class dbLefReader
 };
 
 }
+
+#endif

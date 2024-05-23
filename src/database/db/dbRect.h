@@ -1,4 +1,5 @@
-#pragma once
+#ifndef DB_RECT
+#define DB_RECT
 
 #include <cassert>
 
@@ -28,3 +29,5 @@ class dbRect
 };
 
 }
+
+#endif

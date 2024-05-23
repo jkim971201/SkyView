@@ -1,4 +1,5 @@
-#pragma once
+#ifndef DB_MACRO
+#define DB_MACRO
 
 #include <string>
 #include <vector>
@@ -84,3 +85,5 @@ class dbMacro
 };
 
 }
+
+#endif
