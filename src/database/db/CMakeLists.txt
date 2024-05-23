@@ -18,6 +18,7 @@ target_sources(db
   dbDefReader.cpp
   dbDie.cpp
 	dbRow.cpp
+	dbInst.cpp
 )
 
 target_link_libraries(db

@@ -43,7 +43,7 @@ class dbRow
 
     // Getters
     const std::string& name() const { return name_; }
-    const dbSite*      site() const { return site_; }
+    const dbSite* site() const { return site_; }
 
     int origX() const { return origX_; }
     int origY() const { return origY_; }

@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <cassert>
 #include <cstdio>
+#include <string>
 
 #include "dbDefReader.h"
 
@@ -10,6 +11,31 @@ namespace db
 static void defLogFunction(const char* errMsg) 
 {
   printf("ERROR: %s\n", errMsg);
+}
+
+static inline std::string removeBackSlashBracket(const std::string& str)
+{
+	std::string newStr = str;
+	//printf("before : %s\n", newStr.c_str());
+  if(newStr.find("\\[") != std::string::npos && newStr.find("\\]") != std::string::npos)
+  {
+    size_t bracket1 = newStr.find("\\[");
+    while(bracket1 != std::string::npos)
+    {
+      newStr.erase(newStr.begin() + bracket1);
+      bracket1 = newStr.find("\\[");
+    }
+
+    size_t bracket2 = newStr.find("\\]");
+    while(bracket2 != std::string::npos)
+    {
+      newStr.erase(newStr.begin() + bracket2);
+      bracket2 = newStr.find("\\]");
+    }
+  }
+	//printf("after : %s\n", newStr.c_str());
+
+	return newStr;
 }
 
 void checkType(defrCallbackType_e c)
@@ -52,6 +78,16 @@ dbDefReader::init()
   // Rows 
   defrSetRowCbk((defrRowCbkFnType)this->defRowCbk);
 
+  // Components
+  defrSetComponentStartCbk(this->defComponentStartCbk);
+  defrSetComponentCbk(this->defComponentCbk);
+  defrSetComponentEndCbk(this->defComponentEndCbk);
+
+  // Pins
+  defrSetStartPinsCbk(this->defPinStartCbk);
+  defrSetPinCbk((defrPinCbkFnType)this->defPinCbk);
+  defrSetPinEndCbk(this->defPinEndCbk);
+
   // Nets
   defrSetNetStartCbk(this->defNetStartCbk);
   defrSetNetCbk(this->defNetCbk);
@@ -61,16 +97,6 @@ dbDefReader::init()
   defrSetSNetStartCbk(this->defSNetStartCbk);
   defrSetSNetCbk(this->defSNetCbk);
   defrSetSNetEndCbk(this->defSNetEndCbk);
-
-  // Pins
-  defrSetStartPinsCbk(this->defPinStartCbk);
-  defrSetPinCbk((defrPinCbkFnType)this->defPinCbk);
-  defrSetPinEndCbk(this->defPinEndCbk);
-
-  // Components
-  defrSetComponentStartCbk(this->defComponentStartCbk);
-  defrSetComponentCbk(this->defComponentCbk);
-  defrSetComponentEndCbk(this->defComponentEndCbk);
 
   // End Design
   defrSetDesignEndCbk(this->defEndCbk);
@@ -231,6 +257,17 @@ int
 dbDefReader::defComponentCbk(defrCallbackType_e c, defiComponent* co, defiUserData ud)
 {
   checkType(c);
+  dbDesign* design = (dbDesign*) ud;
+ 
+	std::string nameWithoutBackSlash = removeBackSlashBracket( std::string(co->id()) );
+
+	dbInst* inst = design->getInstByName( nameWithoutBackSlash );
+
+	if(inst == nullptr)
+	  design->addNewInst(co, nameWithoutBackSlash);
+	else
+		design->fillInst(co, inst);
+
   return 0;
 }
 

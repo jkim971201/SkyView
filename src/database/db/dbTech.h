@@ -39,17 +39,9 @@ class dbTech
     int getRightBusBit() const { return right_bus_delimiter_; }
     int getLeftBusBit()  const { return left_bus_delimiter_;  }
 
-          dbLayer* getLayerByName(const std::string& name);
-    const dbLayer* getLayerByName(const std::string& name) const
-    {
-      return getLayerByName(name);
-    };
-
-          dbSite* getSiteByName(const std::string& name);
-    const dbSite* getSiteByName(const std::string& name) const
-    {
-      return getSiteByName(name);
-    };
+    dbLayer* getLayerByName (const std::string& name);
+    dbSite*  getSiteByName  (const std::string& name);
+    dbMacro* getMacroByName (const std::string& name);
 
   private:
 

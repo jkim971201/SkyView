@@ -11,9 +11,9 @@ namespace db
 dbTech::dbTech(std::shared_ptr<dbTypes> types)
   : types_               (types),
     dbu_                 (0),
-		left_bus_delimiter_  ('['),
-		right_bus_delimiter_ (']'),
-		divider_             ('/')
+    left_bus_delimiter_  ('['),
+    right_bus_delimiter_ (']'),
+    divider_             ('/')
 {
   str2dbLayer_.clear();
   str2dbSite_.clear();
@@ -61,6 +61,21 @@ dbTech::getSiteByName(const std::string& name)
     return itr->second;
 }
 
+dbMacro*
+dbTech::getMacroByName(const std::string& name)
+{
+  auto itr = str2dbMacro_.find(name);
+
+  if(itr == str2dbMacro_.end())
+  {
+    std::cout << "Error - Macro " << name;
+    std::cout << " does not exist in the database..." << std::endl;
+    exit(0);
+  }
+  else
+    return itr->second;
+}
+
 int
 dbTech::getDbuLength(double micron) const
 {
@@ -85,8 +100,8 @@ dbTech::setUnits(const lefiUnits* unit)
 void
 dbTech::setBusBit(const char* busBit)
 {
-	left_bus_delimiter_  = busBit[0];
-	right_bus_delimiter_ = busBit[1];
+  left_bus_delimiter_  = busBit[0];
+  right_bus_delimiter_ = busBit[1];
 }
 
 void

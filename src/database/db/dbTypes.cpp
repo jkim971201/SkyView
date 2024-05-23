@@ -2,6 +2,7 @@
 #include <algorithm>
 
 #include "dbTypes.h"
+#include "def/defiComponent.hpp"
 
 namespace db
 {
@@ -9,59 +10,64 @@ namespace db
 dbTypes::dbTypes()
 {
   // Initialization
-  strToRoutingType_["CUT"        ] = RoutingType::CUT;
-  strToRoutingType_["ROUTING"    ] = RoutingType::ROUTING;
-  strToRoutingType_["MASTERSLICE"] = RoutingType::MASTERSLICE;
-  strToRoutingType_["OVERLAP"    ] = RoutingType::OVERLAP;
+  str2RoutingType_["CUT"        ] = RoutingType::CUT;
+  str2RoutingType_["ROUTING"    ] = RoutingType::ROUTING;
+  str2RoutingType_["MASTERSLICE"] = RoutingType::MASTERSLICE;
+  str2RoutingType_["OVERLAP"    ] = RoutingType::OVERLAP;
 
-  strToLayerDirection_["VERTICAL"  ] = LayerDirection::VERTICAL;
-  strToLayerDirection_["HORIZONTAL"] = LayerDirection::HORIZONTAL;
+  str2LayerDirection_["VERTICAL"  ] = LayerDirection::VERTICAL;
+  str2LayerDirection_["HORIZONTAL"] = LayerDirection::HORIZONTAL;
 
-  strToMacroClass_["CORE"            ] = MacroClass::CORE;
-  strToMacroClass_["CORE FEEDTHRU"   ] = MacroClass::CORE_FEEDTHRU;
-  strToMacroClass_["CORE TIEHIGH"    ] = MacroClass::CORE_TIEHIGH;
-  strToMacroClass_["CORE TIELOW"     ] = MacroClass::CORE_TIELOW;
-  strToMacroClass_["CORE SPACER"     ] = MacroClass::CORE_SPACER;
-  strToMacroClass_["CORE WELLTAP"    ] = MacroClass::CORE_WELLTAP;
-  strToMacroClass_["CORE ANTENNACELL"] = MacroClass::CORE_ANTENNACELL;
+  str2MacroClass_["CORE"            ] = MacroClass::CORE;
+  str2MacroClass_["CORE FEEDTHRU"   ] = MacroClass::CORE_FEEDTHRU;
+  str2MacroClass_["CORE TIEHIGH"    ] = MacroClass::CORE_TIEHIGH;
+  str2MacroClass_["CORE TIELOW"     ] = MacroClass::CORE_TIELOW;
+  str2MacroClass_["CORE SPACER"     ] = MacroClass::CORE_SPACER;
+  str2MacroClass_["CORE WELLTAP"    ] = MacroClass::CORE_WELLTAP;
+  str2MacroClass_["CORE ANTENNACELL"] = MacroClass::CORE_ANTENNACELL;
 
-  strToMacroClass_["PAD"        ] = MacroClass::PAD;
-  strToMacroClass_["BLOCK"      ] = MacroClass::BLOCK;
-  strToMacroClass_["ENDCAP"     ] = MacroClass::ENDCAP;
+  str2MacroClass_["PAD"        ] = MacroClass::PAD;
+  str2MacroClass_["BLOCK"      ] = MacroClass::BLOCK;
+  str2MacroClass_["ENDCAP"     ] = MacroClass::ENDCAP;
   
-  strToSiteClass_["CORE"] = SiteClass::CORE_SITE;
-  strToSiteClass_["core"] = SiteClass::CORE_SITE;
+  str2SiteClass_["CORE"] = SiteClass::CORE_SITE;
+  str2SiteClass_["core"] = SiteClass::CORE_SITE;
 
-  strToPinDirection_["INPUT" ] = PinDirection::INPUT;
-  strToPinDirection_["OUTPUT"] = PinDirection::OUTPUT;
-  strToPinDirection_["INOUT" ] = PinDirection::INOUT;
+  str2PinDirection_["INPUT" ] = PinDirection::INPUT;
+  str2PinDirection_["OUTPUT"] = PinDirection::OUTPUT;
+  str2PinDirection_["INOUT" ] = PinDirection::INOUT;
 
-  strToPinUsage_["SIGNAL" ] = PinUsage::SIGNAL;
-  strToPinUsage_["POWER"  ] = PinUsage::POWER;
-  strToPinUsage_["GROUND" ] = PinUsage::GROUND;
-  strToPinUsage_["CLOCK"  ] = PinUsage::CLOCK;
+  str2PinUsage_["SIGNAL" ] = PinUsage::SIGNAL;
+  str2PinUsage_["POWER"  ] = PinUsage::POWER;
+  str2PinUsage_["GROUND" ] = PinUsage::GROUND;
+  str2PinUsage_["CLOCK"  ] = PinUsage::CLOCK;
 
-  strToPinShape_["ABUTMENT"] = PinShape::ABUTMENT;
-  strToPinShape_["RING"    ] = PinShape::RING;
-  strToPinShape_["FEEDTHRU"] = PinShape::FEEDTHRU;
+  str2PinShape_["ABUTMENT"] = PinShape::ABUTMENT;
+  str2PinShape_["RING"    ] = PinShape::RING;
+  str2PinShape_["FEEDTHRU"] = PinShape::FEEDTHRU;
 
-  strToOrient_["N" ] = Orient::N;
-  strToOrient_["S" ] = Orient::S;
-  strToOrient_["FN"] = Orient::FN;
-  strToOrient_["FS"] = Orient::FS;
+  str2Orient_["N" ] = Orient::N;
+  str2Orient_["S" ] = Orient::S;
+  str2Orient_["FN"] = Orient::FN;
+  str2Orient_["FS"] = Orient::FS;
 
-  strToSource_["DIST"   ] = Source::DIST;
-  strToSource_["NETLIST"] = Source::NETLIST;
-  strToSource_["TIMING" ] = Source::TIMING;
-  strToSource_["USER"   ] = Source::USER;
+  str2Source_["DIST"   ] = Source::DIST;
+  str2Source_["NETLIST"] = Source::NETLIST;
+  str2Source_["TIMING" ] = Source::TIMING;
+  str2Source_["USER"   ] = Source::USER;
+
+	int2Status_[DEFI_COMPONENT_UNPLACED] = Status::UNPLACED;
+	int2Status_[DEFI_COMPONENT_PLACED  ] = Status::PLACED;
+	int2Status_[DEFI_COMPONENT_FIXED   ] = Status::FIXED;
+	int2Status_[DEFI_COMPONENT_COVER   ] = Status::COVER;
 }
 
 RoutingType
 dbTypes::getRoutingType(const std::string& str) const
 {
-  auto itr = strToRoutingType_.find(str);
+  auto itr = str2RoutingType_.find(str);
   
-  if(itr == strToRoutingType_.end())
+  if(itr == str2RoutingType_.end())
   {
     std::cout << "Error - ROUTING TYPE " << str;
     std::cout << " is unknown (or not supported yet)..." << std::endl;
@@ -74,9 +80,9 @@ dbTypes::getRoutingType(const std::string& str) const
 LayerDirection
 dbTypes::getLayerDirection(const std::string& str) const
 {
-  auto itr = strToLayerDirection_.find(str);
+  auto itr = str2LayerDirection_.find(str);
   
-  if(itr == strToLayerDirection_.end())
+  if(itr == str2LayerDirection_.end())
   {
     std::cout << "Error - DIRECTION " << str;
     std::cout << " is unknown (or not supported yet)..." << std::endl;
@@ -89,9 +95,9 @@ dbTypes::getLayerDirection(const std::string& str) const
 MacroClass
 dbTypes::getMacroClass(const std::string& str) const
 {
-  auto itr = strToMacroClass_.find(str);
+  auto itr = str2MacroClass_.find(str);
   
-  if(itr == strToMacroClass_.end())
+  if(itr == str2MacroClass_.end())
   {
     std::cout << "Error - MACRO CLASS " << str;
     std::cout << " is unknown (or not supported yet)..." << std::endl;
@@ -104,9 +110,9 @@ dbTypes::getMacroClass(const std::string& str) const
 SiteClass
 dbTypes::getSiteClass(const std::string& str) const
 {
-  auto itr = strToSiteClass_.find(str);
+  auto itr = str2SiteClass_.find(str);
   
-  if(itr == strToSiteClass_.end())
+  if(itr == str2SiteClass_.end())
   {
     std::cout << "Error - SITE CLASS " << str;
     std::cout << " is unknown (or not supported yet)..." << std::endl;
@@ -119,9 +125,9 @@ dbTypes::getSiteClass(const std::string& str) const
 PinDirection
 dbTypes::getPinDirection(const std::string& str) const
 {
-  auto itr = strToPinDirection_.find(str);
+  auto itr = str2PinDirection_.find(str);
   
-  if(itr == strToPinDirection_.end())
+  if(itr == str2PinDirection_.end())
   {
     std::cout << "Error - PIN DIRECTION " << str;
     std::cout << " is unknown (or not supported yet)..." << std::endl;
@@ -134,9 +140,9 @@ dbTypes::getPinDirection(const std::string& str) const
 PinUsage
 dbTypes::getPinUsage(const std::string& str) const
 {
-  auto itr = strToPinUsage_.find(str);
+  auto itr = str2PinUsage_.find(str);
   
-  if(itr == strToPinUsage_.end())
+  if(itr == str2PinUsage_.end())
   {
     std::cout << "Error - PIN  USAGE " << str;
     std::cout << " is unknown (or not supported yet)..." << std::endl;
@@ -149,9 +155,9 @@ dbTypes::getPinUsage(const std::string& str) const
 PinShape
 dbTypes::getPinShape(const std::string& str) const
 {
-  auto itr = strToPinShape_.find(str);
+  auto itr = str2PinShape_.find(str);
   
-  if(itr == strToPinShape_.end())
+  if(itr == str2PinShape_.end())
   {
     std::cout << "Error - PIN SHAPE " << str;
     std::cout << " is unknown (or not supported yet)..." << std::endl;
@@ -164,9 +170,9 @@ dbTypes::getPinShape(const std::string& str) const
 Orient
 dbTypes::getOrient(const std::string& str) const
 {
-  auto itr = strToOrient_.find(str);
+  auto itr = str2Orient_.find(str);
   
-  if(itr == strToOrient_.end())
+  if(itr == str2Orient_.end())
   {
     std::cout << "Error - Orient " << str;
     std::cout << " is unknown (or not supported yet)..." << std::endl;
@@ -179,11 +185,26 @@ dbTypes::getOrient(const std::string& str) const
 Source
 dbTypes::getSource(const std::string& str) const
 {
-  auto itr = strToSource_.find(str);
+  auto itr = str2Source_.find(str);
   
-  if(itr == strToSource_.end())
+  if(itr == str2Source_.end())
   {
     std::cout << "Error - SOURCE " << str;
+    std::cout << " is unknown (or not supported yet)..." << std::endl;
+    exit(0);
+  }
+  else
+    return itr->second;
+}
+
+Status
+dbTypes::getStatus(int status) const
+{
+  auto itr = int2Status_.find(status);
+  
+  if(itr == int2Status_.end())
+  {
+    std::cout << "Error - PLACEMENT STATUS " << status;
     std::cout << " is unknown (or not supported yet)..." << std::endl;
     exit(0);
   }
