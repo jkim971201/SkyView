@@ -1,5 +1,6 @@
 #include <cassert>
 #include <cstdio>
+#include <string>
 
 #include "dbLefReader.h"
 
@@ -27,6 +28,10 @@ dbLefReader::init()
   lefrSetUserData(tech_.get());
 
   lefrSetUnitsCbk(this->lefUnitsCbk);
+
+  lefrSetBusBitCharsCbk(this->lefBusBitCbk);
+  lefrSetDividerCharCbk(this->lefDividerCbk);
+
   lefrSetLayerCbk(this->lefLayerCbk);
   lefrSetSiteCbk(this->lefSiteCbk);
   lefrSetMacroBeginCbk(this->lefMacroBeginCbk);
@@ -40,6 +45,15 @@ void
 dbLefReader::parseLef(const std::string& filename)
 {
   init();
+
+  size_t dot = filename.find_last_of('.');
+  std::string filetype = filename.substr(dot + 1);
+
+  if(filetype != "lef")
+  {
+    printf("Please give .lef file!\n");
+    exit(1);
+  }
 
   FILE* file = fopen(filename.c_str(), "r");
 
@@ -66,6 +80,22 @@ dbLefReader::lefUnitsCbk(lefrCallbackType_e c, lefiUnits* unit, lefiUserData ud)
 {
   dbTech* tech = (dbTech*) ud;
   tech->setUnits(unit);
+  return 0;
+}
+
+int
+dbLefReader::lefBusBitCbk(lefrCallbackType_e c, const char* busBit, lefiUserData ud)
+{
+  dbTech* tech = (dbTech*) ud;
+  tech->setBusBit(busBit);
+  return 0;
+}
+
+int 
+dbLefReader::lefDividerCbk(lefrCallbackType_e c, const char* div, lefiUserData ud)
+{
+  dbTech* tech = (dbTech*) ud;
+  tech->setDivider(div);
   return 0;
 }
 
@@ -127,18 +157,6 @@ dbLefReader::lefMacroObsCbk(lefrCallbackType_e c, lefiObstruction* obs, lefiUser
 int 
 dbLefReader::lefEndCbk(lefrCallbackType_e c, const char* name, lefiUserData ud ) 
 {
-//  dbTech* tech = (dbTech*) ud;
-//  switch(c) 
-//  {
-//    case lefrMacroEndCbkType:
-////      cout << "Macro: " << topMacro_->name << " is undergoing test" << endl;
-//      tech->read_lef_macro_define_top_power(topMacro_);
-//      // reset topMacro_'s pointer
-//      topMacro_ = 0;
-//      break;
-//    default:
-//      break;
-//  }
   return 0;
 }
 

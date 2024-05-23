@@ -27,6 +27,8 @@ class dbLefReader
 
     // LEF CallBacks.
     static int lefUnitsCbk      (lefrCallbackType_e c, lefiUnits*      unit, lefiUserData ud);
+    static int lefBusBitCbk     (lefrCallbackType_e c, const char*   busBit, lefiUserData ud);
+    static int lefDividerCbk    (lefrCallbackType_e c, const char*  divider, lefiUserData ud);
     static int lefLayerCbk      (lefrCallbackType_e c, lefiLayer*        la, lefiUserData ud);
     static int lefSiteCbk       (lefrCallbackType_e c, lefiSite*         si, lefiUserData ud);
   

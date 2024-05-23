@@ -9,8 +9,11 @@ namespace db
 {
 
 dbTech::dbTech(std::shared_ptr<dbTypes> types)
-  : types_ (types),
-    dbu_   (    0)
+  : types_               (types),
+    dbu_                 (0),
+		left_bus_delimiter_  ('['),
+		right_bus_delimiter_ (']'),
+		divider_             ('/')
 {
   str2dbLayer_.clear();
   str2dbSite_.clear();
@@ -80,6 +83,19 @@ dbTech::setUnits(const lefiUnits* unit)
 }
 
 void
+dbTech::setBusBit(const char* busBit)
+{
+	left_bus_delimiter_  = busBit[0];
+	right_bus_delimiter_ = busBit[1];
+}
+
+void
+dbTech::setDivider(const char* div)
+{
+  divider_ = div[0];
+}
+
+void
 dbTech::createNewLayer(const lefiLayer* la)
 {
   if(dbu_ == 0)
@@ -137,7 +153,7 @@ dbTech::createNewLayer(const lefiLayer* la)
   //if(la->hasSpacing()) 
   //  newLayer->setSpacing(la->spacing());
  
-  newLayer->print();
+  //newLayer->print();
 }
 
 void
@@ -174,7 +190,7 @@ dbTech::createNewSite(const lefiSite* site)
   if(site->has90Symmetry())
     newSite->setSymmetryR90(true);
 
-  newSite->print();
+  //newSite->print();
 }
 
 void
@@ -360,7 +376,7 @@ dbTech::fillNewMacro(const lefiMacro* ma, dbMacro* newMacro)
   if( ma->hasYSymmetry()  ) newMacro->setSymmetryY(true);
   if( ma->has90Symmetry() ) newMacro->setSymmetryR90(true);
 
-  newMacro->print();
+  //newMacro->print();
 }
   
 }
