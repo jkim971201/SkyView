@@ -14,6 +14,8 @@
 #include "dbDie.h"
 #include "dbRow.h"
 #include "dbInst.h"
+#include "dbIO.h"
+#include "dbNet.h"
 
 namespace db
 {
@@ -33,9 +35,15 @@ class dbDesign
     void setDbu(int dbu);
     void setDie(const defiBox* box);
 
-    void addNewRow  (const defiRow* ro);
+    // Row
+    void addNewRow  (const defiRow* row);
+
+    // Inst
     void addNewInst (const defiComponent* comp, const std::string& name);
     void fillInst   (const defiComponent* comp, dbInst* inst);
+
+    // IO
+    void addNewIO   (const defiPin* pin, const std::string& name);
 
     // Getters
           dbDie* getDie()       { return &die_;  }
@@ -46,6 +54,12 @@ class dbDesign
 
           std::vector<dbInst*> getInsts()       { return insts_; }
     const std::vector<dbInst*> getInsts() const { return insts_; }
+
+          std::vector<dbIO*> getIOs()       { return ios_; }
+    const std::vector<dbIO*> getIOs() const { return ios_; }
+
+          std::vector<dbNet*> getNets()       { return nets_; }
+    const std::vector<dbNet*> getNets() const { return nets_; }
 
     const std::string& name() const { return name_; }
 
@@ -58,11 +72,13 @@ class dbDesign
     dbDie                die_;
     std::vector<dbRow*>  rows_;
     std::vector<dbInst*> insts_;
-    //std::vector<dbIO*>    ios_;
-    //std::vector<dbNet*>   nets_;
-    //std::vector<dbTerm*> tersm_;
+    std::vector<dbIO*>   ios_;
+    std::vector<dbNet*>  nets_;
+    //std::vector<dbTerm*> terms_;
 
     std::unordered_map<std::string, dbInst*> str2dbInst_;
+    std::unordered_map<std::string, dbIO*>   str2dbIO_;
+    std::unordered_map<std::string, dbNet*>  str2dbNet_;
 };
 
 }

@@ -15,8 +15,8 @@ static void defLogFunction(const char* errMsg)
 
 static inline std::string removeBackSlashBracket(const std::string& str)
 {
-	std::string newStr = str;
-	//printf("before : %s\n", newStr.c_str());
+  std::string newStr = str;
+  //printf("before : %s\n", newStr.c_str());
   if(newStr.find("\\[") != std::string::npos && newStr.find("\\]") != std::string::npos)
   {
     size_t bracket1 = newStr.find("\\[");
@@ -33,9 +33,9 @@ static inline std::string removeBackSlashBracket(const std::string& str)
       bracket2 = newStr.find("\\]");
     }
   }
-	//printf("after : %s\n", newStr.c_str());
+  //printf("after : %s\n", newStr.c_str());
 
-	return newStr;
+  return newStr;
 }
 
 void checkType(defrCallbackType_e c)
@@ -175,7 +175,7 @@ dbDefReader::defRowCbk(defrCallbackType_e c, defiRow* ro, defiUserData ud)
 {
   checkType(c);
   dbDesign* design = (dbDesign*) ud;
-	design->addNewRow(ro);
+  design->addNewRow(ro);
   return 0;
 }
 
@@ -228,6 +228,12 @@ int
 dbDefReader::defPinStartCbk(defrCallbackType_e c, int  number, defiUserData ud)
 {
   checkType(c);
+  dbDesign* design = (dbDesign*) ud;
+
+  if(design->getIOs().size() > number)
+    assert(0);
+  else
+    design->getIOs().reserve(number);
   return 0;
 }
 
@@ -235,6 +241,11 @@ int
 dbDefReader::defPinCbk(defrCallbackType_e c, defiPin* pi, defiUserData ud)
 {
   checkType(c);
+  
+  dbDesign* design = (dbDesign*) ud;
+
+  std::string nameWithoutBackSlash = removeBackSlashBracket( std::string(pi->pinName()) );
+  design->addNewIO(pi, nameWithoutBackSlash);
   return 0;
 }
 
@@ -250,6 +261,14 @@ int
 dbDefReader::defComponentStartCbk(defrCallbackType_e c, int number, defiUserData ud)
 {
   checkType(c);
+
+  dbDesign* design = (dbDesign*) ud;
+
+  if(design->getInsts().size() > number)
+    assert(0);
+  else
+    design->getInsts().reserve(number);
+
   return 0;
 }
 
@@ -259,14 +278,14 @@ dbDefReader::defComponentCbk(defrCallbackType_e c, defiComponent* co, defiUserDa
   checkType(c);
   dbDesign* design = (dbDesign*) ud;
  
-	std::string nameWithoutBackSlash = removeBackSlashBracket( std::string(co->id()) );
+  std::string nameWithoutBackSlash = removeBackSlashBracket( std::string(co->id()) );
 
-	dbInst* inst = design->getInstByName( nameWithoutBackSlash );
+  dbInst* inst = design->getInstByName( nameWithoutBackSlash );
 
-	if(inst == nullptr)
-	  design->addNewInst(co, nameWithoutBackSlash);
-	else
-		design->fillInst(co, inst);
+  if(inst == nullptr)
+    design->addNewInst(co, nameWithoutBackSlash);
+  else
+    design->fillInst(co, inst);
 
   return 0;
 }

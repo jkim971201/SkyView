@@ -16,8 +16,12 @@ dbDesign::~dbDesign()
 {
   rows_.clear();
   insts_.clear();
+  ios_.clear();
+  nets_.clear();
 
   str2dbInst_.clear();
+	str2dbIO_.clear();
+	str2dbNet_.clear();
 }
 
 dbInst*
@@ -170,6 +174,53 @@ dbDesign::fillInst(const defiComponent* comp, dbInst* inst)
   }
 
   inst->print();
+}
+
+void 
+dbDesign::addNewIO(const defiPin* pin, const std::string& name)
+{
+  dbIO* newIO = new dbIO;
+  ios_.push_back( newIO );
+  newIO->setName( name );
+  str2dbIO_[ newIO->name() ] = newIO;
+  
+	if(pin->hasDirection())
+	{
+    auto dir = types_->getPinDirection( std::string(pin->direction()) );
+		newIO->setDirection( dir );
+	}
+
+  if(pin->hasPort())
+	{
+    printf("PORT Syntax for DEF PIN is not supported yet...\n");
+		exit(1);
+	}
+	else
+	{
+    if(pin->hasPlacement())
+  	{
+      newIO->setOrigX( pin->placementX() );
+      newIO->setOrigY( pin->placementY() );
+			auto orient = types_->getOrient( pin->orientStr() );
+			newIO->setOrient( orient );
+  	}
+  
+    if(pin->hasLayer())
+    {
+      for(int i = 0; i < pin->numLayer(); i++)
+      {
+        int xl, yl, xh, yh;
+        pin->bounds(i, &xl, &yl, &xh, &yh);
+				dbLayer* layer = tech_->getLayerByName( std::string(pin->layer(i)) );
+				newIO->addRect( dbRect(xl, yl, xh, yh, layer) );
+        // printf("(%d %d) (%d %d)\n", xl, yl, xh, yh);
+      }
+    }
+
+		pin->setLocation();
+	}
+
+	pin->print();
 }
 
 }

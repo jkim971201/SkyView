@@ -8,9 +8,10 @@ namespace db
 
 class dbLayer;
 
-// This class is when
+// This class is used when
 // #1. for describing the pin shape of LefPin
 // #2. for describing the obstruct shape
+// #3. for describing the boundary of DEF IO
 class dbRect
 {
 	public:
