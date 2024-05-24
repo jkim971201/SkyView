@@ -20,6 +20,7 @@ target_sources(db
 	dbRow.cpp
 	dbInst.cpp
 	dbIO.cpp
+	dbNet.cpp
 )
 
 target_link_libraries(db

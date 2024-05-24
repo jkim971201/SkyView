@@ -28,7 +28,9 @@ class dbDesign
              const std::shared_ptr<dbTech>  tech);
     ~dbDesign();
 
-    dbInst* getInstByName(const std::string& name);
+    dbInst* getInstByName (const std::string& name);
+    dbIO*   getIOByName   (const std::string& name);
+    dbNet*  getNetByName  (const std::string& name);
 
     // Setters
     void setName(const char* name) { name_ = std::string(name); }
@@ -44,6 +46,9 @@ class dbDesign
 
     // IO
     void addNewIO   (const defiPin* pin, const std::string& name);
+
+    // Net
+		dbNet* getNewNet(const std::string& name);
 
     // Getters
           dbDie* getDie()       { return &die_;  }

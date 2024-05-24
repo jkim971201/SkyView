@@ -8,11 +8,10 @@
 #include "dbTypes.h"
 #include "dbLayer.h"
 #include "dbRect.h"
+#include "dbNet.h"
 
 namespace db
 {
-
-class dbNet;
 
 class dbIO
 {
@@ -46,8 +45,8 @@ class dbIO
     int cx() const { return (lx_ + ux_) / 2; }
     int cy() const { return (ly_ + uy_) / 2; }
 
-    int64_t area() const { return static_cast<int64_t>(dx_) 
-                                * static_cast<int64_t>(dy_); }
+    int64_t area() const { return static_cast<int64_t>( dx() ) 
+                                * static_cast<int64_t>( dy() ); }
 
     int origX() const { return origX_; }
     int origY() const { return origY_; }

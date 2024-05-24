@@ -20,8 +20,8 @@ dbDesign::~dbDesign()
   nets_.clear();
 
   str2dbInst_.clear();
-	str2dbIO_.clear();
-	str2dbNet_.clear();
+  str2dbIO_.clear();
+  str2dbNet_.clear();
 }
 
 dbInst*
@@ -30,6 +30,28 @@ dbDesign::getInstByName(const std::string& name)
   auto itr = str2dbInst_.find(name);
   
   if(itr == str2dbInst_.end())  
+    return nullptr;
+  else
+    return itr->second;
+}
+
+dbIO*
+dbDesign::getIOByName(const std::string& name)
+{  
+  auto itr = str2dbIO_.find(name);
+  
+  if(itr == str2dbIO_.end())  
+    return nullptr;
+  else
+    return itr->second;
+}
+
+dbNet*
+dbDesign::getNetByName(const std::string& name)
+{ 
+  auto itr = str2dbNet_.find(name);
+  
+  if(itr == str2dbNet_.end())  
     return nullptr;
   else
     return itr->second;
@@ -184,26 +206,34 @@ dbDesign::addNewIO(const defiPin* pin, const std::string& name)
   newIO->setName( name );
   str2dbIO_[ newIO->name() ] = newIO;
   
-	if(pin->hasDirection())
-	{
+	const std::string netNameStr = pin->netName();
+  dbNet* net = getNetByName( netNameStr );
+
+  if(net == nullptr)
+		net = getNewNet( netNameStr );
+
+  newIO->setNet(net);
+
+  if(pin->hasDirection())
+  {
     auto dir = types_->getPinDirection( std::string(pin->direction()) );
-		newIO->setDirection( dir );
-	}
+    newIO->setDirection( dir );
+  }
 
   if(pin->hasPort())
-	{
+  {
     printf("PORT Syntax for DEF PIN is not supported yet...\n");
-		exit(1);
-	}
-	else
-	{
+    exit(1);
+  }
+  else
+  {
     if(pin->hasPlacement())
-  	{
+    {
       newIO->setOrigX( pin->placementX() );
       newIO->setOrigY( pin->placementY() );
-			auto orient = types_->getOrient( pin->orientStr() );
-			newIO->setOrient( orient );
-  	}
+      auto orient = types_->getOrient( pin->orientStr() );
+      newIO->setOrient( orient );
+    }
   
     if(pin->hasLayer())
     {
@@ -211,16 +241,27 @@ dbDesign::addNewIO(const defiPin* pin, const std::string& name)
       {
         int xl, yl, xh, yh;
         pin->bounds(i, &xl, &yl, &xh, &yh);
-				dbLayer* layer = tech_->getLayerByName( std::string(pin->layer(i)) );
-				newIO->addRect( dbRect(xl, yl, xh, yh, layer) );
+        dbLayer* layer = tech_->getLayerByName( std::string(pin->layer(i)) );
+        newIO->addRect( dbRect(xl, yl, xh, yh, layer) );
         // printf("(%d %d) (%d %d)\n", xl, yl, xh, yh);
       }
     }
 
-		pin->setLocation();
-	}
+    newIO->setLocation();
+  }
 
-	pin->print();
+  newIO->print();
+}
+
+dbNet*
+dbDesign::getNewNet(const std::string& name)
+{
+	dbNet* newNet = new dbNet;
+	nets_.push_back( newNet );
+  newNet->setName(name);
+  str2dbNet_[ newNet->name() ] = newNet;
+
+	return newNet;
 }
 
 }
