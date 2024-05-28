@@ -1,3 +1,5 @@
+add_subdirectory(gui)
+
 add_swig(I_FILE    SkyLine.i 
          NAME      skyline
          NAMESPACE skyline)
@@ -16,4 +18,5 @@ target_include_directories(skyline
 target_link_libraries(skyline
   PRIVATE
 	db
+	gui
 )

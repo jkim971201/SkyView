@@ -25,4 +25,18 @@ read_lef_cmd(const char *filename)
   sky->readLef(filename);
 }
 
+void
+read_def_cmd(const char *filename)
+{
+  skyline::SkyLine* sky = skyline::getSkyLine();
+  sky->readDef(filename);
+}
+
+void
+display_cmd()
+{
+  skyline::SkyLine* sky = skyline::getSkyLine();
+  sky->display();
+}
+
 %}

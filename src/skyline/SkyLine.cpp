@@ -12,7 +12,8 @@ SkyLine* SkyLine::getStaticPtr()
 
 SkyLine::SkyLine()
 {
-	db_ = std::make_shared<dbDatabase>();
+  db_  = std::make_shared<dbDatabase>();
+  gui_ = std::make_shared<Viewer>(db_);
 }
 
 SkyLine::~SkyLine()
@@ -23,6 +24,18 @@ void
 SkyLine::readLef(const char* file_path)
 {
   db_->readLef(file_path);
+}
+
+void
+SkyLine::readDef(const char* file_path)
+{
+  db_->readDef(file_path);
+}
+
+void
+SkyLine::display()
+{
+  gui_->display();
 }
 
 }

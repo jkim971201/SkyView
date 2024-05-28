@@ -1,27 +1,32 @@
 #include <memory>
 #include "db/dbDatabase.h"
+#include "gui/Viewer.h"
 
 using namespace db;
+using namespace gui;
 
 namespace skyline
 {
 
 class SkyLine
 {
-	public:
+  public:
 
     static SkyLine* getStaticPtr();
 
     void readLef(const char* file_path);
+    void readDef(const char* file_path);
+    void display();
 
-	private:
+  private:
 
-		// For Singleton,
-		// we should make Constructor and Deconstructor as private
+    // For Singleton,
+    // we should make Constructor and Deconstructor as private
     SkyLine();
-		~SkyLine();
+    ~SkyLine();
 
-		std::shared_ptr<dbDatabase> db_;
+    std::shared_ptr<dbDatabase> db_;
+    std::shared_ptr<Viewer>     gui_;
 };
 
 }
