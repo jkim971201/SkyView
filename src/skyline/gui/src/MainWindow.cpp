@@ -61,13 +61,6 @@ MainWindow::~MainWindow()
 {
 }
 
-void
-MainWindow::display()
-{
-  this->show();
-  app_->exec();
-}
-
 // [SLOTS]
 void 
 MainWindow::newFile()

@@ -8,25 +8,25 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Widgets)
 set(gui_sources 
     src/SkyView.cpp
     src/MDI_Interface.cpp
-		src/MainWindow.cpp
+    src/MainWindow.cpp
 )
 
 set(gui_headers
-	  src/MDI_Interface.h
-		src/MainWindow.h
+    src/MDI_Interface.h
+    src/MainWindow.h
 )
 
 add_library(gui 
-	          ${gui_sources} 
-	          ${gui_headers}
+            ${gui_sources} 
+            ${gui_headers}
 )
 
 target_link_libraries(gui
-	db
-	Qt${QT_VERSION_MAJOR}::Widgets
+  db
+  Qt${QT_VERSION_MAJOR}::Widgets
 )
 
 target_include_directories(gui
-	PUBLIC
-	include
+  PUBLIC
+  include
 )

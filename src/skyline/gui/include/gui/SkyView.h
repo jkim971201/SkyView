@@ -16,16 +16,14 @@ class SkyView
   public:
 
     SkyView();
-		~SkyView();
+    ~SkyView();
 
     void linkDatabase(std::shared_ptr<dbDatabase> db);
     void display();
 
   private:
 
-    std::shared_ptr<dbDatabase>   db_;
-    std::unique_ptr<QApplication> app_;
-    std::unique_ptr<MainWindow>   window_;
+    std::shared_ptr<dbDatabase> db_;
 };
 
 }

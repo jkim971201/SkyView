@@ -20,12 +20,9 @@ public:
   MainWindow(QWidget *parent = nullptr);
   ~MainWindow();
   
-  void display();
   void linkDatabase(std::shared_ptr<dbDatabase> db);
 
 private:
-
-  QApplication* app_;
 
   std::shared_ptr<dbDatabase> db_;
 

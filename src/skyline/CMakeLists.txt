@@ -5,18 +5,18 @@ add_swig(I_FILE    SkyLine.i
          NAMESPACE skyline)
 
 target_sources(skyline
-	PRIVATE
-	SkyLine.cpp
+  PRIVATE
+  SkyLine.cpp
 )
 
 target_include_directories(skyline
-	PUBLIC
+  PUBLIC
   ${PROJECT_SOURCE_DIR}/src/database
   ${PROJECT_SOURCE_DIR}/src/skyline
 )
 
 target_link_libraries(skyline
-	PUBLIC
-	db
-	gui
+  PUBLIC
+  db
+  gui
 )

@@ -1,18 +1,14 @@
 #include "gui/SkyView.h"
 #include "MainWindow.h"
 
+extern int    cmd_argc;
+extern char** cmd_argv; 
+
 namespace gui
 {
 
 SkyView::SkyView()
-  : db_     (nullptr),
-    app_    (nullptr),
-    window_ (nullptr)
 {
-  int    argc = 1;
-  char** argv = nullptr;
-  app_    = std::make_unique<QApplication>(argc, argv);
-  window_ = std::make_unique<MainWindow>();
 }
 
 SkyView::~SkyView()
@@ -28,7 +24,11 @@ SkyView::linkDatabase(std::shared_ptr<dbDatabase> db)
 void
 SkyView::display()
 {
-  window_->display();
+  QApplication app(cmd_argc, cmd_argv);
+  MainWindow window;
+  window.show();
+  int exit_code = app.exec();
+  exit(exit_code);
 }
 
 }
