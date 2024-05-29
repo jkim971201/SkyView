@@ -7,7 +7,8 @@ extern char** cmd_argv;
 namespace gui
 {
 
-SkyView::SkyView()
+SkyView::SkyView(const std::shared_ptr<dbDatabase> db)
+	: db_ (db)
 {
 }
 
@@ -16,16 +17,12 @@ SkyView::~SkyView()
 }
 
 void
-SkyView::linkDatabase(std::shared_ptr<dbDatabase> db)
-{
-  db_ = db;
-}
-
-void
 SkyView::display()
 {
   QApplication app(cmd_argc, cmd_argv);
   MainWindow window;
+  window.setDatabase(db_);
+	window.init();
   window.show();
   int exit_code = app.exec();
   exit(exit_code);

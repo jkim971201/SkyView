@@ -15,7 +15,7 @@ class SkyView
 
   public:
 
-    SkyView();
+    SkyView(const std::shared_ptr<dbDatabase> db);
     ~SkyView();
 
     void linkDatabase(std::shared_ptr<dbDatabase> db);

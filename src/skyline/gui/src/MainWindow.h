@@ -1,11 +1,11 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QApplication>
 #include <QMainWindow>
+#include <QGraphicsScene>
 
-#include "MDI_Interface.h"
 #include "db/dbDatabase.h"
+#include "LayoutView.h"
 
 using namespace db;
 
@@ -16,19 +16,29 @@ class MainWindow : public QMainWindow
 {
   Q_OBJECT
 
-public:
-  MainWindow(QWidget *parent = nullptr);
-  ~MainWindow();
+  public:
+    MainWindow(QWidget *parent = nullptr);
+    ~MainWindow();
   
-  void linkDatabase(std::shared_ptr<dbDatabase> db);
+		void init();
+    void setDatabase(std::shared_ptr<dbDatabase> db) { db_ = db; }
 
-private:
+    const std::shared_ptr<dbDatabase> db() const { return db_; }
 
-  std::shared_ptr<dbDatabase> db_;
+  private:
 
-private slots:
-  void newFile();
-  void open();
+    std::shared_ptr<dbDatabase> db_;
+
+    QGraphicsScene* base_scene_;
+    LayoutView*     layout_view_;
+
+		void createMenu();
+		void createDock();
+
+  private slots:
+
+    void newFile();
+    void open();
 };
 
 }

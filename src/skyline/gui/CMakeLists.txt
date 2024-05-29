@@ -7,14 +7,17 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Widgets)
 
 set(gui_sources 
     src/SkyView.cpp
-    src/MDI_Interface.cpp
     src/MainWindow.cpp
+		src/LayoutView.cpp
 )
 
 set(gui_headers
-    src/MDI_Interface.h
     src/MainWindow.h
+		src/LayoutView.h
 )
+
+# QMake re-compile the MOC files 
+# when headers (with Q_OBJECT) are added in library list)
 
 add_library(gui 
             ${gui_sources} 
