@@ -1,6 +1,6 @@
 #include <memory>
 #include "db/dbDatabase.h"
-#include "gui/Viewer.h"
+#include "gui/SkyView.h"
 
 using namespace db;
 using namespace gui;
@@ -26,7 +26,7 @@ class SkyLine
     ~SkyLine();
 
     std::shared_ptr<dbDatabase> db_;
-    std::shared_ptr<Viewer>     gui_;
+    std::unique_ptr<SkyView>    gui_;
 };
 
 }

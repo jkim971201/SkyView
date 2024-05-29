@@ -5,6 +5,9 @@
 #include <QMainWindow>
 
 #include "MDI_Interface.h"
+#include "db/dbDatabase.h"
+
+using namespace db;
 
 namespace gui
 {
@@ -18,13 +21,13 @@ public:
   ~MainWindow();
   
   void display();
+  void linkDatabase(std::shared_ptr<dbDatabase> db);
 
 private:
 
   QApplication* app_;
 
-  int    argc_;
-  char** argv_;
+  std::shared_ptr<dbDatabase> db_;
 
 private slots:
   void newFile();

@@ -13,13 +13,8 @@ namespace gui
 {
 
 MainWindow::MainWindow(QWidget *parent)
-  : QMainWindow(parent),
-    app_       (nullptr),
-    argc_      (1),
-    argv_      (nullptr)
+  : QMainWindow (parent)
 {
-  app_ = new QApplication(argc_, argv_);
-
   QMenu*   fileMenu;
   QAction* newAct;
   QAction* openAct;

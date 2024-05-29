@@ -7,5 +7,5 @@ proc read_def { arg } {
 }
 
 proc display { } {
-  skyline::display_cmd $arg
+  skyline::display_cmd
 }
