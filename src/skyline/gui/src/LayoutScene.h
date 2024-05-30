@@ -2,6 +2,8 @@
 #define LAYOUT_SCENE_H
 
 #include <memory>
+#include <QColor>
+#include <QPainter>
 #include <QGraphicsScene>
 
 #include "db/dbDatabase.h"

@@ -36,6 +36,7 @@ class MainWindow : public QMainWindow
 
     void createMenu();
     void createDock();
+		void createItem();
 
   private slots:
 

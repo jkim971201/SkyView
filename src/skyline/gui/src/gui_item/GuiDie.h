@@ -1,6 +1,8 @@
 #ifndef GUI_DIE_H
 #define GUI_DIE_H
 
+#include <QColor>
+#include <QPainter>
 #include <QGraphicsItem>
 #include "db/dbDie.h"
 
@@ -15,13 +17,18 @@ class GuiDie : public QGraphicsItem
 
     GuiDie(dbDie* die);
 
+		void setRect(const QRectF& rect) { rect_ = rect; }
+
+    QRectF boundingRect() const override;
+
     void paint(QPainter* painter, 
                const QStyleOptionGraphicsItem* option, 
-               QWidget* widget);
+               QWidget* widget) override;
 
   private:
 
     dbDie* die_;
+		QRectF rect_;
 };
 
 }

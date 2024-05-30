@@ -13,8 +13,7 @@ SkyLine* SkyLine::getStaticPtr()
 SkyLine::SkyLine()
 {
   db_  = std::make_shared<dbDatabase>();
-  gui_ = std::make_unique<SkyView>();
-  gui_->linkDatabase(db_);
+  gui_ = std::make_shared<SkyView>(db_);
 }
 
 SkyLine::~SkyLine()

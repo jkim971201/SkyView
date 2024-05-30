@@ -66,6 +66,9 @@ MainWindow::init()
   layout_view_ = new LayoutView;
   layout_view_->setScene(layout_scene_);
   setCentralWidget(layout_view_);
+
+	// Draw Objects
+	createItem();
 }
 
 void
@@ -92,6 +95,12 @@ MainWindow::createDock()
 
   dock->setWidget(objectList);
   addDockWidget(Qt::RightDockWidgetArea, dock);
+}
+
+void
+MainWindow::createItem()
+{
+  layout_scene_->createGuiDie();
 }
 
 // [SLOTS]

@@ -26,7 +26,7 @@ class SkyLine
     ~SkyLine();
 
     std::shared_ptr<dbDatabase> db_;
-    std::unique_ptr<SkyView>    gui_;
+    std::shared_ptr<SkyView>    gui_;
 };
 
 }

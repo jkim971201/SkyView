@@ -7,10 +7,12 @@
 
 extern "C" 
 { 
-	extern int Skyline_Init(Tcl_Interp* interp); 
+  extern int Skyline_Init(Tcl_Interp* interp); 
 }
 
 bool exit_mode = true;
+
+int    cmd_argc;
 char** cmd_argv;
 
 void sourceTclFile(std::string& filename, Tcl_Interp *interp)
@@ -39,13 +41,13 @@ int customTclInit(char** argv, Tcl_Interp* interp)
     Skyline_Init(interp);
 
     #ifdef SKYLINE_TCL
-		std::string init_cmd = "source " + std::string(SKYLINE_TCL);
+    std::string init_cmd = "source " + std::string(SKYLINE_TCL);
     #else
-		std::cout << "SkyLine.tcl is not defined" << std::endl;
-		exit(1);
+    std::cout << "SkyLine.tcl is not defined" << std::endl;
+    exit(1);
     #endif
 
-		Tcl_Eval(interp, init_cmd.c_str());
+    Tcl_Eval(interp, init_cmd.c_str());
 
     std::string filename = std::string(argv[1]);
 
@@ -68,6 +70,7 @@ int main(int argc, char** argv)
     exit(0);
   }
 
+	cmd_argc = argc;
   cmd_argv = argv;
 
   Tcl_Main(1, argv, tclInitWrapper);

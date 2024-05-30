@@ -762,7 +762,7 @@ const char* defiComponent::maxLayer() const
   return maxLayer_;
 }
 
-void defiComponent::haloEdges(int* left, int* bottom, int* right, int* top)
+void defiComponent::haloEdges(int* left, int* bottom, int* right, int* top) const
 {
   *left = leftHalo_;
   *bottom = bottomHalo_;

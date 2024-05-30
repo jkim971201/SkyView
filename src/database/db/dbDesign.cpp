@@ -93,7 +93,7 @@ dbDesign::setDie(const defiBox* box)
   die_.setUx(ux);
   die_.setUy(uy);
 
-  die_.print();
+  //die_.print();
 }
 
 void
@@ -141,7 +141,7 @@ dbDesign::addNewRow(const defiRow* ro)
 
   rows_.push_back(newRow);
 
-  newRow->print();
+  //newRow->print();
 }
 
 void
@@ -195,7 +195,7 @@ dbDesign::fillInst(const defiComponent* comp, dbInst* inst)
     exit(1);
   }
 
-  inst->print();
+  //inst->print();
 }
 
 void 
@@ -250,7 +250,7 @@ dbDesign::addNewIO(const defiPin* pin, const std::string& name)
     newIO->setLocation();
   }
 
-  newIO->print();
+  //newIO->print();
 }
 
 dbNet*

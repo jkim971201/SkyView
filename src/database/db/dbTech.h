@@ -43,6 +43,8 @@ class dbTech
     dbSite*  getSiteByName  (const std::string& name);
     dbMacro* getMacroByName (const std::string& name);
 
+    const std::vector<dbLayer*>& getLayers() const { return layers_; }
+
   private:
 
     // DBU per MICRON

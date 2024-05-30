@@ -31,6 +31,7 @@ target_link_libraries(db
 
 target_include_directories(db
   PUBLIC
-  ${CMAKE_SOURCE_DIR}/src/database/parsers/lef
-  ${CMAKE_SOURCE_DIR}/src/database/parsers/def
+	${CMAKE_SOURCE_DIR}/src/database
+	${CMAKE_SOURCE_DIR}/src/database/parsers/lef
+	${CMAKE_SOURCE_DIR}/src/database/parsers/def
 )

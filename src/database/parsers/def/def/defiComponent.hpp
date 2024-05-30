@@ -137,7 +137,8 @@ class defiComponent
   const char* macroName() const;
   int hasHalo() const;                                           // 5.6
   int hasHaloSoft() const;                                       // 5.7
-  void haloEdges(int* left, int* bottom, int* right, int* top);  // 5.6
+  void haloEdges(int* left, int* bottom, int* right, int* top) const; // 5.6 
+	// haloEdges is changed to const function by JKIm 2024.05.23
   int hasRouteHalo() const;                                      // 5.7
   int haloDist() const;                                          // 5.7
   const char* minLayer() const;                                  // 5.7
