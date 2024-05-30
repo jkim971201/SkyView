@@ -1,5 +1,5 @@
-#ifndef LAYOUTVIEW_H
-#define LAYOUTVIEW_H
+#ifndef LAYOUT_VIEW_H
+#define LAYOUT_VIEW_H
 
 #include <QGraphicsView>
 

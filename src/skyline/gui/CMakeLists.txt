@@ -8,12 +8,18 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Widgets)
 set(gui_sources 
     src/SkyView.cpp
     src/MainWindow.cpp
-		src/LayoutView.cpp
+    src/LayoutView.cpp
+    src/LayoutScene.cpp
+    src/gui_item/GuiInst.cpp
+    src/gui_item/GuiDie.cpp
 )
 
 set(gui_headers
     src/MainWindow.h
-		src/LayoutView.h
+    src/LayoutView.h
+    src/LayoutScene.h
+    src/gui_item/GuiInst.h
+    src/gui_item/GuiDie.h
 )
 
 # QMake re-compile the MOC files 

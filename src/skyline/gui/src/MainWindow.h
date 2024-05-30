@@ -6,6 +6,7 @@
 
 #include "db/dbDatabase.h"
 #include "LayoutView.h"
+#include "LayoutScene.h"
 
 using namespace db;
 
@@ -20,20 +21,21 @@ class MainWindow : public QMainWindow
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
   
-		void init();
+    void init();
     void setDatabase(std::shared_ptr<dbDatabase> db) { db_ = db; }
 
-    const std::shared_ptr<dbDatabase> db() const { return db_; }
+    LayoutScene* getScene() { return layout_scene_; }
+    LayoutView*  getView()  { return layout_view_;  }
 
   private:
 
     std::shared_ptr<dbDatabase> db_;
 
-    QGraphicsScene* base_scene_;
-    LayoutView*     layout_view_;
+    LayoutScene* layout_scene_;
+    LayoutView*  layout_view_;
 
-		void createMenu();
-		void createDock();
+    void createMenu();
+    void createDock();
 
   private slots:
 
