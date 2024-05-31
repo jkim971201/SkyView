@@ -58,19 +58,12 @@ MainWindow::init()
                                            : screenSize * 0.8;
   resize(size);
 
-  // Layout
+  // Scene
   layout_scene_ = new LayoutScene;
-
-	QRectF sceneRect = this->rect();
-
-	std::cout << "sceneRect" << std::endl;
-  std::cout << sceneRect.width() << " " << sceneRect.height() << std::endl;
-
-	//layout_scene_->setSceneRect(-100, -100,
-	//		                        +rect().width(), +rect().height() );
   layout_scene_->setBackgroundBrush( Qt::black );
   layout_scene_->setDatabase(db_);
 
+	// View
   layout_view_ = new LayoutView;
   layout_view_->setScene(layout_scene_);
   setCentralWidget(layout_view_);
@@ -109,6 +102,7 @@ void
 MainWindow::createItem()
 {
   layout_scene_->createGuiDie();
+  layout_scene_->createGuiRow();
   layout_scene_->createGuiInst();
 }
 

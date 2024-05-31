@@ -26,6 +26,8 @@ class dbDie
     int ly() const { return ly_; }
     int ux() const { return ux_; }
     int uy() const { return uy_; }
+		int dx() const { return ux_ - lx_; }
+		int dy() const { return uy_ - ly_; }
 
     int64_t area() const { return static_cast<int64_t>(ux_ - lx_)
                                 * static_cast<int64_t>(uy_ - ly_); }

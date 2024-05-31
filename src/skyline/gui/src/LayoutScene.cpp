@@ -1,6 +1,7 @@
 #include "LayoutScene.h"
-#include "gui_item/GuiInst.h"
 #include "gui_item/GuiDie.h"
+#include "gui_item/GuiRow.h"
+#include "gui_item/GuiInst.h"
 
 #include <cassert>
 #include <iostream>
@@ -10,7 +11,6 @@ namespace gui
 
 LayoutScene::LayoutScene(QObject* parent)
 {
-
 }
 
 void
@@ -26,14 +26,29 @@ LayoutScene::createGuiDie()
   double dieDx = die->dx() / dbu;
   double dieDy = die->dy() / dbu;
 
-  std::cout << "dieLx : " << dieLx << std::endl;
-  std::cout << "dieLy : " << dieLy << std::endl;
-  std::cout << "dieDx : " << dieDx << std::endl;
-  std::cout << "dieDy : " << dieDy << std::endl;
-
-  die_gui->setRect( QRectF(dieLx, -dieLy, dieDx, -dieDy) );
+  die_gui->setRect( QRectF(dieLx, dieLy, dieDx, dieDy) );
 
   this->addItem(die_gui);
+}
+
+void
+LayoutScene::createGuiRow()
+{
+  double dbu = static_cast<double>(db_->getTech()->getDbu());
+
+  for(auto row : db_->getDesign()->getRows())
+  {
+    GuiRow* row_gui = new GuiRow(row);
+
+    double rowLx = row->lx() / dbu;
+    double rowLy = row->ly() / dbu;
+    double rowDx = row->dx() / dbu;
+    double rowDy = row->dy() / dbu;
+  
+    row_gui->setRect( QRectF(rowLx, rowLy, rowDx, rowDy) );
+  
+    this->addItem(row_gui);
+  }
 }
 
 void
@@ -50,7 +65,7 @@ LayoutScene::createGuiInst()
     double cellDx = inst->dx() / dbu;
     double cellDy = inst->dy() / dbu;
   
-    inst_gui->setRect( QRectF(cellLx, -cellLy, cellDx, -cellDy) );
+    inst_gui->setRect( QRectF(cellLx, cellLy, cellDx, cellDy) );
     this->addItem(inst_gui);
   }
 }

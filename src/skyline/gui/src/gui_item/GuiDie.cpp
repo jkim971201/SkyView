@@ -1,3 +1,6 @@
+#include <QStyleOptionGraphicsItem>
+#include <iostream>
+
 #include "GuiDie.h"
 
 namespace gui
@@ -20,10 +23,9 @@ GuiDie::paint(QPainter* painter,
               const QStyleOptionGraphicsItem* option,
               QWidget* widget)
 {
-  painter->setPen( QPen(Qt::red, 1) );
-  //painter->setBrush(Qt::red);
+	// std::cout << "LoD : " << option->levelOfDetailFromTransform(painter->worldTransform()) << std::endl;
+  painter->setPen( QPen(Qt::gray, 0, Qt::PenStyle::DashDotLine) );
   painter->drawRect(rect_);
-  painter->fillRect(rect_, painter->brush() );
 }
 
 }

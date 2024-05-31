@@ -14,14 +14,16 @@ class LayoutView : public QGraphicsView
     
     LayoutView(QWidget* parent = nullptr);
 
-    void zoomFit();
+    void fitView();
 
-	protected:
+  protected:
 
-		void wheelEvent(QWheelEvent* event);
+    void wheelEvent(QWheelEvent* event) override;
+    void paintEvent(QPaintEvent* event) override;
 
   private:
 
+    bool firstShow_;
 };
 
 }

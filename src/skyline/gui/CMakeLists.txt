@@ -10,16 +10,18 @@ set(gui_sources
     src/MainWindow.cpp
     src/LayoutView.cpp
     src/LayoutScene.cpp
-    src/gui_item/GuiInst.cpp
     src/gui_item/GuiDie.cpp
+		src/gui_item/GuiRow.cpp
+    src/gui_item/GuiInst.cpp
 )
 
 set(gui_headers
     src/MainWindow.h
     src/LayoutView.h
     src/LayoutScene.h
-    src/gui_item/GuiInst.h
     src/gui_item/GuiDie.h
+		src/gui_item/GuiRow.h
+    src/gui_item/GuiInst.h
 )
 
 # QMake re-compile the MOC files 

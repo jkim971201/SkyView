@@ -23,6 +23,7 @@ class LayoutScene : public QGraphicsScene
 
     void setDatabase(std::shared_ptr<dbDatabase> db) { db_ = db; }
 		void createGuiDie();
+		void createGuiRow();
 		void createGuiInst();
 
   private:
