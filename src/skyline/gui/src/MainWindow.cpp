@@ -60,6 +60,14 @@ MainWindow::init()
 
   // Layout
   layout_scene_ = new LayoutScene;
+
+	QRectF sceneRect = this->rect();
+
+	std::cout << "sceneRect" << std::endl;
+  std::cout << sceneRect.width() << " " << sceneRect.height() << std::endl;
+
+	//layout_scene_->setSceneRect(-100, -100,
+	//		                        +rect().width(), +rect().height() );
   layout_scene_->setBackgroundBrush( Qt::black );
   layout_scene_->setDatabase(db_);
 
@@ -67,8 +75,8 @@ MainWindow::init()
   layout_view_->setScene(layout_scene_);
   setCentralWidget(layout_view_);
 
-	// Draw Objects
-	createItem();
+  // Draw Objects
+  createItem();
 }
 
 void
@@ -101,6 +109,7 @@ void
 MainWindow::createItem()
 {
   layout_scene_->createGuiDie();
+  layout_scene_->createGuiInst();
 }
 
 // [SLOTS]

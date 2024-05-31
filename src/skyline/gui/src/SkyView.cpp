@@ -25,7 +25,6 @@ SkyView::display()
   MainWindow window;
   window.setDatabase(db_);
   window.init();
-  window.getView()->zoomFit();
   window.show();
   int exit_code = app.exec();
   exit(exit_code);

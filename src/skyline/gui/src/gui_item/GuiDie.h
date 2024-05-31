@@ -17,7 +17,7 @@ class GuiDie : public QGraphicsItem
 
     GuiDie(dbDie* die);
 
-		void setRect(const QRectF& rect) { rect_ = rect; }
+    void setRect(const QRectF& rect) { rect_ = rect; }
 
     QRectF boundingRect() const override;
 
@@ -28,7 +28,7 @@ class GuiDie : public QGraphicsItem
   private:
 
     dbDie* die_;
-		QRectF rect_;
+    QRectF rect_;
 };
 
 }

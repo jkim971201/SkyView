@@ -12,7 +12,7 @@ GuiDie::GuiDie(dbDie* die)
 QRectF
 GuiDie::boundingRect() const
 {
-	return rect_;
+  return rect_;
 }
 
 void
@@ -21,9 +21,9 @@ GuiDie::paint(QPainter* painter,
               QWidget* widget)
 {
   painter->setPen( QPen(Qt::red, 1) );
-	painter->setBrush(Qt::red);
-	painter->drawRect(rect_);
-	painter->fillRect(rect_, painter->brush() );
+  //painter->setBrush(Qt::red);
+  painter->drawRect(rect_);
+  painter->fillRect(rect_, painter->brush() );
 }
 
 }
