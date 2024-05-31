@@ -24,21 +24,6 @@ LayoutView::wheelEvent(QWheelEvent* event)
   double numSteps   = numDegrees / 15.0;
   double factor     = std::pow(1.125, numSteps);
   scale(factor, factor);
-
-//  if(event->modifiers() & Qt::ControlModifier) 
-//  {
-//    QApplication::setOverrideCursor(Qt::WaitCursor);
-//    if(event->angleDelta().y() > 0) 
-//      zoomUp();
-//    else 
-//      zoomDown();
-//    event->accept();
-//  } 
-//  else 
-//  {
-//    event->accept();
-//    QGraphicsView::wheelEvent(e);
-//  }
 }
 
 void 
@@ -55,15 +40,15 @@ LayoutView::zoom(qreal scale)
 void 
 LayoutView::zoomUp() 
 {
-  scale_ *= 2;
-  std::cout << "zoomUp scale = " << scale_ << std::endl;
+  scale_ *= 1.2;
+  std::cout << "scale = " << scale_ << std::endl;
 }
 
 void 
 LayoutView::zoomDown() 
 {
-  scale_ *= 0.5;
-  std::cout << "zoomDown scale = " << scale_ << std::endl;
+  scale_ /= 1.2;
+  std::cout << "scale = " << scale_ << std::endl;
 }
 
 void 
