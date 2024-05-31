@@ -14,13 +14,6 @@ class LayoutView : public QGraphicsView
     
     LayoutView(QWidget* parent = nullptr);
 
-    qreal getScale() { return scale_; }
-
-    void setScaleFitToDesign(qreal width, qreal height);
-
-    void zoom(qreal scale = 1);
-    void zoomUp();
-    void zoomDown();
     void zoomFit();
 
 	protected:
@@ -29,10 +22,6 @@ class LayoutView : public QGraphicsView
 
   private:
 
-    qreal scale_;
-		qreal scaleFit_;
-    qreal width_;
-    qreal height_;
 };
 
 }

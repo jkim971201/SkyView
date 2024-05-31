@@ -31,7 +31,7 @@ LayoutScene::createGuiDie()
   std::cout << "dieDx : " << dieDx << std::endl;
   std::cout << "dieDy : " << dieDy << std::endl;
 
-  die_gui->setRect( QRectF(dieLx, dieLy, dieDx, dieDy) );
+  die_gui->setRect( QRectF(dieLx, -dieLy, dieDx, -dieDy) );
 
   this->addItem(die_gui);
 }
@@ -50,7 +50,7 @@ LayoutScene::createGuiInst()
     double cellDx = inst->dx() / dbu;
     double cellDy = inst->dy() / dbu;
   
-    inst_gui->setRect( QRectF(cellLx, cellLy, cellDx, cellDy) );
+    inst_gui->setRect( QRectF(cellLx, -cellLy, cellDx, -cellDy) );
     this->addItem(inst_gui);
   }
 }
