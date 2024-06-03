@@ -19,6 +19,11 @@
 #include <cassert>
 #include <iostream>
 
+static void loadResources()
+{
+  Q_INIT_RESOURCE(resource);
+}
+
 namespace gui
 {
 
@@ -36,13 +41,28 @@ MainWindow::init()
 {
   assert(db_ != nullptr);
 
+  loadResources();
+
   setWindowTitle("SkyLine");
+
+  // Scene
+  layout_scene_ = new LayoutScene;
+  layout_scene_->setBackgroundBrush( Qt::black );
+  layout_scene_->setDatabase(db_);
+
+	// View
+  layout_view_ = new LayoutView;
+  layout_view_->setScene(layout_scene_);
+  setCentralWidget(layout_view_);
 
   // Menu Bar
   createMenu();
 
   // Dock
   createDock();
+
+  // Tool Bar
+	createToolBar();
 
   // Status Bar
   statusBar()->showMessage(tr("Ready"));
@@ -58,16 +78,6 @@ MainWindow::init()
                                            : screenSize * 0.8;
   resize(size);
 
-  // Scene
-  layout_scene_ = new LayoutScene;
-  layout_scene_->setBackgroundBrush( Qt::black );
-  layout_scene_->setDatabase(db_);
-
-	// View
-  layout_view_ = new LayoutView;
-  layout_view_->setScene(layout_scene_);
-  setCentralWidget(layout_view_);
-
   // Draw Objects
   createItem();
 }
@@ -75,10 +85,15 @@ MainWindow::init()
 void
 MainWindow::createMenu()
 {
-  QMenu* fileMenu;
-  fileMenu = menuBar()->addMenu(tr("&File"));
-  fileMenu = menuBar()->addMenu(tr("&View"));
-  fileMenu = menuBar()->addMenu(tr("&Help"));
+  QMenu* menu;
+
+	QFont font = menuBar()->font();
+  font.setPointSize(12);
+	menuBar()->setFont( font );
+
+  menu = menuBar()->addMenu(tr("&File"));
+  menu = menuBar()->addMenu(tr("&View"));
+  menu = menuBar()->addMenu(tr("&Help"));
 }
 
 void
@@ -99,24 +114,34 @@ MainWindow::createDock()
 }
 
 void
+MainWindow::createToolBar()
+{
+  QToolBar* toolBar;
+
+	QAction* zoomIn  = new QAction(QIcon(":/zoom_in.png") , tr("Zoom In") , this);
+	QAction* zoomOut = new QAction(QIcon(":/zoom_out.png"), tr("Zoom Out"), this);
+	QAction* zoomFit = new QAction(QIcon(":/zoom_fit.png"), tr("Zoom Fit"), this);
+
+  toolBar = addToolBar(tr("Tool Bar"));
+  toolBar->addAction( zoomIn  );
+	toolBar->setStatusTip(tr("Zoom In Layout View"));
+  connect(zoomIn, SIGNAL(triggered()), layout_view_, SLOT(zoomIn_slot()));
+
+  toolBar->addAction( zoomOut );
+	toolBar->setStatusTip(tr("Zoom Out Layout View"));
+  connect(zoomOut, SIGNAL(triggered()), layout_view_, SLOT(zoomOut_slot()));
+
+  toolBar->addAction( zoomFit );
+	toolBar->setStatusTip(tr("Zoom Fit Layout View"));
+  connect(zoomFit, SIGNAL(triggered()), layout_view_, SLOT(zoomFit_slot()));
+}
+
+void
 MainWindow::createItem()
 {
   layout_scene_->createGuiDie();
   layout_scene_->createGuiRow();
   layout_scene_->createGuiInst();
-}
-
-// [SLOTS]
-void 
-MainWindow::newFile()
-{
-  qDebug() << Q_FUNC_INFO;
-}
-
-void 
-MainWindow::open()
-{
-  qDebug() << Q_FUNC_INFO;
 }
 
 }

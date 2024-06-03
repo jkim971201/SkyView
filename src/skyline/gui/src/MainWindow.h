@@ -36,12 +36,8 @@ class MainWindow : public QMainWindow
 
     void createMenu();
     void createDock();
+		void createToolBar();
 		void createItem();
-
-  private slots:
-
-    void newFile();
-    void open();
 };
 
 }

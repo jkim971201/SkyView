@@ -15,6 +15,32 @@ LayoutView::LayoutView(QWidget* parent)
   setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
 }
 
+void 
+LayoutView::zoomFit()
+{
+  QRectF rectToFit = sceneRect();
+  double sceneW = rectToFit.width();
+  double sceneH = rectToFit.height();
+
+	// Make 10% blank margin along boundary
+  rectToFit.adjust(-0.1 * sceneW, -0.1 * sceneH, 
+                   +0.1 * sceneW, +0.1 * sceneH);
+
+  fitInView(rectToFit, Qt::KeepAspectRatio);
+}
+
+void
+LayoutView::zoomIn()
+{
+  scale(1.25, 1.25);
+}
+
+void
+LayoutView::zoomOut()
+{
+  scale(0.75, 0.75);
+}
+
 void
 LayoutView::wheelEvent(QWheelEvent* event)
 {
@@ -24,29 +50,62 @@ LayoutView::wheelEvent(QWheelEvent* event)
   scale(factor, factor);
 }
 
-void 
-LayoutView::fitView()
-{
-  QRectF rectToFit = sceneRect();
-  double sceneW = rectToFit.width();
-  double sceneH = rectToFit.height();
-
-  rectToFit.adjust(-0.1 * sceneW, -0.1 * sceneH, 
-                   +0.1 * sceneW, +0.1 * sceneH);
-
-  fitInView(rectToFit, Qt::KeepAspectRatio);
-}
-
 void
 LayoutView::paintEvent(QPaintEvent* event)
 {
   if(firstShow_ == false)
   {
-    fitView();
+    zoomFit();
     firstShow_ = true;
   }
 
   QGraphicsView::paintEvent(event);
+}
+
+void
+LayoutView::keyPressEvent(QKeyEvent* event)
+{
+	if(event->key() == Qt::Key_F)
+	{
+		// Zoom Fit
+		zoomFit();
+	}
+	else if(event->key() == Qt::Key_Z && event->modifiers() != Qt::ShiftModifier)
+	{
+		// Zoom In
+		zoomIn();
+	}
+	else if(event->key() == Qt::Key_Z && event->modifiers() == Qt::ShiftModifier)
+	{
+		// Zoom Out
+		zoomOut();
+	}
+	else if(event->key() == Qt::Key_Q)
+	{
+    close();
+		exit(0);
+	}
+	else
+	  QGraphicsView::keyPressEvent(event);
+}
+
+// Slots
+void
+LayoutView::zoomIn_slot()
+{
+	zoomIn();
+}
+
+void
+LayoutView::zoomOut_slot()
+{
+	zoomOut();
+}
+
+void
+LayoutView::zoomFit_slot()
+{
+	zoomFit();
 }
 
 }

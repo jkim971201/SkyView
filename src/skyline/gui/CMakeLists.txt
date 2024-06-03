@@ -13,6 +13,7 @@ set(gui_sources
     src/gui_item/GuiDie.cpp
 		src/gui_item/GuiRow.cpp
     src/gui_item/GuiInst.cpp
+		icons/resource.qrc
 )
 
 set(gui_headers
