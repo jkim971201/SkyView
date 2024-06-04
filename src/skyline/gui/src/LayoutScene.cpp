@@ -99,7 +99,7 @@ LayoutScene::createGuiIO()
 		else if(ioUx_micron >= coreUx_micron)
 			io_gui->setRight();
 		else if(ioUy_micron >= coreUy_micron)
-			io_gui->setBottom();
+			io_gui->setTop();
 		else
 			assert(0);
 

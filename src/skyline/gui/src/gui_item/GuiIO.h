@@ -15,7 +15,7 @@ class GuiIO : public GuiItem
 
     GuiIO(dbIO* io);
 
-    void setRect(const QRectF& rect) { rect_ = rect; }
+    void setRect(const QRectF& rect);
 
     QRectF boundingRect() const override;
 
@@ -37,6 +37,11 @@ class GuiIO : public GuiItem
     bool isRight_;
     bool isBottom_;
     bool isTop_;
+
+		double polyLx_;
+		double polyLy_;
+		double polyUx_;
+		double polyUy_;
 };
 
 }

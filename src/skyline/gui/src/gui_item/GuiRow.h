@@ -1,9 +1,7 @@
 #ifndef GUI_ROW_H
 #define GUI_ROW_H
 
-#include <QColor>
-#include <QPainter>
-#include <QGraphicsItem>
+#include "GuiItem.h"
 #include "db/dbRow.h"
 
 using namespace db;
@@ -11,7 +9,7 @@ using namespace db;
 namespace gui
 {
 
-class GuiRow : public QGraphicsItem
+class GuiRow : public GuiItem
 {
   public:
 

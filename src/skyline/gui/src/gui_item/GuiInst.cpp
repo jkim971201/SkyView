@@ -22,17 +22,20 @@ GuiInst::paint(QPainter* painter,
                const QStyleOptionGraphicsItem* option,
                QWidget* widget)
 {
-  QBrush brush(Qt::gray, Qt::BrushStyle::DiagCrossPattern);
+  //painter->setRenderHint(QPainter::Antialiasing);
+  qreal lod = option->levelOfDetailFromTransform(painter->worldTransform());
+
+  QBrush brush(Qt::gray, Qt::BrushStyle::Dense6Pattern);
   brush.setTransform(QTransform(painter->worldTransform().inverted()));
 
-  QPen pen(Qt::gray, 0.02, Qt::PenStyle::SolidLine);
+  QPen pen(Qt::gray, 1, Qt::PenStyle::SolidLine);
   pen.setJoinStyle(Qt::PenJoinStyle::MiterJoin);
+	pen.setWidthF(pen.widthF() / lod);
 
   painter->setPen(pen);
   painter->setBrush(brush);
   painter->drawRect(rect_);
 
-  // qreal lod = option->levelOfDetailFromTransform(painter->worldTransform());
 
   // Orientation Line
   qreal inst_width  = std::abs(rect_.width());
@@ -83,6 +86,9 @@ GuiInst::paint(QPainter* painter,
   }
 
   QLineF line(p1, p2);
+
+	pen.setJoinStyle(Qt::PenJoinStyle::BevelJoin);
+	painter->setPen(pen);
   painter->drawLine(line);
 }
 

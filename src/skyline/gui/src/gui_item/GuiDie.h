@@ -1,9 +1,7 @@
 #ifndef GUI_DIE_H
 #define GUI_DIE_H
 
-#include <QColor>
-#include <QPainter>
-#include <QGraphicsItem>
+#include "GuiItem.h"
 #include "db/dbDie.h"
 
 using namespace db;
@@ -11,7 +9,7 @@ using namespace db;
 namespace gui
 {
 
-class GuiDie : public QGraphicsItem
+class GuiDie : public GuiItem
 {
   public:
 
