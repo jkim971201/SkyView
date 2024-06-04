@@ -19,13 +19,6 @@ void
 LayoutView::zoomFit()
 {
   QRectF rectToFit = sceneRect();
-  double sceneW = rectToFit.width();
-  double sceneH = rectToFit.height();
-
-	// Make 10% blank margin along boundary
-  rectToFit.adjust(-0.1 * sceneW, -0.1 * sceneH, 
-                   +0.1 * sceneW, +0.1 * sceneH);
-
   fitInView(rectToFit, Qt::KeepAspectRatio);
 }
 

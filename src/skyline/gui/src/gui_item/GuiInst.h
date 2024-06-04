@@ -1,17 +1,15 @@
 #ifndef GUI_INST_H
 #define GUI_INST_H
 
-#include <QColor>
-#include <QPainter>
-#include <QGraphicsItem>
 #include "db/dbInst.h"
+#include "GuiItem.h"
 
 using namespace db;
 
 namespace gui
 {
 
-class GuiInst : public QGraphicsItem
+class GuiInst : public GuiItem 
 {
   public:
 

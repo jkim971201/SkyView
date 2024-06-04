@@ -25,6 +25,9 @@ class LayoutScene : public QGraphicsScene
 		void createGuiDie();
 		void createGuiRow();
 		void createGuiInst();
+		void createGuiIO();
+
+		void expandScene();
 
   private:
 

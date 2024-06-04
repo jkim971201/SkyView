@@ -13,6 +13,8 @@ set(gui_sources
     src/gui_item/GuiDie.cpp
 		src/gui_item/GuiRow.cpp
     src/gui_item/GuiInst.cpp
+    src/gui_item/GuiIO.cpp
+    src/gui_item/GuiItem.cpp
 		icons/resource.qrc
 )
 
@@ -23,6 +25,7 @@ set(gui_headers
     src/gui_item/GuiDie.h
 		src/gui_item/GuiRow.h
     src/gui_item/GuiInst.h
+		src/gui_item/GuiItem.h
 )
 
 # QMake re-compile the MOC files 

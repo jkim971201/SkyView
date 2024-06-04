@@ -22,8 +22,14 @@ GuiInst::paint(QPainter* painter,
                const QStyleOptionGraphicsItem* option,
                QWidget* widget)
 {
-  painter->setPen(QPen(Qt::gray, 0, Qt::PenStyle::SolidLine));
-  painter->setBrush(QBrush(Qt::gray, Qt::Dense6Pattern));
+  QBrush brush(Qt::gray, Qt::BrushStyle::DiagCrossPattern);
+  brush.setTransform(QTransform(painter->worldTransform().inverted()));
+
+  QPen pen(Qt::gray, 0.02, Qt::PenStyle::SolidLine);
+  pen.setJoinStyle(Qt::PenJoinStyle::MiterJoin);
+
+  painter->setPen(pen);
+  painter->setBrush(brush);
   painter->drawRect(rect_);
 
   // qreal lod = option->levelOfDetailFromTransform(painter->worldTransform());
