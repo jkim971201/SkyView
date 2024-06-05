@@ -39,16 +39,22 @@ dbInst::setLocation(int placementX, int placementY)
 		{
       dx_ = macro_->sizeX();
       dy_ = macro_->sizeY();
-			lx_ = placementX - dx_;
-			ly_ = placementY - dy_;
+			lx_ = placementX;
+			ly_ = placementY;
+
+			//lx_ = placementX - dx_;
+			//ly_ = placementY - dy_;
 			break;
 		}
 		case Orient::W :
 		{
       dx_ = macro_->sizeY();
       dy_ = macro_->sizeX();
-			lx_ = placementX - dx_;
+			lx_ = placementX;
 			ly_ = placementY;
+
+			//lx_ = placementX - dx_;
+			//ly_ = placementY;
 			break;
 		}
 		case Orient::E :
@@ -56,15 +62,21 @@ dbInst::setLocation(int placementX, int placementY)
       dx_ = macro_->sizeY();
       dy_ = macro_->sizeX();
 			lx_ = placementX;
-			ly_ = placementY - dy_;
+			ly_ = placementY;
+
+			//lx_ = placementX;
+			//ly_ = placementY - dy_;
 			break;
 		}
 		case Orient::FN :
 		{
       dx_ = macro_->sizeX();
       dy_ = macro_->sizeY();
-			lx_ = placementX - dx_;
+			lx_ = placementX;
 			ly_ = placementY;
+
+			//lx_ = placementX - dx_;
+			//ly_ = placementY;
 			break;
 		}
 		case Orient::FS :
@@ -72,13 +84,17 @@ dbInst::setLocation(int placementX, int placementY)
       dx_ = macro_->sizeX();
       dy_ = macro_->sizeY();
 			lx_ = placementX;
-			ly_ = placementY - dy_;
+			ly_ = placementY;
+
+			//lx_ = placementX;
+			//ly_ = placementY - dy_;
 			break;
 		}
 		case Orient::FW :
 		{
       dx_ = macro_->sizeY();
       dy_ = macro_->sizeX();
+
 			lx_ = placementX;
 			ly_ = placementY;
 			break;
@@ -87,8 +103,11 @@ dbInst::setLocation(int placementX, int placementY)
 		{
       dx_ = macro_->sizeY();
       dy_ = macro_->sizeX();
-			lx_ = placementX - dx_;
-			ly_ = placementY - dy_;
+			lx_ = placementX;
+			ly_ = placementY;
+
+			//lx_ = placementX - dx_;
+			//ly_ = placementY - dy_;
 			break;
 		}
 	}

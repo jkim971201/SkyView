@@ -16,6 +16,7 @@
 #include "dbInst.h"
 #include "dbIO.h"
 #include "dbNet.h"
+#include "dbTerm.h"
 
 namespace db
 {
@@ -91,7 +92,7 @@ class dbDesign
     std::vector<dbInst*> insts_;
     std::vector<dbIO*>   ios_;
     std::vector<dbNet*>  nets_;
-    //std::vector<dbTerm*> terms_;
+    std::vector<dbTerm*> terms_;
 
     std::unordered_map<std::string, dbInst*> str2dbInst_;
     std::unordered_map<std::string, dbIO*>   str2dbIO_;

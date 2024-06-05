@@ -198,6 +198,14 @@ int
 dbDefReader::defNetEndCbk(defrCallbackType_e c, void* , defiUserData ud)
 {
   checkType(c);
+	
+  dbDesign* design = (dbDesign*) ud;
+
+  if(design->getNets().size() > number)
+    assert(0);
+  else
+    design->getNets().reserve(number);
+
   return 0;
 }
     
