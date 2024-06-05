@@ -13,6 +13,9 @@ LayoutView::LayoutView(QWidget* parent)
 	scale(1.0, -1.0);
   setDragMode(QGraphicsView::ScrollHandDrag);
   setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
+
+	// This is to remove the residual line along the scene when moving the viewport
+	setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
 }
 
 void 

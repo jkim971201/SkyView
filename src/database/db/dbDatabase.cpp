@@ -30,7 +30,7 @@ dbDatabase::readLef(const char* fileName)
 
   lefList_.insert(filenameStr);
 
-  std::cout << "Read " << filenameStr << std::endl;
+  std::cout << "Read   " << filenameStr << std::endl;
 
   lefReader_->parseLef(filenameStr);
 
@@ -50,7 +50,7 @@ dbDatabase::readDef(const char* fileName)
 
   defFile_ = filenameStr;
 
-  std::cout << "Read " << filenameStr << std::endl;
+  std::cout << "Read   " << filenameStr << std::endl;
 
   defReader_->parseDef(filenameStr);
 

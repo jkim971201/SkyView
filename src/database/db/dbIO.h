@@ -40,7 +40,7 @@ class dbIO
     int uy() const { return uy_; }
     int lx() const { return lx_; }
     int ly() const { return ly_; }
-    int dx() const { return ux_ - uy_; }
+    int dx() const { return ux_ - lx_; }
     int dy() const { return uy_ - ly_; }
     int cx() const { return (lx_ + ux_) / 2; }
     int cy() const { return (ly_ + uy_) / 2; }

@@ -100,8 +100,6 @@ LayoutScene::createGuiIO()
 			io_gui->setRight();
 		else if(ioUy_micron >= coreUy_micron)
 			io_gui->setTop();
-		else
-			assert(0);
 
     double ioLx_dbu = ioLx_micron / dbu;
     double ioLy_dbu = ioLy_micron / dbu;

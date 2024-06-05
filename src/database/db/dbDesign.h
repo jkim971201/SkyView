@@ -28,14 +28,21 @@ class dbDesign
              const std::shared_ptr<dbTech>  tech);
     ~dbDesign();
 
-    dbInst* getInstByName (const std::string& name);
-    dbIO*   getIOByName   (const std::string& name);
-    dbNet*  getNetByName  (const std::string& name);
-
     // Setters
     void setName(const char* name) { name_ = std::string(name); }
     void setDbu(int dbu);
     void setDie(const defiBox* box);
+
+    // Getters
+    dbInst* getInstByName (const std::string& name);
+    dbIO*   getIOByName   (const std::string& name);
+    dbNet*  getNetByName  (const std::string& name);
+
+    // TODO: Maybe this is not the best to way to describe a "block".
+    int coreLx() const { return coreLx_; }
+    int coreLy() const { return coreLy_; }
+    int coreUx() const { return coreUx_; }
+    int coreUy() const { return coreUy_; }
 
     // Row
     void addNewRow  (const defiRow* row);
@@ -48,7 +55,7 @@ class dbDesign
     void addNewIO   (const defiPin* pin, const std::string& name);
 
     // Net
-		dbNet* getNewNet(const std::string& name);
+    dbNet* getNewNet(const std::string& name);
 
     // Getters
           dbDie* getDie()       { return &die_;  }
@@ -69,6 +76,11 @@ class dbDesign
     const std::string& name() const { return name_; }
 
   private:
+
+    int coreLx_;
+    int coreLy_;
+    int coreUx_;
+    int coreUy_;
 
     std::shared_ptr<dbTypes> types_;
     std::shared_ptr<dbTech>  tech_;

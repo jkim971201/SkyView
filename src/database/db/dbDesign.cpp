@@ -5,9 +5,13 @@ namespace db
 
 dbDesign::dbDesign(const std::shared_ptr<dbTypes> types,
                    const std::shared_ptr<dbTech>  tech)
-  : tech_  (tech),
-    types_ (types),
-    name_  ("")
+  : tech_   (tech),
+    types_  (types),
+    name_   (""),
+    coreLx_ (std::numeric_limits<int>::max()),
+    coreLy_ (std::numeric_limits<int>::max()),
+    coreUx_ (std::numeric_limits<int>::min()),
+    coreUy_ (std::numeric_limits<int>::min())
 {
   str2dbInst_.clear();
 }
@@ -141,6 +145,10 @@ dbDesign::addNewRow(const defiRow* ro)
 
   rows_.push_back(newRow);
 
+  if(coreLx_ > newRow->lx()) coreLx_ = newRow->lx();
+  if(coreLy_ > newRow->ly()) coreLy_ = newRow->ly();
+  if(coreUx_ < newRow->ux()) coreUx_ = newRow->ux();
+  if(coreUy_ < newRow->uy()) coreUy_ = newRow->uy();
   //newRow->print();
 }
 
@@ -206,11 +214,11 @@ dbDesign::addNewIO(const defiPin* pin, const std::string& name)
   newIO->setName( name );
   str2dbIO_[ newIO->name() ] = newIO;
   
-	const std::string netNameStr = pin->netName();
+  const std::string netNameStr = pin->netName();
   dbNet* net = getNetByName( netNameStr );
 
   if(net == nullptr)
-		net = getNewNet( netNameStr );
+    net = getNewNet( netNameStr );
 
   newIO->setNet(net);
 
@@ -256,12 +264,12 @@ dbDesign::addNewIO(const defiPin* pin, const std::string& name)
 dbNet*
 dbDesign::getNewNet(const std::string& name)
 {
-	dbNet* newNet = new dbNet;
-	nets_.push_back( newNet );
+  dbNet* newNet = new dbNet;
+  nets_.push_back( newNet );
   newNet->setName(name);
   str2dbNet_[ newNet->name() ] = newNet;
 
-	return newNet;
+  return newNet;
 }
 
 }

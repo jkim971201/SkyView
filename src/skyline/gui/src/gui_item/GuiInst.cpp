@@ -1,3 +1,4 @@
+#include <QApplication>
 #include <QStyleOptionGraphicsItem>
 
 #include "GuiInst.h"
@@ -8,13 +9,15 @@ namespace gui
 GuiInst::GuiInst(dbInst* inst)
   : inst_ (inst)
 {
-
 }
 
 QRectF
 GuiInst::boundingRect() const
 {
-  return rect_;
+  qreal marginX = rect_.width() * 0.001;
+  qreal marginY = rect_.height() * 0.001;
+
+  return rect_.adjusted(-marginX, -marginY, +marginX, +marginY);
 }
 
 void
@@ -22,20 +25,19 @@ GuiInst::paint(QPainter* painter,
                const QStyleOptionGraphicsItem* option,
                QWidget* widget)
 {
-  //painter->setRenderHint(QPainter::Antialiasing);
+  // painter->setRenderHint(QPainter::Antialiasing);
   qreal lod = option->levelOfDetailFromTransform(painter->worldTransform());
 
   QBrush brush(Qt::gray, Qt::BrushStyle::Dense6Pattern);
   brush.setTransform(QTransform(painter->worldTransform().inverted()));
 
-  QPen pen(Qt::gray, 1, Qt::PenStyle::SolidLine);
+  QPen pen(Qt::gray, 0, Qt::PenStyle::SolidLine);
   pen.setJoinStyle(Qt::PenJoinStyle::MiterJoin);
-	pen.setWidthF(pen.widthF() / lod);
+  pen.setWidthF(pen.widthF() / lod);
 
   painter->setPen(pen);
   painter->setBrush(brush);
   painter->drawRect(rect_);
-
 
   // Orientation Line
   qreal inst_width  = std::abs(rect_.width());
@@ -87,9 +89,53 @@ GuiInst::paint(QPainter* painter,
 
   QLineF line(p1, p2);
 
-	pen.setJoinStyle(Qt::PenJoinStyle::BevelJoin);
-	painter->setPen(pen);
+  pen.setJoinStyle(Qt::PenJoinStyle::BevelJoin);
+  painter->setPen(pen);
   painter->drawLine(line);
+
+  drawInstName(painter, Qt::white, lod);
+}
+
+void
+GuiInst::drawInstName(QPainter* painter, const QColor& color, qreal lod)
+{
+  const qreal rectW = rect_.width();
+  const qreal rectH = rect_.height();
+
+  const qreal scale_adjust   = 1.0 / lod;
+  const qreal text_font_size = rectH * 0.05 * lod;
+
+  const qreal rectW_scaled = rect_.width();
+  const qreal rectH_scaled = rect_.height();
+
+  QFont font = painter->font();
+  font.setPointSizeF(text_font_size);
+  painter->setFont(font);
+
+  QFontMetricsF metric(font);
+  QString name(inst_->name().c_str());
+
+  QRectF textBBox = metric.boundingRect(name);
+
+  painter->save();
+
+  painter->translate(rect_.left(), rect_.top() + scale_adjust * text_font_size);
+  painter->scale(scale_adjust, -scale_adjust);
+
+  QPen pen = painter->pen();
+  pen.setColor(color);
+  painter->setPen(pen);
+  painter->drawText(0, 0, name);
+
+//  pen.setColor(Qt::red);
+//  painter->setPen(pen);
+//
+//  QBrush brush(Qt::red, Qt::Dense6Pattern);
+//  brush.setTransform(QTransform(painter->worldTransform().inverted()));
+//  painter->setBrush( brush );
+//  painter->drawRect( textBBox );
+
+  painter->restore();
 }
 
 }

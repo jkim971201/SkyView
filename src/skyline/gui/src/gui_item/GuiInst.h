@@ -27,6 +27,8 @@ class GuiInst : public GuiItem
 
     dbInst* inst_;
     QRectF rect_;
+
+    void drawInstName(QPainter* painter, const QColor& color, qreal lod);
 };
 
 }
