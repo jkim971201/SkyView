@@ -6,20 +6,28 @@ namespace db
 {
 
 dbITerm::dbITerm()
-	: net_   (nullptr),
-		inst_  (nullptr),
+  : name_  (""),
+    net_   (nullptr),
+    inst_  (nullptr),
     mterm_ (nullptr)
+{
+}
+
+dbITerm::dbITerm(const std::string& name, dbInst* inst, dbMTerm* mterm)
+  : name_  (name),
+    net_   (nullptr),
+    inst_  (inst),
+    mterm_ (mterm)
 {
 }
 
 void
 dbITerm::print() const
 {
-  std::cout << "Instance Pin" << std::endl;
-	std::cout << "INST    : " << inst_->name() << std::endl;
-	std::cout << "NET     : " << net_->name() << std::endl;
-	std::cout << "LEF PIN : " << mterm_->name() << std::endl;
-	std::cout << std::endl;
+  std::cout << "ITerm Name : " << name_ << std::endl;
+  if(net_ != nullptr)
+    std::cout << "Connected to net: " << net_->name() << std::endl;
+  std::cout << std::endl;
 }
 
 }

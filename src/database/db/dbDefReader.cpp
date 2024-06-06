@@ -72,8 +72,8 @@ dbDefReader::init()
   // Unit
   defrSetUnitsCbk(this->defUnitsCbk);
   
-	// Divider
-	defrSetDividerCbk(this->defDividerCbk);
+  // Divider
+  defrSetDividerCbk(this->defDividerCbk);
 
   // Die
   defrSetDieAreaCbk((defrBoxCbkFnType)this->defDieAreaCbk);
@@ -168,7 +168,7 @@ dbDefReader::defDividerCbk(defrCallbackType_e c, const char* div, defiUserData u
 {
   checkType(c);
   dbDesign* design = (dbDesign*) ud;
-	design->setDivider(div[0]);
+  design->setDivider(div[0]);
   return 0;
 }
 
@@ -210,6 +210,18 @@ int
 dbDefReader::defNetCbk(defrCallbackType_e c, defiNet* net, defiUserData ud)
 {
   checkType(c);
+  dbDesign* design = (dbDesign*) ud;
+  
+  const std::string& nameWithoutBackSlash
+    = removeBackSlashBracket( std::string(net->name()) );
+
+  dbNet* dbnet = design->getNetByName(nameWithoutBackSlash);
+
+  if(dbnet == nullptr)
+    dbnet = design->getNewNet(nameWithoutBackSlash);
+
+  design->fillNet(net, dbnet);
+
   return 0;
 }
 

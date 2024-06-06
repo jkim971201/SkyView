@@ -1,7 +1,8 @@
 #ifndef DB_INST
 #define DB_INST
 
-#include <cstdlib>
+#include <cstdlib> // for int64_t
+#include <unordered_map>
 
 #include "dbTypes.h"
 #include "dbMacro.h"
@@ -26,8 +27,10 @@ class dbInst
     void setOrient (Orient  orient) { orient_ = orient; }
     void setSource (Source  source) { source_ = source; }
     void setStatus (Status  status) { status_ = status; }
-    void setLocation(int placementX, int placementY); // placementX, Y is the point from .def
-    void addTerm   (dbITerm* iterm) { iterms_.push_back(iterm); }
+
+    void addITerm   (dbITerm* iterm);
+    void setLocation(int placementX, int placementY); 
+    // placementX, placementY is the point from .def
 
     // Halo is set to 0 by default
     void setHalo(int hT, int hB, int hL, int hR) 
@@ -41,7 +44,7 @@ class dbInst
     // Getters
     const dbMacro* macro() const { return macro_; }
     const std::string& name() const { return name_;  }
-    const std::vector<dbITerm*>& iterms() const { return iterms_; }
+    const std::vector<dbITerm*>& getITerms() const { return iterms_; }
     int lx() const { return lx_; }
     int ly() const { return ly_; }
     int ux() const { return lx_ + dx_; }
@@ -65,6 +68,8 @@ class dbInst
     Source source()  const { return source_; }
     Status status()  const { return status_; }
 
+    dbITerm* getITermByMTermName(const std::string& name);
+
   private:
 
     dbMacro* macro_;
@@ -87,6 +92,7 @@ class dbInst
     int haloR_;
 
     std::vector<dbITerm*> iterms_;
+    std::unordered_map<std::string, dbITerm*> itermMap_;
 };
 
 }

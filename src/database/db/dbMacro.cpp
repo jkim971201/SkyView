@@ -33,8 +33,8 @@ dbMacro::addMTerm(dbMTerm* newPin)
   mtermMap_[newPin->name()] = newPin;
 }
 
-const dbMTerm*
-dbMacro::getMTermByName(const std::string& pinName) const
+dbMTerm*
+dbMacro::getMTermByName(const std::string& pinName)
 {
   auto itr = mtermMap_.find(pinName);
   

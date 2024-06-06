@@ -55,9 +55,9 @@ class dbMacro
     bool isSymmetryR90() const { return symR90_; }
 
     const std::vector<dbMTerm*>& getMTerms() const { return mterms_; }
-		const dbObs*                 getObs()    const { return &obs_;   }
+    const dbObs*                 getObs()    const { return &obs_;   }
 
-    const dbMTerm* getMTermByName(const std::string& pinName) const;
+    dbMTerm* getMTermByName(const std::string& pinName);
 
   private:
 

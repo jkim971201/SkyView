@@ -1,5 +1,13 @@
 #include "dbDesign.h"
 
+template <typename M>
+inline bool duplicateCheck(M& map, const std::string& name)
+{
+  if(map.find(name) != map.end())
+    return true;
+  else return false;
+}
+
 namespace db
 {
 
@@ -8,7 +16,7 @@ dbDesign::dbDesign(const std::shared_ptr<dbTypes> types,
   : tech_    (tech),
     types_   (types),
     name_    (""),
-		divider_ ('/'),
+    divider_ ('/'),
     coreLx_  (std::numeric_limits<int>::max()),
     coreLy_  (std::numeric_limits<int>::max()),
     coreUx_  (std::numeric_limits<int>::min()),
@@ -23,8 +31,9 @@ dbDesign::~dbDesign()
 {
   rows_.clear();
   insts_.clear();
-  bterms_.clear();
   nets_.clear();
+  bterms_.clear();
+  iterms_.clear();
 
   str2dbInst_.clear();
   str2dbBTerm_.clear();
@@ -81,7 +90,7 @@ dbDesign::setDbu(int dbu)
 void
 dbDesign::setDivider(const char div)
 {
-	const char lefDiv = tech_->getDivider();
+  const char lefDiv = tech_->getDivider();
   const char defDiv = div;
 
   if(lefDiv != defDiv)
@@ -180,15 +189,29 @@ dbDesign::addNewInst(const defiComponent* comp, const std::string& name)
   // and name() returns the name of the LEF MACRO.
   // macroName() even returns null pointer...
   newInst->setName( name );
-  str2dbInst_[newInst->name()] = newInst;
+
+  if(duplicateCheck(str2dbInst_, name))
+  {
+    printf("Inst %s already exists!\n", name.c_str());
+    exit(1);
+  }
+
+  str2dbInst_[name] = newInst;
   
   dbMacro* macro = tech_->getMacroByName( std::string(comp->name()) );
   newInst->setMacro( macro );
 
   fillInst(comp, newInst);
 
-	// dbITerms are created at the same time with dbInst
-  
+  // dbITerms are created at the same time with dbInst
+  const std::string divStr = std::string(1, divider_); // convert a single char to std::string
+  for(auto mterm : macro->getMTerms())
+  {
+    const std::string itermName = name + divStr + mterm->name();
+    dbITerm* newITerm = new dbITerm(itermName, newInst, mterm);
+    iterms_.push_back(newITerm);
+    newInst->addITerm(newITerm);
+  }
 }
 
 void
@@ -211,7 +234,7 @@ dbDesign::fillInst(const defiComponent* comp, dbInst* inst)
   if(comp->hasHalo() > 0) 
   {
     int left, bottom, right, top;
-    // haloEdges is non-const method originally,
+    // haloEdges is non-const method originally in LEF/DEF C++ APIs,
     // so we have to change haloEdges to const method.
     comp->haloEdges(&left, &bottom, &right, &top);
     inst->setHalo(top, bottom, left, right);
@@ -229,10 +252,17 @@ dbDesign::fillInst(const defiComponent* comp, dbInst* inst)
 void 
 dbDesign::addNewIO(const defiPin* pin, const std::string& name)
 {
-  dbBTerm* newIO = new dbBTerm;
-  bterms_.push_back( newIO );
-  newIO->setName( name );
-  str2dbBTerm_[ newIO->name() ] = newIO;
+  dbBTerm* newBTerm = new dbBTerm;
+  bterms_.push_back( newBTerm );
+  newBTerm->setName( name );
+
+  if(duplicateCheck(str2dbBTerm_, name))
+  {
+    printf("BTerm %s already exists!\n", name.c_str());
+    exit(1);
+  }
+
+  str2dbBTerm_[name] = newBTerm;
   
   const std::string netNameStr = pin->netName();
   dbNet* net = getNetByName( netNameStr );
@@ -240,12 +270,12 @@ dbDesign::addNewIO(const defiPin* pin, const std::string& name)
   if(net == nullptr)
     net = getNewNet( netNameStr );
 
-  newIO->setNet(net);
+  newBTerm->setNet(net);
 
   if(pin->hasDirection())
   {
     auto dir = types_->getPinDirection( std::string(pin->direction()) );
-    newIO->setDirection( dir );
+    newBTerm->setDirection( dir );
   }
 
   if(pin->hasPort())
@@ -257,10 +287,10 @@ dbDesign::addNewIO(const defiPin* pin, const std::string& name)
   {
     if(pin->hasPlacement())
     {
-      newIO->setOrigX( pin->placementX() );
-      newIO->setOrigY( pin->placementY() );
+      newBTerm->setOrigX( pin->placementX() );
+      newBTerm->setOrigY( pin->placementY() );
       auto orient = types_->getOrient( pin->orientStr() );
-      newIO->setOrient( orient );
+      newBTerm->setOrient( orient );
     }
   
     if(pin->hasLayer())
@@ -270,15 +300,15 @@ dbDesign::addNewIO(const defiPin* pin, const std::string& name)
         int xl, yl, xh, yh;
         pin->bounds(i, &xl, &yl, &xh, &yh);
         dbLayer* layer = tech_->getLayerByName( std::string(pin->layer(i)) );
-        newIO->addRect( dbRect(xl, yl, xh, yh, layer) );
+        newBTerm->addRect( dbRect(xl, yl, xh, yh, layer) );
         // printf("(%d %d) (%d %d)\n", xl, yl, xh, yh);
       }
     }
 
-    newIO->setLocation();
+    newBTerm->setLocation();
   }
 
-  //newIO->print();
+  //newBTerm->print();
 }
 
 dbNet*
@@ -287,9 +317,22 @@ dbDesign::getNewNet(const std::string& name)
   dbNet* newNet = new dbNet;
   nets_.push_back( newNet );
   newNet->setName(name);
-  str2dbNet_[ newNet->name() ] = newNet;
+
+  if(duplicateCheck(str2dbNet_, name))
+  {
+    printf("Net %s already exists!\n", name.c_str());
+    exit(1);
+  }
+
+  str2dbNet_[name] = newNet;
 
   return newNet;
+}
+
+void
+dbDesign::fillNet(const defiNet* defNet, dbNet* net)
+{
+  
 }
 
 }

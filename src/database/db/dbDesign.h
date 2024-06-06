@@ -32,16 +32,15 @@ class dbDesign
     // Setters
     void setName(const char* name) { name_ = std::string(name); }
     void setDbu(int dbu);
-		void setDivider(const char div);
+    void setDivider(const char div);
     void setDie(const defiBox* box);
 
     // Getters
     dbInst*  getInstByName  (const std::string& name);
     dbNet*   getNetByName   (const std::string& name);
     dbBTerm* getBTermByName (const std::string& name);
-    dbITerm* getITermByName (const std::string& name);
 
-		const char divider() const { return divider_; }
+    const char divider() const { return divider_; }
 
     // TODO: Maybe this is not the best to way to describe a "core region".
     int coreLx() const { return coreLx_; }
@@ -61,22 +60,23 @@ class dbDesign
 
     // Net
     dbNet* getNewNet(const std::string& name);
+    void fillNet    (const defiNet* defNet, dbNet* net);
 
     // Getters
           dbDie* getDie()       { return &die_;  }
     const dbDie* getDie() const { return &die_;  }
 
-          std::vector<dbRow*> getRows()       { return rows_; }
-    const std::vector<dbRow*> getRows() const { return rows_; }
+          std::vector<dbRow*>& getRows()       { return rows_; }
+    const std::vector<dbRow*>& getRows() const { return rows_; }
 
-          std::vector<dbInst*> getInsts()       { return insts_; }
-    const std::vector<dbInst*> getInsts() const { return insts_; }
+          std::vector<dbInst*>& getInsts()       { return insts_; }
+    const std::vector<dbInst*>& getInsts() const { return insts_; }
 
-          std::vector<dbBTerm*> getBTerms()       { return bterms_; }
-    const std::vector<dbBTerm*> getBTerms() const { return bterms_; }
+          std::vector<dbBTerm*>& getBTerms()       { return bterms_; }
+    const std::vector<dbBTerm*>& getBTerms() const { return bterms_; }
 
-          std::vector<dbNet*> getNets()       { return nets_; }
-    const std::vector<dbNet*> getNets() const { return nets_; }
+          std::vector<dbNet*>& getNets()       { return nets_; }
+    const std::vector<dbNet*>& getNets() const { return nets_; }
 
     // Returns the design name
     const std::string& name() const { return name_; } 
@@ -104,7 +104,6 @@ class dbDesign
     std::unordered_map<std::string, dbInst*>  str2dbInst_;
     std::unordered_map<std::string, dbNet*>   str2dbNet_;
     std::unordered_map<std::string, dbBTerm*> str2dbBTerm_;
-    std::unordered_map<std::string, dbITerm*> str2dbITerm_;
 };
 
 }
