@@ -81,16 +81,16 @@ LayoutScene::createGuiIO()
   int coreUx_micron = db_->getDesign()->coreUx();
   int coreUy_micron = db_->getDesign()->coreUy();
 
-  for(auto io : db_->getDesign()->getIOs())
+  for(auto bterm : db_->getDesign()->getBTerms())
   {
-    GuiIO* io_gui = new GuiIO(io);
+    GuiIO* io_gui = new GuiIO(bterm);
   
-    int ioLx_micron = io->lx();
-    int ioLy_micron = io->ly();
-		int ioUx_micron = io->ux();
-		int ioUy_micron = io->uy();
-    int ioDx_micron = io->dx();
-    int ioDy_micron = io->dy();
+    int ioLx_micron = bterm->lx();
+    int ioLy_micron = bterm->ly();
+		int ioUx_micron = bterm->ux();
+		int ioUy_micron = bterm->uy();
+    int ioDx_micron = bterm->dx();
+    int ioDy_micron = bterm->dy();
 
 		if(ioLx_micron <= coreLx_micron)
 			io_gui->setLeft();

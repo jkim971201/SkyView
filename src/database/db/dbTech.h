@@ -23,7 +23,7 @@ class dbTech
 
     void setUnits        (const lefiUnits* unit);
     void setBusBit       (const char* busBit);
-    void setDivider      (const char* divider);
+    void setDivider      (const char divider);
     void createNewLayer  (const lefiLayer* la);
     void createNewSite   (const lefiSite* si);
     void addPinToMacro   (const lefiPin*         pi, dbMacro* topMacro);
@@ -36,8 +36,9 @@ class dbTech
     int getDbuLength(double micron) const;
     int getDbuArea  (double micron) const;
 
-    int getRightBusBit() const { return right_bus_delimiter_; }
-    int getLeftBusBit()  const { return left_bus_delimiter_;  }
+		const char getDivider() const { return divider_;             }
+    int getRightBusBit()    const { return right_bus_delimiter_; }
+    int getLeftBusBit()     const { return left_bus_delimiter_;  }
 
     dbLayer* getLayerByName (const std::string& name);
     dbSite*  getSiteByName  (const std::string& name);

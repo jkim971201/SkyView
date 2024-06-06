@@ -105,9 +105,9 @@ dbTech::setBusBit(const char* busBit)
 }
 
 void
-dbTech::setDivider(const char* div)
+dbTech::setDivider(const char div)
 {
-  divider_ = div[0];
+  divider_ = div;
 }
 
 void
@@ -217,26 +217,26 @@ dbTech::addPinToMacro(const lefiPin* pi, dbMacro* topMacro)
     exit(1);
   }
 
-  dbPin* newPin = new dbPin;
-  newPin->setName( std::string(pi->name()) );
-  newPin->setMacro( topMacro );
+  dbMTerm* newMTerm = new dbMTerm;
+  newMTerm->setName( std::string(pi->name()) );
+  newMTerm->setMacro( topMacro );
 
   if(pi->hasDirection() )
   {
     auto dir = types_->getPinDirection( std::string(pi->direction()) );
-    newPin->setPinDirection( dir );
+    newMTerm->setPinDirection( dir );
   }
 
   if(pi->hasUse())
   {
     auto use = types_->getPinUsage( std::string(pi->use()) );
-    newPin->setPinUsage(use);
+    newMTerm->setPinUsage(use);
   }
 
   if(pi->hasShape())
   {
     auto shape = types_->getPinShape( std::string(pi->shape()) );
-    newPin->setPinShape(shape);
+    newMTerm->setPinShape(shape);
   }
 
   int numPorts = pi->numPorts();
@@ -269,7 +269,7 @@ dbTech::addPinToMacro(const lefiPin* pi, dbMacro* topMacro)
           int rectUx = getDbuLength( lrect->xh );
           int rectUy = getDbuLength( lrect->yh );
 
-          newPin->addRect( dbRect(rectLx, rectLy, rectUx, rectUy, curLayer) );
+          newMTerm->addRect( dbRect(rectLx, rectLy, rectUx, rectUy, curLayer) );
           break;
         }
 
@@ -296,14 +296,14 @@ dbTech::addPinToMacro(const lefiPin* pi, dbMacro* topMacro)
           int polyUxDbu = getDbuLength( polyUx );
           int polyUyDbu = getDbuLength( polyUy );
 
-          newPin->addRect( dbRect(polyLxDbu, polyLyDbu, polyUxDbu, polyUyDbu, curLayer) );
+          newMTerm->addRect( dbRect(polyLxDbu, polyLyDbu, polyUxDbu, polyUyDbu, curLayer) );
           break;
         }
       }
     }
   }
 
-  topMacro->addPin( newPin );
+  topMacro->addMTerm( newMTerm );
 }
 
 void

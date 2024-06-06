@@ -14,9 +14,9 @@
 #include "dbDie.h"
 #include "dbRow.h"
 #include "dbInst.h"
-#include "dbIO.h"
 #include "dbNet.h"
-#include "dbTerm.h"
+#include "dbBTerm.h"
+#include "dbITerm.h"
 
 namespace db
 {
@@ -32,14 +32,18 @@ class dbDesign
     // Setters
     void setName(const char* name) { name_ = std::string(name); }
     void setDbu(int dbu);
+		void setDivider(const char div);
     void setDie(const defiBox* box);
 
     // Getters
-    dbInst* getInstByName (const std::string& name);
-    dbIO*   getIOByName   (const std::string& name);
-    dbNet*  getNetByName  (const std::string& name);
+    dbInst*  getInstByName  (const std::string& name);
+    dbNet*   getNetByName   (const std::string& name);
+    dbBTerm* getBTermByName (const std::string& name);
+    dbITerm* getITermByName (const std::string& name);
 
-    // TODO: Maybe this is not the best to way to describe a "block".
+		const char divider() const { return divider_; }
+
+    // TODO: Maybe this is not the best to way to describe a "core region".
     int coreLx() const { return coreLx_; }
     int coreLy() const { return coreLy_; }
     int coreUx() const { return coreUx_; }
@@ -52,7 +56,7 @@ class dbDesign
     void addNewInst (const defiComponent* comp, const std::string& name);
     void fillInst   (const defiComponent* comp, dbInst* inst);
 
-    // IO
+    // BTerm (IO)
     void addNewIO   (const defiPin* pin, const std::string& name);
 
     // Net
@@ -68,13 +72,14 @@ class dbDesign
           std::vector<dbInst*> getInsts()       { return insts_; }
     const std::vector<dbInst*> getInsts() const { return insts_; }
 
-          std::vector<dbIO*> getIOs()       { return ios_; }
-    const std::vector<dbIO*> getIOs() const { return ios_; }
+          std::vector<dbBTerm*> getBTerms()       { return bterms_; }
+    const std::vector<dbBTerm*> getBTerms() const { return bterms_; }
 
           std::vector<dbNet*> getNets()       { return nets_; }
     const std::vector<dbNet*> getNets() const { return nets_; }
 
-    const std::string& name() const { return name_; }
+    // Returns the design name
+    const std::string& name() const { return name_; } 
 
   private:
 
@@ -83,20 +88,23 @@ class dbDesign
     int coreUx_;
     int coreUy_;
 
-    std::shared_ptr<dbTypes> types_;
     std::shared_ptr<dbTech>  tech_;
+    std::shared_ptr<dbTypes> types_;
 
-    std::string          name_;
-    dbDie                die_;
-    std::vector<dbRow*>  rows_;
-    std::vector<dbInst*> insts_;
-    std::vector<dbIO*>   ios_;
-    std::vector<dbNet*>  nets_;
-    std::vector<dbTerm*> terms_;
+    char divider_;
 
-    std::unordered_map<std::string, dbInst*> str2dbInst_;
-    std::unordered_map<std::string, dbIO*>   str2dbIO_;
-    std::unordered_map<std::string, dbNet*>  str2dbNet_;
+    std::string           name_;
+    dbDie                 die_;
+    std::vector<dbRow*>   rows_;
+    std::vector<dbInst*>  insts_;
+    std::vector<dbNet*>   nets_;
+    std::vector<dbBTerm*> bterms_;
+    std::vector<dbITerm*> iterms_;
+
+    std::unordered_map<std::string, dbInst*>  str2dbInst_;
+    std::unordered_map<std::string, dbNet*>   str2dbNet_;
+    std::unordered_map<std::string, dbBTerm*> str2dbBTerm_;
+    std::unordered_map<std::string, dbITerm*> str2dbITerm_;
 };
 
 }

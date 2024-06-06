@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "dbPin.h"
+#include "dbMTerm.h"
 #include "dbObs.h"
 #include "dbTypes.h"
 #include "dbRect.h"
@@ -12,7 +12,7 @@
 namespace db
 {
 
-class dbPin;
+class dbMTerm;
 class dbSite;
 class dbObs;
 
@@ -27,18 +27,18 @@ class dbMacro
     void print() const;
 
     // Setters
-    void setName(const char* name)       { name_ = std::string(name); }
-    void setMacroClass(MacroClass cl)    { macroClass_ = cl;     }
-    void setSite (dbSite* site)          { site_   = site;       }
-    void setSizeX(int sizeX)             { sizeX_  = sizeX;      }
-    void setSizeY(int sizeY)             { sizeY_  = sizeY;      }
-    void setOrigX(int origX)             { origX_  = origX;      }
-    void setOrigY(int origY)             { origY_  = origY;      }
-    void setSymmetryX   (bool sym)       { symX_   = sym;        }
-    void setSymmetryY   (bool sym)       { symY_   = sym;        }
-    void setSymmetryR90 (bool sym)       { symR90_ = sym;        }
-    void addRectToObs(dbRect rect)       { obs_.addRect(rect);   }
-    void addPin(dbPin* pin);
+    void setName(const char* name)    { name_ = std::string(name); }
+    void setMacroClass(MacroClass cl) { macroClass_ = cl;     }
+    void setSite (dbSite* site)       { site_   = site;       }
+    void setSizeX(int sizeX)          { sizeX_  = sizeX;      }
+    void setSizeY(int sizeY)          { sizeY_  = sizeY;      }
+    void setOrigX(int origX)          { origX_  = origX;      }
+    void setOrigY(int origY)          { origY_  = origY;      }
+    void setSymmetryX   (bool sym)    { symX_   = sym;        }
+    void setSymmetryY   (bool sym)    { symY_   = sym;        }
+    void setSymmetryR90 (bool sym)    { symR90_ = sym;        }
+    void addRectToObs(dbRect rect)    { obs_.addRect(rect);   }
+    void addMTerm(dbMTerm* mterm);
 
     // Getters
     MacroClass   macroClass() const { return macroClass_; }
@@ -54,24 +54,21 @@ class dbMacro
     bool isSymmetryY()   const { return symY_;   }
     bool isSymmetryR90() const { return symR90_; }
 
-    const std::vector<dbPin*>& pins() const { return pins_; }
-		const dbObs*               obs()  const { return &obs_; }
+    const std::vector<dbMTerm*>& getMTerms() const { return mterms_; }
+		const dbObs*                 getObs()    const { return &obs_;   }
 
-    const dbPin* getPinByName(const std::string& pinName) const;
-
-          std::unordered_map<std::string, dbPin*>& pinMap()       { return pinMap_; }
-    const std::unordered_map<std::string, dbPin*>& pinMap() const { return pinMap_; }
+    const dbMTerm* getMTermByName(const std::string& pinName) const;
 
   private:
 
     // LEF Syntax
-    std::string         name_;
-    MacroClass          macroClass_;
-    dbSite*             site_;
-    std::vector<dbPin*> pins_;
-    dbObs               obs_;
+    std::string           name_;
+    MacroClass            macroClass_;
+    dbSite*               site_;
+    std::vector<dbMTerm*> mterms_;
+    dbObs                 obs_;
 
-    std::unordered_map<std::string, dbPin*> pinMap_;
+    std::unordered_map<std::string, dbMTerm*> mtermMap_;
 
     int sizeX_;
     int sizeY_;

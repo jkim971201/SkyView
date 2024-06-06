@@ -1,7 +1,7 @@
 #ifndef GUI_IO_H
 #define GUI_IO_H
 
-#include "db/dbIO.h"
+#include "db/dbBTerm.h"
 #include "GuiItem.h"
 
 using namespace db;
@@ -13,7 +13,7 @@ class GuiIO : public GuiItem
 {
   public:
 
-    GuiIO(dbIO* io);
+    GuiIO(dbBTerm* io);
 
     void setRect(const QRectF& rect);
 
@@ -30,7 +30,7 @@ class GuiIO : public GuiItem
 
   private:
 
-    dbIO* io_;
+    dbBTerm* io_;
     QRectF rect_;
 
     bool isLeft_;

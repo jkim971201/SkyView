@@ -33,6 +33,9 @@ class dbDefReader
     // Units
     static int defUnitsCbk(defrCallbackType_e c, double unit, defiUserData ud);
 
+    // Divier
+    static int defDividerCbk(defrCallbackType_e c, const char* div, defiUserData ud);
+
     // Die
     static int defDieAreaCbk(defrCallbackType_e c, defiBox* box, defiUserData ud);
 

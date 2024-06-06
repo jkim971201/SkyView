@@ -9,7 +9,7 @@ target_sources(db
   dbLefReader.cpp
   dbLayer.cpp
   dbSite.cpp
-  dbPin.cpp
+	dbMTerm.cpp
   dbMacro.cpp
   dbObs.cpp
 
@@ -19,9 +19,9 @@ target_sources(db
   dbDie.cpp
 	dbRow.cpp
 	dbInst.cpp
-	dbIO.cpp
 	dbNet.cpp
-	dbTerm.cpp
+	dbBTerm.cpp
+	dbITerm.cpp
 )
 
 target_link_libraries(db

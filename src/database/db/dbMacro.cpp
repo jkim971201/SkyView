@@ -16,29 +16,29 @@ dbMacro::dbMacro()
     symY_   (false),
     symR90_ (false)
 {
-  pins_.clear();
-  pinMap_.clear();
+  mterms_.clear();
+  mtermMap_.clear();
 }
 
 dbMacro::~dbMacro()
 {
-  pins_.clear();
-  pinMap_.clear();
+  mterms_.clear();
+  mtermMap_.clear();
 }
 
 void
-dbMacro::addPin(dbPin* newPin)
+dbMacro::addMTerm(dbMTerm* newPin)
 {
-  pins_.push_back(newPin);
-  pinMap_[newPin->name()] = newPin;
+  mterms_.push_back(newPin);
+  mtermMap_[newPin->name()] = newPin;
 }
 
-const dbPin*
-dbMacro::getPinByName(const std::string& pinName) const
+const dbMTerm*
+dbMacro::getMTermByName(const std::string& pinName) const
 {
-  auto itr = pinMap_.find(pinName);
+  auto itr = mtermMap_.find(pinName);
   
-  if(itr == pinMap_.end())
+  if(itr == mtermMap_.end())
   {
     std::cout << "Cannot find Pin " << pinName;
     std::cout << " in MACRO << " << name_ << std::endl;
@@ -63,7 +63,7 @@ dbMacro::print() const
   std::cout << "SYMMETRY R90 : " << symR90_       << std::endl;
   std::cout << std::endl;
 
-  for(const auto pin : pins_)
+  for(const auto pin : mterms_)
     pin->print();
 
   obs_.print();

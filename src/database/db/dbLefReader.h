@@ -43,7 +43,7 @@ class dbLefReader
 
     // This is used when LefPinCbk function.
     // (so this has to be static also)
-    // New dbPin will be added to this topMacro_.
+    // New dbMTerm will be added to this topMacro_.
     static dbMacro* topMacro_;
 
     std::shared_ptr<dbTypes> types_;

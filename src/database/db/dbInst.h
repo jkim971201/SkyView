@@ -5,9 +5,12 @@
 
 #include "dbTypes.h"
 #include "dbMacro.h"
+#include "dbITerm.h"
 
 namespace db
 {
+
+class dbITerm;
 
 class dbInst
 {
@@ -24,7 +27,7 @@ class dbInst
     void setSource (Source  source) { source_ = source; }
     void setStatus (Status  status) { status_ = status; }
     void setLocation(int placementX, int placementY); // placementX, Y is the point from .def
-    //void addTerm   (dbTerm* term) { terms_.push_back(term); }
+    void addTerm   (dbITerm* iterm) { iterms_.push_back(iterm); }
 
     // Halo is set to 0 by default
     void setHalo(int hT, int hB, int hL, int hR) 
@@ -38,7 +41,7 @@ class dbInst
     // Getters
     const dbMacro* macro() const { return macro_; }
     const std::string& name() const { return name_;  }
-    //const std::vector<dbTerm>& terms() const { return terms_; }
+    const std::vector<dbITerm*>& iterms() const { return iterms_; }
     int lx() const { return lx_; }
     int ly() const { return ly_; }
     int ux() const { return lx_ + dx_; }
@@ -83,7 +86,7 @@ class dbInst
     int haloL_;
     int haloR_;
 
-    //std::vector<dbTerm> terms_;
+    std::vector<dbITerm*> iterms_;
 };
 
 }

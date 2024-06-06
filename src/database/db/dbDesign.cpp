@@ -5,26 +5,29 @@ namespace db
 
 dbDesign::dbDesign(const std::shared_ptr<dbTypes> types,
                    const std::shared_ptr<dbTech>  tech)
-  : tech_   (tech),
-    types_  (types),
-    name_   (""),
-    coreLx_ (std::numeric_limits<int>::max()),
-    coreLy_ (std::numeric_limits<int>::max()),
-    coreUx_ (std::numeric_limits<int>::min()),
-    coreUy_ (std::numeric_limits<int>::min())
+  : tech_    (tech),
+    types_   (types),
+    name_    (""),
+		divider_ ('/'),
+    coreLx_  (std::numeric_limits<int>::max()),
+    coreLy_  (std::numeric_limits<int>::max()),
+    coreUx_  (std::numeric_limits<int>::min()),
+    coreUy_  (std::numeric_limits<int>::min())
 {
   str2dbInst_.clear();
+  str2dbBTerm_.clear();
+  str2dbNet_.clear();
 }
 
 dbDesign::~dbDesign()
 {
   rows_.clear();
   insts_.clear();
-  ios_.clear();
+  bterms_.clear();
   nets_.clear();
 
   str2dbInst_.clear();
-  str2dbIO_.clear();
+  str2dbBTerm_.clear();
   str2dbNet_.clear();
 }
 
@@ -39,12 +42,12 @@ dbDesign::getInstByName(const std::string& name)
     return itr->second;
 }
 
-dbIO*
-dbDesign::getIOByName(const std::string& name)
+dbBTerm*
+dbDesign::getBTermByName(const std::string& name)
 {  
-  auto itr = str2dbIO_.find(name);
+  auto itr = str2dbBTerm_.find(name);
   
-  if(itr == str2dbIO_.end())  
+  if(itr == str2dbBTerm_.end())  
     return nullptr;
   else
     return itr->second;
@@ -71,6 +74,20 @@ dbDesign::setDbu(int dbu)
   {
     printf("DEF Dbu (%d) is different from LEF Dbu (%d)\n", 
             defDbu, lefDbu);
+    exit(1);
+  }
+}
+
+void
+dbDesign::setDivider(const char div)
+{
+	const char lefDiv = tech_->getDivider();
+  const char defDiv = div;
+
+  if(lefDiv != defDiv)
+  {
+    printf("DEF Div (%c) is different from LEF Div (%c)\n", 
+            defDiv, lefDiv);
     exit(1);
   }
 }
@@ -158,8 +175,8 @@ dbDesign::addNewInst(const defiComponent* comp, const std::string& name)
   dbInst* newInst = new dbInst;
   insts_.push_back( newInst );
 
-  // This is really weird...
-  // id() returns the name of the instance,
+  // This is really weird part of LEF/DEF C++ API.
+  // id() of defiComponent returns the name of the instance,
   // and name() returns the name of the LEF MACRO.
   // macroName() even returns null pointer...
   newInst->setName( name );
@@ -169,6 +186,9 @@ dbDesign::addNewInst(const defiComponent* comp, const std::string& name)
   newInst->setMacro( macro );
 
   fillInst(comp, newInst);
+
+	// dbITerms are created at the same time with dbInst
+  
 }
 
 void
@@ -209,10 +229,10 @@ dbDesign::fillInst(const defiComponent* comp, dbInst* inst)
 void 
 dbDesign::addNewIO(const defiPin* pin, const std::string& name)
 {
-  dbIO* newIO = new dbIO;
-  ios_.push_back( newIO );
+  dbBTerm* newIO = new dbBTerm;
+  bterms_.push_back( newIO );
   newIO->setName( name );
-  str2dbIO_[ newIO->name() ] = newIO;
+  str2dbBTerm_[ newIO->name() ] = newIO;
   
   const std::string netNameStr = pin->netName();
   dbNet* net = getNetByName( netNameStr );

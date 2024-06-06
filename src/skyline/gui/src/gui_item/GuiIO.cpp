@@ -7,7 +7,7 @@
 namespace gui
 {
 
-GuiIO::GuiIO(dbIO* io)
+GuiIO::GuiIO(dbBTerm* io)
   : io_       (io),
     isLeft_   (false),
     isRight_  (false),

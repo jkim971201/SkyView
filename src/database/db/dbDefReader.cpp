@@ -72,6 +72,9 @@ dbDefReader::init()
   // Unit
   defrSetUnitsCbk(this->defUnitsCbk);
   
+	// Divider
+	defrSetDividerCbk(this->defDividerCbk);
+
   // Die
   defrSetDieAreaCbk((defrBoxCbkFnType)this->defDieAreaCbk);
 
@@ -159,6 +162,16 @@ dbDefReader::defUnitsCbk(defrCallbackType_e c, double unit, defiUserData ud)
   return 0;
 }
 
+// Units
+int 
+dbDefReader::defDividerCbk(defrCallbackType_e c, const char* div, defiUserData ud)
+{
+  checkType(c);
+  dbDesign* design = (dbDesign*) ud;
+	design->setDivider(div[0]);
+  return 0;
+}
+
 // Die
 int 
 dbDefReader::defDieAreaCbk(defrCallbackType_e c, defiBox* box, defiUserData ud)
@@ -184,6 +197,12 @@ int
 dbDefReader::defNetStartCbk(defrCallbackType_e c, int number, defiUserData ud)
 {
   checkType(c);
+  dbDesign* design = (dbDesign*) ud;
+
+  if(design->getNets().size() > number)
+    assert(0);
+  else
+    design->getNets().reserve(number);
   return 0;
 }
 
@@ -198,14 +217,6 @@ int
 dbDefReader::defNetEndCbk(defrCallbackType_e c, void* , defiUserData ud)
 {
   checkType(c);
-	
-  dbDesign* design = (dbDesign*) ud;
-
-  if(design->getNets().size() > number)
-    assert(0);
-  else
-    design->getNets().reserve(number);
-
   return 0;
 }
     
@@ -238,10 +249,10 @@ dbDefReader::defPinStartCbk(defrCallbackType_e c, int  number, defiUserData ud)
   checkType(c);
   dbDesign* design = (dbDesign*) ud;
 
-  if(design->getIOs().size() > number)
+  if(design->getBTerms().size() > number)
     assert(0);
   else
-    design->getIOs().reserve(number);
+    design->getBTerms().reserve(number);
   return 0;
 }
 

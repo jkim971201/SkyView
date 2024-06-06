@@ -95,7 +95,7 @@ int
 dbLefReader::lefDividerCbk(lefrCallbackType_e c, const char* div, lefiUserData ud)
 {
   dbTech* tech = (dbTech*) ud;
-  tech->setDivider(div);
+  tech->setDivider(div[0]);
   return 0;
 }
 
