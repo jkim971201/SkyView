@@ -43,7 +43,7 @@ enum Source         {DIST, NETLIST, TIMING, USER}; // SOURCE of a COMPONENT
 enum Status         {PLACED, FIXED, COVER, UNPLACED};
 
 /* DEF NET */
-enum NetUsage       {ANALOG_NET, CLOCK_NET, GROUND_NET, POWER_NET, RESET_NET, SCAN_NET, SIGNAL_NET, TIEOFF_NET};
+enum NetUse         {ANALOG_NET, CLOCK_NET, GROUND_NET, POWER_NET, RESET_NET, SCAN_NET, SIGNAL_NET, TIEOFF_NET};
 
 class dbTypes
 {
@@ -60,6 +60,7 @@ class dbTypes
     PinShape       getPinShape       (const std::string& str) const;
     Orient         getOrient         (const std::string& str) const;
     Source         getSource         (const std::string& str) const;
+		NetUse         getNetUse         (const std::string& str) const;
     Status         getStatus         (int status)             const;
 
   private:
@@ -73,6 +74,7 @@ class dbTypes
     std::unordered_map<std::string, PinShape>       str2PinShape_;        // String - enum PIN_SHAPE      Table
     std::unordered_map<std::string, Orient>         str2Orient_;          // String - enum ORIENT         Table
     std::unordered_map<std::string, Source>         str2Source_;          // String - enum SOURCE         Table
+    std::unordered_map<std::string, NetUse>         str2NetUse_;          // String - enum USE (def net)  Table
     std::unordered_map<int, Status>                 int2Status_;          // Int    - enum STATUS         Table
 	  // defrReader API does not define Placement Status as const char* (string).
 		// Instead, it gives us placement status as an integer.

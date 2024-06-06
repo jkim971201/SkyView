@@ -56,6 +56,15 @@ dbTypes::dbTypes()
   str2Source_["TIMING" ] = Source::TIMING;
   str2Source_["USER"   ] = Source::USER;
 
+  str2NetUse_["ANALOG_NET"] = NetUse::ANALOG_NET;
+  str2NetUse_["CLOCK_NET" ] = NetUse::CLOCK_NET;
+  str2NetUse_["GROUND_NET"] = NetUse::GROUND_NET;
+  str2NetUse_["POWER_NET" ] = NetUse::POWER_NET;
+  str2NetUse_["RESET_NET" ] = NetUse::RESET_NET;
+  str2NetUse_["SCAN_NET"  ] = NetUse::SCAN_NET;
+  str2NetUse_["SIGNAL_NET"] = NetUse::SIGNAL_NET;
+  str2NetUse_["TIEOFF_NET"] = NetUse::TIEOFF_NET;
+
 	int2Status_[DEFI_COMPONENT_UNPLACED] = Status::UNPLACED;
 	int2Status_[DEFI_COMPONENT_PLACED  ] = Status::PLACED;
 	int2Status_[DEFI_COMPONENT_FIXED   ] = Status::FIXED;
@@ -190,6 +199,21 @@ dbTypes::getSource(const std::string& str) const
   if(itr == str2Source_.end())
   {
     std::cout << "Error - SOURCE " << str;
+    std::cout << " is unknown (or not supported yet)..." << std::endl;
+    exit(0);
+  }
+  else
+    return itr->second;
+}
+
+NetUse
+dbTypes::getNetUse(const std::string& str) const
+{
+  auto itr = str2NetUse_.find(str);
+  
+  if(itr == str2NetUse_.end())
+  {
+    std::cout << "Error - USE " << str;
     std::cout << " is unknown (or not supported yet)..." << std::endl;
     exit(0);
   }

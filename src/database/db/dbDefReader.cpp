@@ -4,6 +4,7 @@
 #include <string>
 
 #include "dbDefReader.h"
+#include "dbUtil.h"
 
 namespace db
 {
@@ -11,31 +12,6 @@ namespace db
 static void defLogFunction(const char* errMsg) 
 {
   printf("ERROR: %s\n", errMsg);
-}
-
-static inline std::string removeBackSlashBracket(const std::string& str)
-{
-  std::string newStr = str;
-  //printf("before : %s\n", newStr.c_str());
-  if(newStr.find("\\[") != std::string::npos && newStr.find("\\]") != std::string::npos)
-  {
-    size_t bracket1 = newStr.find("\\[");
-    while(bracket1 != std::string::npos)
-    {
-      newStr.erase(newStr.begin() + bracket1);
-      bracket1 = newStr.find("\\[");
-    }
-
-    size_t bracket2 = newStr.find("\\]");
-    while(bracket2 != std::string::npos)
-    {
-      newStr.erase(newStr.begin() + bracket2);
-      bracket2 = newStr.find("\\]");
-    }
-  }
-  //printf("after : %s\n", newStr.c_str());
-
-  return newStr;
 }
 
 void checkType(defrCallbackType_e c)

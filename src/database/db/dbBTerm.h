@@ -13,6 +13,8 @@
 namespace db
 {
 
+class dbNet;
+
 class dbBTerm
 {
   public:

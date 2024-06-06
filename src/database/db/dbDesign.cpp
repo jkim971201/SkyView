@@ -1,12 +1,5 @@
 #include "dbDesign.h"
-
-template <typename M>
-inline bool duplicateCheck(M& map, const std::string& name)
-{
-  if(map.find(name) != map.end())
-    return true;
-  else return false;
-}
+#include "dbUtil.h"
 
 namespace db
 {
@@ -332,7 +325,58 @@ dbDesign::getNewNet(const std::string& name)
 void
 dbDesign::fillNet(const defiNet* defNet, dbNet* net)
 {
-  
+  if(defNet->hasUse())    
+  {
+    auto use = types_->getNetUse(std::string(defNet->use()));
+    net->setUse(use);
+  }
+
+  if(defNet->hasSource()) 
+  {
+    auto src = types_->getSource(std::string(defNet->source()));
+    net->setSource(src);
+  }
+
+  for(int i = 0; i < defNet->numConnections(); ++i) 
+  {
+    if(defNet->pinIsSynthesized(i)) 
+    {
+      printf("SYNTHESIZED is not unsupported syntax.");
+      exit(1);
+    }
+
+    if(defNet->pinIsMustJoin(i)) 
+    {
+      printf("MUSTJOIN is not unsupported syntax.");
+      exit(1);
+    } 
+    else 
+    {
+      const std::string& instNameStr 
+				= removeBackSlashBracket( std::string(defNet->instance(i)) );
+      const std::string& termNameStr = std::string(defNet->pin(i));
+
+      if(instNameStr == "PIN" || instNameStr == "Pin" || instNameStr == "pin")
+      {
+        dbBTerm* bterm = getBTermByName(termNameStr);
+        assert(bterm != nullptr);
+        net->addBTerm(bterm);
+        bterm->setNet(net);
+      }
+      else
+      {
+        dbInst* inst = getInstByName(instNameStr);
+        assert(inst != nullptr);
+
+        dbITerm* iterm = inst->getITermByMTermName(termNameStr);
+        assert(iterm != nullptr);
+        
+        net->addITerm(iterm);
+        iterm->setNet(net);
+      }
+    }
+  }
+	// net->print();
 }
 
 }

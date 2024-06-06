@@ -10,6 +10,8 @@
 #include "dbTech.h"
 #include "dbDesign.h"
 
+extern inline std::string removeBackSlashBracket(const std::string& str);
+
 namespace db
 {
 

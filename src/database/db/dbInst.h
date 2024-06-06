@@ -22,11 +22,11 @@ class dbInst
     void print() const;
 
     // Setters
-    void setName   (const std::string& name) { name_ = name; }
-    void setMacro  (dbMacro* macro) { macro_  = macro;  }
-    void setOrient (Orient  orient) { orient_ = orient; }
-    void setSource (Source  source) { source_ = source; }
-    void setStatus (Status  status) { status_ = status; }
+    void setName   (const std::string& name) { name_ = name;     }
+    void setMacro  (dbMacro* macro)          { macro_  = macro;  }
+    void setOrient (const Orient  orient)    { orient_ = orient; }
+    void setSource (const Source  source)    { source_ = source; }
+    void setStatus (const Status  status)    { status_ = status; }
 
     void addITerm   (dbITerm* iterm);
     void setLocation(int placementX, int placementY); 
