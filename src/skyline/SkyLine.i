@@ -33,6 +33,13 @@ read_def_cmd(const char *filename)
 }
 
 void
+read_verilog_cmd(const char *filename)
+{
+  skyline::SkyLine* sky = skyline::getSkyLine();
+  sky->readVerilog(filename);
+}
+
+void
 display_cmd()
 {
   skyline::SkyLine* sky = skyline::getSkyLine();

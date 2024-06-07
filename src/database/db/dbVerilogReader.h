@@ -51,6 +51,8 @@ class dbVerilogReader : public verilog::ParserVerilogInterface
       std::cout << "Instance: " << inst << '\n';
       insts_.push_back(std::move(inst));
     }
+
+    void readFile(const std::string& filename);
     
   private:
 

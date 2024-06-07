@@ -1,6 +1,3 @@
-#ifndef DB_DATABASE_H
-#define DB_DATABASE_H
-
 #include <cassert>
 #include <iostream>
 
@@ -20,11 +17,11 @@ dbDatabase::dbDatabase()
   // Initialization order matters.
   types_     = std::make_shared<dbTypes>();
   tech_      = std::make_shared<dbTech>(types_);
-	design_    = std::make_shared<dbDesign>(types_, tech_);
+  design_    = std::make_shared<dbDesign>(types_, tech_);
 
   lefReader_ = std::make_shared<dbLefReader>(types_, tech_);
   defReader_ = std::make_shared<dbDefReader>(types_, tech_, design_);
-	verilogReader_ = std::make_shared<dbVerilogReader>(tech_, design_);
+  verilogReader_ = std::make_shared<dbVerilogReader>(tech_, design_);
 }
 
 void
@@ -64,7 +61,24 @@ dbDatabase::readDef(const char* fileName)
   std::cout << "Finish " << filenameStr << std::endl;
 }
 
+void
+dbDatabase::readVerilog(const char* fileName)
+{
+  std::string filenameStr = std::string(fileName);
 
+  if(vFile_ != "")
+  {
+    printf("You cannot read multiple .v files!\n");
+    exit(1);
+  }
+
+  vFile_ = filenameStr;
+
+  std::cout << "Read   " << filenameStr << std::endl;
+
+  verilogReader_->readFile(filenameStr);
+
+  std::cout << "Finish " << filenameStr << std::endl;
 }
 
-#endif
+}

@@ -33,6 +33,12 @@ SkyLine::readDef(const char* file_path)
 }
 
 void
+SkyLine::readVerilog(const char* file_path)
+{
+  db_->readVerilog(file_path);
+}
+
+void
 SkyLine::display()
 {
   gui_->display();

@@ -30,17 +30,17 @@ class ParserVerilogInterface
     virtual void add_assignment(Assignment&&) = 0;
     virtual void add_instance(Instance&&) = 0;
 
-    void read(const std::filesystem::path&); 
+    bool read(const std::filesystem::path&); 
 
   private:
     VerilogScanner* _scanner {nullptr};
     VerilogParser*  _parser {nullptr};
 };
 
-inline void ParserVerilogInterface::read(const std::filesystem::path& p)
+inline bool ParserVerilogInterface::read(const std::filesystem::path& p)
 {
   if(!std::filesystem::exists(p))
-    return;
+    return false;
 
   std::ifstream ifs(p);
 
@@ -50,6 +50,8 @@ inline void ParserVerilogInterface::read(const std::filesystem::path& p)
     _parser = new VerilogParser(*_scanner, this);
 
   _parser->parse();
+
+	return true;
 }
 
 } 

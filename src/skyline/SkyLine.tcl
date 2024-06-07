@@ -6,6 +6,10 @@ proc read_def { arg } {
   skyline::read_def_cmd $arg
 }
 
+proc read_verilog { arg } {
+  skyline::read_verilog_cmd $arg
+}
+
 proc display { } {
   skyline::display_cmd
 }

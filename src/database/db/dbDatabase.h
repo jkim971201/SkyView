@@ -1,5 +1,5 @@
-#ifndef DB_DATABASE
-#define DB_DATABASE
+#ifndef DB_DATABASE_H
+#define DB_DATABASE_H
 
 #include <set>
 #include <string>
@@ -26,8 +26,9 @@ class dbDatabase
 
     dbDatabase();
 
-    void readLef(const char* filename);
-    void readDef(const char* filename);
+    void readLef     (const char* filename);
+    void readDef     (const char* filename);
+    void readVerilog (const char* filename);
 
     std::shared_ptr<dbTech>   getTech()   { return tech_;   }
     std::shared_ptr<dbDesign> getDesign() { return design_; }
@@ -39,13 +40,14 @@ class dbDatabase
     std::shared_ptr<dbDefReader>     defReader_;
     std::shared_ptr<dbVerilogReader> verilogReader_;
     
+    std::string   vFile_;           // File name  of .v   already read
     std::string defFile_;           // File name  of .def already read
     std::set<std::string> lefList_; // File names of .lef already read
 
     // Technology (PDK) and Design
     std::shared_ptr<dbTech>   tech_;
     std::shared_ptr<dbTypes>  types_;
-		std::shared_ptr<dbDesign> design_;
+    std::shared_ptr<dbDesign> design_;
 };
 
 }
