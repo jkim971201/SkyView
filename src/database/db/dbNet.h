@@ -1,5 +1,5 @@
-#ifndef DB_NET
-#define DB_NET
+#ifndef DB_NET_H
+#define DB_NET_H
 
 #include "dbTypes.h"
 

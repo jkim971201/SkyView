@@ -1,5 +1,5 @@
-#ifndef DB_INST
-#define DB_INST
+#ifndef DB_INST_H
+#define DB_INST_H
 
 #include <cstdlib> // for int64_t
 #include <unordered_map>

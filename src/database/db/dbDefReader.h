@@ -1,5 +1,5 @@
-#ifndef DB_DEF_READER
-#define DB_DEF_READER
+#ifndef DB_DEF_READER_H
+#define DB_DEF_READER_H
 
 #include <string>
 #include <memory>
@@ -10,8 +10,6 @@
 #include "dbTech.h"
 #include "dbDesign.h"
 
-extern inline std::string removeBackSlashBracket(const std::string& str);
-
 namespace db
 {
 
@@ -21,7 +19,7 @@ class dbDefReader
 
     dbDefReader(std::shared_ptr<dbTypes>  types, 
                 std::shared_ptr<dbTech>   tech,
-								std::shared_ptr<dbDesign> design);
+                std::shared_ptr<dbDesign> design);
 
     void init();
 

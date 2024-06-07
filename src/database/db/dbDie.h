@@ -1,5 +1,5 @@
-#ifndef DB_DIE
-#define DB_DIE
+#ifndef DB_DIE_H
+#define DB_DIE_H
 
 #include <cstdint>
 

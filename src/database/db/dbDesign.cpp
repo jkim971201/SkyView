@@ -197,10 +197,9 @@ dbDesign::addNewInst(const defiComponent* comp, const std::string& name)
   fillInst(comp, newInst);
 
   // dbITerms are created at the same time with dbInst
-  const std::string divStr = std::string(1, divider_); // convert a single char to std::string
   for(auto mterm : macro->getMTerms())
   {
-    const std::string itermName = name + divStr + mterm->name();
+    const std::string itermName = makeITermName(name, mterm->name());
     dbITerm* newITerm = new dbITerm(itermName, newInst, mterm);
     iterms_.push_back(newITerm);
     newInst->addITerm(newITerm);
@@ -377,6 +376,14 @@ dbDesign::fillNet(const defiNet* defNet, dbNet* net)
     }
   }
 	// net->print();
+}
+
+const std::string
+dbDesign::makeITermName(const std::string& instName, const std::string& mTermName) const
+{
+  const std::string divStr = std::string(1, divider_); 
+	// convert a single char to std::string
+  return instName + divStr + mTermName;
 }
 
 }

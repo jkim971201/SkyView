@@ -7,13 +7,18 @@
 #include <memory>
 
 #include "dbTypes.h"
-#include "dbLefReader.h"
-#include "dbDefReader.h"
+//#include "dbLefReader.h"
+//#include "dbDefReader.h"
+//#include "dbVerilogReader.h"
 #include "dbTech.h"
 #include "dbDesign.h"
 
 namespace db
 {
+
+class dbLefReader;
+class dbDefReader;
+class dbVerilogReader;
 
 class dbDatabase
 {
@@ -30,8 +35,9 @@ class dbDatabase
   private:
 
     // Parsing
-    std::shared_ptr<dbLefReader> lefReader_;
-    std::shared_ptr<dbDefReader> defReader_;
+    std::shared_ptr<dbLefReader>     lefReader_;
+    std::shared_ptr<dbDefReader>     defReader_;
+    std::shared_ptr<dbVerilogReader> verilogReader_;
     
     std::string defFile_;           // File name  of .def already read
     std::set<std::string> lefList_; // File names of .lef already read

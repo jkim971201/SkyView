@@ -1,5 +1,5 @@
-#ifndef DB_LEF_READER
-#define DB_LEF_READER
+#ifndef DB_LEF_READER_H
+#define DB_LEF_READER_H
 
 #include <string>
 #include <memory>

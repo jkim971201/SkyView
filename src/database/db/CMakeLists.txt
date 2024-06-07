@@ -22,12 +22,16 @@ target_sources(db
 	dbNet.cpp
 	dbBTerm.cpp
 	dbITerm.cpp
+
+	# VERILOG
+	dbVerilogReader.cpp
 )
 
 target_link_libraries(db
   PRIVATE
   lef
   def
+	verilog
 )
 
 target_include_directories(db
@@ -35,4 +39,5 @@ target_include_directories(db
 	${CMAKE_SOURCE_DIR}/src/database
 	${CMAKE_SOURCE_DIR}/src/database/parsers/lef
 	${CMAKE_SOURCE_DIR}/src/database/parsers/def
+	${CMAKE_SOURCE_DIR}/src/database/parsers/verilog/include
 )

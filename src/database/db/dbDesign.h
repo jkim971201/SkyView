@@ -104,6 +104,8 @@ class dbDesign
     std::unordered_map<std::string, dbInst*>  str2dbInst_;
     std::unordered_map<std::string, dbNet*>   str2dbNet_;
     std::unordered_map<std::string, dbBTerm*> str2dbBTerm_;
+
+		const std::string makeITermName(const std::string& instName, const std::string& mTermName) const;
 };
 
 }

@@ -1,7 +1,13 @@
+#ifndef DB_DATABASE_H
+#define DB_DATABASE_H
+
 #include <cassert>
 #include <iostream>
 
 #include "dbDatabase.h"
+#include "dbLefReader.h"
+#include "dbDefReader.h"
+#include "dbVerilogReader.h"
 
 namespace db
 {
@@ -18,6 +24,7 @@ dbDatabase::dbDatabase()
 
   lefReader_ = std::make_shared<dbLefReader>(types_, tech_);
   defReader_ = std::make_shared<dbDefReader>(types_, tech_, design_);
+	verilogReader_ = std::make_shared<dbVerilogReader>(tech_, design_);
 }
 
 void
@@ -59,3 +66,5 @@ dbDatabase::readDef(const char* fileName)
 
 
 }
+
+#endif
