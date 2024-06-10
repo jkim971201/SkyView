@@ -7,9 +7,6 @@
 #include <memory>
 
 #include "dbTypes.h"
-//#include "dbLefReader.h"
-//#include "dbDefReader.h"
-//#include "dbVerilogReader.h"
 #include "dbTech.h"
 #include "dbDesign.h"
 
@@ -26,9 +23,10 @@ class dbDatabase
 
     dbDatabase();
 
-    void readLef     (const char* filename);
-    void readDef     (const char* filename);
-    void readVerilog (const char* filename);
+    void readLef         (const char* filename);
+    void readDef         (const char* filename);
+    void readVerilog     (const char* filename);
+		void setTopModuleName(const char*  topname);
 
     std::shared_ptr<dbTech>   getTech()   { return tech_;   }
     std::shared_ptr<dbDesign> getDesign() { return design_; }

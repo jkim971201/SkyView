@@ -192,6 +192,14 @@ dbDesign::addNewInst(const defiComponent* comp, const std::string& name)
   str2dbInst_[name] = newInst;
   
   dbMacro* macro = tech_->getMacroByName( std::string(comp->name()) );
+
+  if(macro == nullptr)
+  {
+    printf("Error - Macro %s", comp->name());
+    printf(" does not exist in the technology database...\n");
+    exit(1);
+  }
+
   newInst->setMacro( macro );
 
   fillInst(comp, newInst);
@@ -292,6 +300,14 @@ dbDesign::addNewIO(const defiPin* pin, const std::string& name)
         int xl, yl, xh, yh;
         pin->bounds(i, &xl, &yl, &xh, &yh);
         dbLayer* layer = tech_->getLayerByName( std::string(pin->layer(i)) );
+
+        if(layer == nullptr)
+        {
+          printf("Error - Layer %s", pin->layer(i));
+          printf(" does not exist in the technology database...\n");
+          exit(0);
+        }
+
         newBTerm->addRect( dbRect(xl, yl, xh, yh, layer) );
         // printf("(%d %d) (%d %d)\n", xl, yl, xh, yh);
       }
@@ -352,7 +368,7 @@ dbDesign::fillNet(const defiNet* defNet, dbNet* net)
     else 
     {
       const std::string& instNameStr 
-				= removeBackSlashBracket( std::string(defNet->instance(i)) );
+        = removeBackSlashBracket( std::string(defNet->instance(i)) );
       const std::string& termNameStr = std::string(defNet->pin(i));
 
       if(instNameStr == "PIN" || instNameStr == "Pin" || instNameStr == "pin")
@@ -375,14 +391,14 @@ dbDesign::fillNet(const defiNet* defNet, dbNet* net)
       }
     }
   }
-	// net->print();
+  // net->print();
 }
 
 const std::string
 dbDesign::makeITermName(const std::string& instName, const std::string& mTermName) const
 {
   const std::string divStr = std::string(1, divider_); 
-	// convert a single char to std::string
+  // convert a single char to std::string
   return instName + divStr + mTermName;
 }
 

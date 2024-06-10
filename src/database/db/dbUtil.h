@@ -10,6 +10,7 @@ namespace db
 template <typename M>
 inline bool duplicateCheck(M& map, const std::string& name)
 {
+	// true -> already exists
   if(map.find(name) != map.end())
     return true;
   else return false;

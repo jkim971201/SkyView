@@ -36,7 +36,7 @@ class dbTech
     int getDbuLength(double micron) const;
     int getDbuArea  (double micron) const;
 
-		const char getDivider() const { return divider_;             }
+    const char getDivider() const { return divider_;             }
     int getRightBusBit()    const { return right_bus_delimiter_; }
     int getLeftBusBit()     const { return left_bus_delimiter_;  }
 

@@ -37,11 +37,7 @@ dbTech::getLayerByName(const std::string& name)
   auto itr = str2dbLayer_.find(name);
 
   if(itr == str2dbLayer_.end())
-  {
-    std::cout << "Error - Layer " << name;
-    std::cout << " does not exist in the database..." << std::endl;
-    exit(0);
-  }
+    return nullptr;
   else
     return itr->second;
 }
@@ -67,11 +63,7 @@ dbTech::getMacroByName(const std::string& name)
   auto itr = str2dbMacro_.find(name);
 
   if(itr == str2dbMacro_.end())
-  {
-    std::cout << "Error - Macro " << name;
-    std::cout << " does not exist in the database..." << std::endl;
-    exit(0);
-  }
+    return nullptr;
   else
     return itr->second;
 }

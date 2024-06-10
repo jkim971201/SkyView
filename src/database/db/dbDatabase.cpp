@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include "dbDatabase.h"
+
 #include "dbLefReader.h"
 #include "dbDefReader.h"
 #include "dbVerilogReader.h"
@@ -10,7 +11,8 @@ namespace db
 {
 
 dbDatabase::dbDatabase()
-  : defFile_ ("")
+  :   vFile_ (""),
+    defFile_ ("")
 {
   lefList_.clear();  
 
@@ -48,8 +50,9 @@ dbDatabase::readDef(const char* fileName)
 
   if(defFile_ != "")
   {
-    printf("You cannot read multiple .def files!\n");
-    exit(1);
+    printf("You cannot read multiple .def files."); 
+    printf(" %s will be ignored.\n", fileName); 
+    return;
   }
 
   defFile_ = filenameStr;
@@ -68,8 +71,9 @@ dbDatabase::readVerilog(const char* fileName)
 
   if(vFile_ != "")
   {
-    printf("You cannot read multiple .v files!\n");
-    exit(1);
+    printf("You cannot read multiple .v files.");
+    printf(" %s will be ignored.\n", fileName);
+    return;
   }
 
   vFile_ = filenameStr;
@@ -79,6 +83,12 @@ dbDatabase::readVerilog(const char* fileName)
   verilogReader_->readFile(filenameStr);
 
   std::cout << "Finish " << filenameStr << std::endl;
+}
+
+void
+dbDatabase::setTopModuleName(const char* topName)
+{ 
+  verilogReader_->setTopModuleName(std::string(topName));
 }
 
 }
