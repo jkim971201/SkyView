@@ -1,5 +1,5 @@
-#ifndef DB_BTERM
-#define DB_BTERM
+#ifndef DB_BTERM_H
+#define DB_BTERM_H
 
 #include <string>
 #include <cstdlib>
@@ -32,7 +32,7 @@ class dbBTerm
     void setOrigX(int val) { origX_ = val; }
     void setOrigY(int val) { origY_ = val; }
 
-    void setNet(dbNet* net) { net_   = net; }
+    void setNet(dbNet* net) { net_ = net; }
     void addRect(dbRect rect) { rects_.push_back(rect); }
 
     void setLocation();

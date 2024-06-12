@@ -1,5 +1,5 @@
-#ifndef DB_LAYER
-#define DB_LAYER
+#ifndef DB_LAYER_H
+#define DB_LAYER_H
 
 #include <string>
 

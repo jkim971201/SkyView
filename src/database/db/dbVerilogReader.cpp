@@ -36,18 +36,18 @@ dbVerilogReader::readFile(const std::string& filename)
   if(topModuleName_ == "")
   {
     if(design_->name() != "")
-		{
+    {
       // top module name is not given,
-			// then use the design name in the .def file
-			topModuleName_ = design_->name();
-		}
-		else
-		{
-			// if def is not read yet, and even top module name is not set,
-			// then it must be an error.
+      // then use the design name in the .def file
+      topModuleName_ = design_->name();
+    }
+    else
+    {
+      // if def is not read yet, and even top module name is not set,
+      // then it must be an error.
       printf("You should give top module name first!\n");
       exit(1);
-		}
+    }
   }
 
   // read function of ParserVerilogInterface will do
@@ -76,25 +76,22 @@ dbVerilogReader::readFile(const std::string& filename)
     const std::string hierNameThisLevel 
       = (modInst == topModuleInst_) ? hierName : hierName + "/" + modInst->name();
 
-	  modInst->setHierName(hierNameThisLevel);
+    modInst->setHierName(hierNameThisLevel);
     for(auto child : masterMod->getChilren())
       resetHierNameRecur(child, hierNameThisLevel);
   };
 
   resetHierNameRecur(topModuleInst_, topModuleName_);
 
-  for(auto mod : modules_)
-  {
-    printf("Module Name : %s\n", mod->name().c_str());
-    for(auto child : mod->getChilren())
-		{
-      printf("  Children      Name : %s\n", child->name().c_str());
-      printf("  Children Hier Name : %s\n", child->hierName().c_str());
-		}
-  }
-
-  printf("NumInst of Top Module : %d\n", topModuleInst_->getModule()->insts().size());
-  printf("Name of Top Module : %s\n", topModuleInst_->getModule()->name().c_str());
+//  for(auto mod : modules_)
+//  {
+//    printf("Module Name : %s\n", mod->name().c_str());
+//    for(auto child : mod->getChilren())
+//    {
+//      printf("  Children      Name : %s\n", child->name().c_str());
+//      printf("  Children Hier Name : %s\n", child->hierName().c_str());
+//    }
+//  }
 }
 
 void 

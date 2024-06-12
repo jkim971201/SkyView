@@ -157,18 +157,17 @@ dbDesign::addNewRow(const defiRow* ro)
       printf("Row StepY %d is smaller than site height %d\n", stepY, site->sizeY());
       exit(1);
     }
-
     newRow->setStepX( stepX );
     newRow->setStepY( stepY );
   }
 
   rows_.push_back(newRow);
-
+  //newRow->print();
+	
   if(coreLx_ > newRow->lx()) coreLx_ = newRow->lx();
   if(coreLy_ > newRow->ly()) coreLy_ = newRow->ly();
   if(coreUx_ < newRow->ux()) coreUx_ = newRow->ux();
   if(coreUy_ < newRow->uy()) coreUy_ = newRow->uy();
-  //newRow->print();
 }
 
 void

@@ -1,5 +1,5 @@
-#ifndef DB_ITERM
-#define DB_ITERM
+#ifndef DB_ITERM_H
+#define DB_ITERM_H
 
 #include "dbNet.h"
 

@@ -1,5 +1,5 @@
-#ifndef DB_TYPES
-#define DB_TYPES
+#ifndef DB_TYPES_H
+#define DB_TYPES_H
 
 #include <string>
 #include <unordered_map>
@@ -60,7 +60,7 @@ class dbTypes
     PinShape       getPinShape       (const std::string& str) const;
     Orient         getOrient         (const std::string& str) const;
     Source         getSource         (const std::string& str) const;
-		NetUse         getNetUse         (const std::string& str) const;
+    NetUse         getNetUse         (const std::string& str) const;
     Status         getStatus         (int status)             const;
 
   private:

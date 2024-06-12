@@ -1,6 +1,8 @@
 #include <iostream>
 
 #include "dbInst.h"
+#include "dbMacro.h"
+#include "dbITerm.h"
 
 namespace db
 {

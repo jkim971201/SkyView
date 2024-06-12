@@ -1,5 +1,5 @@
-#ifndef DB_SITE
-#define DB_SITE
+#ifndef DB_SITE_H
+#define DB_SITE_H
 
 #include "dbTypes.h"
 

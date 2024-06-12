@@ -1,5 +1,5 @@
-#ifndef DB_DESIGN
-#define DB_DESIGN
+#ifndef DB_DESIGN_H
+#define DB_DESIGN_H
 
 #include <vector>
 #include <memory>
@@ -48,6 +48,11 @@ class dbDesign
     int coreUx() const { return coreUx_; }
     int coreUy() const { return coreUy_; }
 
+    void setCoreLx(int lx) { coreLx_ = lx; }
+    void setCoreLy(int ly) { coreLy_ = ly; }
+    void setCoreUx(int ux) { coreUx_ = ux; }
+    void setCoreUy(int uy) { coreUy_ = uy; }
+
     // Row
     void addNewRow  (const defiRow* row);
 
@@ -60,7 +65,7 @@ class dbDesign
 
     // Net
     dbNet* getNewNet(const std::string& name);
-    void fillNet    (const defiNet* defNet, dbNet* net);
+    void   fillNet  (const defiNet* defNet, dbNet* net);
 
     // Getters
           dbDie* getDie()       { return &die_;  }
@@ -105,7 +110,7 @@ class dbDesign
     std::unordered_map<std::string, dbNet*>   str2dbNet_;
     std::unordered_map<std::string, dbBTerm*> str2dbBTerm_;
 
-		const std::string makeITermName(const std::string& instName, const std::string& mTermName) const;
+    const std::string makeITermName(const std::string& instName, const std::string& mTermName) const;
 };
 
 }

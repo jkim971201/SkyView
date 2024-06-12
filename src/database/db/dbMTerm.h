@@ -1,5 +1,5 @@
-#ifndef DB_MTERM
-#define DB_MTERM
+#ifndef DB_MTERM_H
+#define DB_MTERM_H
 
 #include <string>
 #include <vector>

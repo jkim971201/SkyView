@@ -6,12 +6,14 @@
 #include "dbLefReader.h"
 #include "dbDefReader.h"
 #include "dbVerilogReader.h"
+#include "dbBookShelfReader.h"
 
 namespace db
 {
 
 dbDatabase::dbDatabase()
-  :   vFile_ (""),
+  : auxFile_ (""),
+    vFile_   (""),
     defFile_ ("")
 {
   lefList_.clear();  
@@ -21,9 +23,10 @@ dbDatabase::dbDatabase()
   tech_      = std::make_shared<dbTech>(types_);
   design_    = std::make_shared<dbDesign>(types_, tech_);
 
-  lefReader_ = std::make_shared<dbLefReader>(types_, tech_);
-  defReader_ = std::make_shared<dbDefReader>(types_, tech_, design_);
+  lefReader_     = std::make_shared<dbLefReader>(types_, tech_);
+  defReader_     = std::make_shared<dbDefReader>(types_, tech_, design_);
   verilogReader_ = std::make_shared<dbVerilogReader>(tech_, design_);
+  bsReader_      = std::make_shared<dbBookShelfReader>(types_, design_);
 }
 
 void
@@ -81,6 +84,27 @@ dbDatabase::readVerilog(const char* fileName)
   std::cout << "Read   " << filenameStr << std::endl;
 
   verilogReader_->readFile(filenameStr);
+
+  std::cout << "Finish " << filenameStr << std::endl;
+}
+
+void
+dbDatabase::readBookShelf(const char* fileName)
+{
+  std::string filenameStr = std::string(fileName);
+
+  if(auxFile_ != "")
+  {
+    printf("You cannot read multiple .aux files.");
+    printf(" %s will be ignored.\n", fileName);
+    return;
+  }
+
+  auxFile_ = filenameStr;
+
+  std::cout << "Read   " << filenameStr << std::endl;
+
+  bsReader_->readFile(filenameStr);
 
   std::cout << "Finish " << filenameStr << std::endl;
 }

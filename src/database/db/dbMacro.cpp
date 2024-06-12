@@ -18,6 +18,8 @@ dbMacro::dbMacro()
 {
   mterms_.clear();
   mtermMap_.clear();
+
+	macroClass_ = MacroClass::CORE;
 }
 
 dbMacro::~dbMacro()

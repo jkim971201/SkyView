@@ -28,16 +28,16 @@ class dbMacro
 
     // Setters
     void setName(const char* name)    { name_ = std::string(name); }
-    void setMacroClass(MacroClass cl) { macroClass_ = cl;     }
-    void setSite (dbSite* site)       { site_   = site;       }
-    void setSizeX(int sizeX)          { sizeX_  = sizeX;      }
-    void setSizeY(int sizeY)          { sizeY_  = sizeY;      }
-    void setOrigX(int origX)          { origX_  = origX;      }
-    void setOrigY(int origY)          { origY_  = origY;      }
-    void setSymmetryX   (bool sym)    { symX_   = sym;        }
-    void setSymmetryY   (bool sym)    { symY_   = sym;        }
-    void setSymmetryR90 (bool sym)    { symR90_ = sym;        }
-    void addRectToObs(dbRect rect)    { obs_.addRect(rect);   }
+    void setMacroClass(MacroClass cl) { macroClass_ = cl;   }
+    void setSite (dbSite* site)       { site_   = site;     }
+    void setSizeX(int sizeX)          { sizeX_  = sizeX;    }
+    void setSizeY(int sizeY)          { sizeY_  = sizeY;    }
+    void setOrigX(int origX)          { origX_  = origX;    }
+    void setOrigY(int origY)          { origY_  = origY;    }
+    void setSymmetryX   (bool sym)    { symX_   = sym;      }
+    void setSymmetryY   (bool sym)    { symY_   = sym;      }
+    void setSymmetryR90 (bool sym)    { symR90_ = sym;      }
+    void addRectToObs(dbRect rect)    { obs_.addRect(rect); }
     void addMTerm(dbMTerm* mterm);
 
     // Getters

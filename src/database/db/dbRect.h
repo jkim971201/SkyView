@@ -1,5 +1,5 @@
-#ifndef DB_RECT
-#define DB_RECT
+#ifndef DB_RECT_H
+#define DB_RECT_H
 
 #include <cassert>
 
@@ -14,19 +14,19 @@ class dbLayer;
 // #3. for describing the boundary of DEF IO
 class dbRect
 {
-	public:
+  public:
 
   dbRect(int lx, int ly, int ux, int uy, dbLayer* _layer)
     : lx(lx), ly(ly), ux(ux), uy(uy), layer (_layer) 
-	{
-		assert(_layer != nullptr);
-	}
+  {
+    assert(_layer != nullptr);
+  }
 
   int lx;
   int ly;
   int ux;
   int uy;
-	dbLayer* layer;
+  dbLayer* layer;
 };
 
 }

@@ -1,16 +1,16 @@
 #ifndef DB_INST_H
 #define DB_INST_H
 
+#include <vector>
 #include <cstdlib> // for int64_t
 #include <unordered_map>
 
 #include "dbTypes.h"
-#include "dbMacro.h"
-#include "dbITerm.h"
 
 namespace db
 {
 
+class dbMacro;
 class dbITerm;
 
 class dbInst
@@ -22,7 +22,7 @@ class dbInst
     void print() const;
 
     // Setters
-    void setName   (const std::string& name) { name_ = name;     }
+    void setName   (const std::string& name) { name_   = name;   }
     void setMacro  (dbMacro* macro)          { macro_  = macro;  }
     void setOrient (const Orient  orient)    { orient_ = orient; }
     void setSource (const Source  source)    { source_ = source; }
@@ -53,12 +53,12 @@ class dbInst
     int cy() const { return ly_ + dy_ / 2; }
     int dx() const { return dx_; }
     int dy() const { return dy_; }
-    int haloT()  const { return haloT_; }
-    int haloB()  const { return haloB_; }
-    int haloL()  const { return haloL_; }
-    int haloR()  const { return haloR_; }
-    int64_t area()  const { return static_cast<int64_t>(dx_) 
-                                 * static_cast<int64_t>(dy_); }
+    int haloT() const { return haloT_; }
+    int haloB() const { return haloB_; }
+    int haloL() const { return haloL_; }
+    int haloR() const { return haloR_; }
+    int64_t area() const { return static_cast<int64_t>(dx_) 
+                                * static_cast<int64_t>(dy_); }
 
     bool isFixed()   const;
     bool isStdCell() const;
