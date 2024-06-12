@@ -19,24 +19,31 @@ getSkyLine()
 %inline %{
 
 void
-read_lef_cmd(const char *filename)
+read_lef_cmd(const char* filename)
 {
   skyline::SkyLine* sky = skyline::getSkyLine();
   sky->readLef(filename);
 }
 
 void
-read_def_cmd(const char *filename)
+read_def_cmd(const char* filename)
 {
   skyline::SkyLine* sky = skyline::getSkyLine();
   sky->readDef(filename);
 }
 
 void
-read_verilog_cmd(const char *filename)
+read_verilog_cmd(const char* filename)
 {
   skyline::SkyLine* sky = skyline::getSkyLine();
   sky->readVerilog(filename);
+}
+
+void
+set_top_module_name_cmd(const char* topname)
+{
+  skyline::SkyLine* sky = skyline::getSkyLine();
+  sky->setTopModuleName(topname);
 }
 
 void

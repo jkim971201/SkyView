@@ -14,9 +14,11 @@ class SkyLine
 
     static SkyLine* getStaticPtr();
 
-    void readLef     (const char* file_path);
-    void readDef     (const char* file_path);
-    void readVerilog (const char* file_path);
+    void readLef          (const char* file_path);
+    void readDef          (const char* file_path);
+    void readVerilog      (const char* file_path);
+		void setTopModuleName (const char*  top_name);
+
     void display();
 
   private:

@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <algorithm>
 
+#include "dbUtil.h"
 #include "dbVerilogReader.h"
 
 namespace db
@@ -35,19 +36,8 @@ dbVerilogReader::readFile(const std::string& filename)
 
   if(topModuleName_ == "")
   {
-    if(design_->name() != "")
-		{
-      // top module name is not given,
-			// then use the design name in the .def file
-			topModuleName_ = design_->name();
-		}
-		else
-		{
-			// if def is not read yet, and even top module name is not set,
-			// then it must be an error.
-      printf("You should give top module name first!\n");
-      exit(1);
-		}
+    printf("You should give top module name first!\n");
+    exit(1);
   }
 
   // read function of ParserVerilogInterface will do
@@ -66,20 +56,26 @@ dbVerilogReader::readFile(const std::string& filename)
     exit(1);
   }
 
-  // Set hierarchical name
-  // recusrsive use of lambda cannot use "auto"
-  std::function<void(ModuleInstPtr, const std::string&)> resetHierNameRecur 
-    = [&] (ModuleInstPtr modInst, const std::string& hierName)
-  {
-    ModulePtr masterMod = modInst->getModule();
+	// recusrsive use of lambda cannot use "auto"
+  // reset hierarchical name
+	std::function<void(ModuleInstPtr, const std::string&)> resetHierNameRecur 
+		= [&] (ModuleInstPtr modInst, const std::string& hierName)
+	{
+		ModulePtr masterMod = modInst->getModule();
 
     const std::string hierNameThisLevel 
-      = (modInst == topModuleInst_) ? hierName : hierName + "/" + modInst->name();
+			= (modInst == topModuleInst_) ? hierName : hierName + "/" + modInst->name();
 
-	  modInst->setHierName(hierNameThisLevel);
-    for(auto child : masterMod->getChilren())
-      resetHierNameRecur(child, hierNameThisLevel);
-  };
+    printf("hierNameThisLevel : %s\n", hierNameThisLevel.c_str());
+
+    if(masterMod->isLeafModule())
+      modInst->setName(hierNameThisLevel);
+		else
+		{
+			for(auto child : masterMod->getChilren())
+			  resetHierNameRecur(child, hierNameThisLevel);
+	  }
+	};
 
   resetHierNameRecur(topModuleInst_, topModuleName_);
 
@@ -87,10 +83,7 @@ dbVerilogReader::readFile(const std::string& filename)
   {
     printf("Module Name : %s\n", mod->name().c_str());
     for(auto child : mod->getChilren())
-		{
-      printf("  Children      Name : %s\n", child->name().c_str());
-      printf("  Children Hier Name : %s\n", child->hierName().c_str());
-		}
+      printf("  Children Name : %s\n", child->name().c_str());
   }
 
   printf("NumInst of Top Module : %d\n", topModuleInst_->getModule()->insts().size());
@@ -186,11 +179,12 @@ dbVerilogReader::makeNewModule(const std::string& name)
 ModuleInstPtr
 dbVerilogReader::makeNewModuleInst(const std::string& instName, ModulePtr mod, ModulePtr parent)
 {
-  // Instance Name will be updated to hierarchical name later (end of readVerilog)
+	// Instance Name will be updated to hierarchical name later (end of readVerilog)
   ModuleInstPtr newModuleInstPtr 
     = std::make_shared<ModuleInst>(instName, mod, parent);
 
-  // Duplicate Check will be done in addChild of Module Class
+  // No Duplicate Check for Module Inst Name
+  
   moduleInsts_.push_back(newModuleInstPtr);
   return newModuleInstPtr;
 }

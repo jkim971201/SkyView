@@ -10,6 +10,10 @@ proc read_verilog { arg } {
   skyline::read_verilog_cmd $arg
 }
 
+proc set_top_name { arg } {
+  skyline::set_top_module_name_cmd $arg
+}
+
 proc display { } {
   skyline::display_cmd
 }

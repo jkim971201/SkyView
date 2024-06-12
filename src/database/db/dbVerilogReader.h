@@ -7,6 +7,7 @@
 
 #include "verilog_driver.hpp"
 
+#include "dbUtil.h"
 #include "dbTech.h"
 #include "dbDesign.h"
 
@@ -25,21 +26,28 @@ class ModuleInst
 
     ModuleInst() {}
     ModuleInst(const std::string& name, ModulePtr mod, ModulePtr parent)
-      : name_   (  name),
-        module_ (   mod),
-        parent_ (parent)
+      : name_      (name),
+        hierName_  (""),
+        module_    (mod),
+        parent_    (parent)
     {}
  
-    const std::string& name() const { return name_; }
+    const std::string& name()     const { return name_;     }
+    const std::string& hierName() const { return hierName_; }
 
     bool isTopModule() const { return parent_ == nullptr; }
 
     ModulePtr getModule() { return module_; }
     ModulePtr getParent() { return parent_; }
+ 
+    void setName     (const std::string& name) { name_     = name; }
+    void setHierName (const std::string& name) { hierName_ = name; }
 
   private:
 
+    // HierName is hierarchical name (e.g. A/B/C)
     std::string name_;
+    std::string hierName_;
     ModulePtr module_;
     ModulePtr parent_;
 };
@@ -53,6 +61,7 @@ class Module
     {
       ports_.clear();
       insts_.clear();
+			str2moduleInst_.clear();
     }
 
     const std::string& name() const { return name_; }
@@ -63,7 +72,19 @@ class Module
     const std::vector<verilog::Port>&     ports() const { return ports_; }
     const std::vector<verilog::Instance>& insts() const { return insts_; }
 
-    void addChild(ModuleInstPtr modInst) { children_.push_back(modInst); }
+    void addChild(ModuleInstPtr modInst) 
+		{
+			const std::string instName = modInst->name();
+			if(duplicateCheck(str2moduleInst_, instName) == true)
+			{
+				printf("Instance %s already exists in module %s\n",
+				        instName.c_str(), name_.c_str());
+				exit(1);
+			}
+	    children_.push_back(modInst); 
+	    str2moduleInst_[modInst->name()] = modInst;
+		}
+
     std::vector<ModuleInstPtr>& getChilren() { return children_; }
 
     bool isLeafModule() const { return children_.empty(); }
@@ -74,6 +95,7 @@ class Module
     std::vector<ModuleInstPtr> children_;
     std::vector<verilog::Port> ports_;
     std::vector<verilog::Instance> insts_;
+    std::unordered_map<std::string, ModuleInstPtr> str2moduleInst_;
 };
 
 class dbVerilogReader : public verilog::ParserVerilogInterface
@@ -110,7 +132,7 @@ class dbVerilogReader : public verilog::ParserVerilogInterface
     
   private:
 
-		std::string topModuleName_;
+    std::string topModuleName_;
 
     ModulePtr     makeNewModule     (const std::string& name);
     ModuleInstPtr makeNewModuleInst (const std::string& name, ModulePtr mod, ModulePtr parent);
@@ -124,10 +146,9 @@ class dbVerilogReader : public verilog::ParserVerilogInterface
     std::vector<verilog::Net> nets_;
     std::vector<verilog::Assignment> assignments_;
 
-    std::vector<ModulePtr>      modules_;
-    std::vector<ModuleInstPtr>  moduleInsts_;
-    std::unordered_map<std::string, ModulePtr>     str2module_;
-    std::unordered_map<std::string, ModuleInstPtr> str2moduleInst_;
+    std::vector<ModulePtr> modules_;
+    std::vector<ModuleInstPtr> moduleInsts_;
+    std::unordered_map<std::string, ModulePtr> str2module_;
 };
 
 }

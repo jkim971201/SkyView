@@ -51,7 +51,7 @@ inline bool ParserVerilogInterface::read(const std::filesystem::path& p)
 
   _parser->parse();
 
-	return true;
+  return true;
 }
 
 } 
