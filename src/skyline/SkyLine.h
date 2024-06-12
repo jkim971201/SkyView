@@ -17,6 +17,7 @@ class SkyLine
     void readLef          (const char* file_path);
     void readDef          (const char* file_path);
     void readVerilog      (const char* file_path);
+    void readBookShelf    (const char* file_path);
 		void setTopModuleName (const char*  top_name);
 
     void display();

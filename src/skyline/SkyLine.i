@@ -40,6 +40,13 @@ read_verilog_cmd(const char* filename)
 }
 
 void
+read_bookshelf_cmd(const char* filename)
+{
+  skyline::SkyLine* sky = skyline::getSkyLine();
+  sky->readBookShelf(filename);
+}
+
+void
 set_top_module_name_cmd(const char* topname)
 {
   skyline::SkyLine* sky = skyline::getSkyLine();

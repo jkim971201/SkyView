@@ -10,7 +10,7 @@ namespace db
 
 dbTech::dbTech(std::shared_ptr<dbTypes> types)
   : types_               (types),
-    dbu_                 (0),
+    dbu_                 (1),
     left_bus_delimiter_  ('['),
     right_bus_delimiter_ (']'),
     divider_             ('/')

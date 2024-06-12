@@ -131,8 +131,8 @@ dbBookShelfReader::convert2db()
     // Default orient is N
     newIO->addRect(dbRect(dbuBookShelf * bsCell->lx(),
                           dbuBookShelf * bsCell->ly(),
-                          dbuBookShelf * bsCell->dx(),
-                          dbuBookShelf * bsCell->dy(),
+                          dbuBookShelf * bsCell->ux(),
+                          dbuBookShelf * bsCell->uy(),
                           dummyLayer));
 		newIO->setLocation();
 		return newIO;
@@ -153,22 +153,31 @@ dbBookShelfReader::convert2db()
     dbRowVector.push_back(convert2dbRow(bsRowPtr));
 
   // Inst && BTerm (include ITerm)
-  auto& dbInstVector = design_->getInsts();
+  auto& dbInstVector  = design_->getInsts();
+  auto& dbBTermVector = design_->getBTerms();
   auto& bsCellVector = bookshelfDB->cellVector();
   for(auto bsCellPtr : bsCellVector)
 	{
+		//printf("BsCell Name : %s\n", bsCellPtr->name().c_str());
+		//printf("Lx Ly : (%d, %d)\n", bsCellPtr->lx(), bsCellPtr->ly());
 		// Bookshelf format does not have IOs explicitly.
-		// we have detect them by context.
-		if(bsParser_->isOutsideDie(bsCellPtr) || bsCellPtr->dx() == 0 || bsCellPtr->dy() == 0)
-			convert2dbBTerm(bsCellPtr);
+		// we have to detect them by context.
+		if(bsCellPtr->dx() == 0 || bsCellPtr->dy() == 0 
+			|| (bsCellPtr->isFixed() && bsParser_->isOutsideDie(bsCellPtr)) )
+		{
+			auto newBTerm = convert2dbBTerm(bsCellPtr);
+      dbBTermVector.push_back(newBTerm);
+		}
 		else
-			convert2dbInst(bsCellPtr);
+		{
+			auto newInst = convert2dbInst(bsCellPtr);
+			dbInstVector.push_back(newInst);
+		}
 	}
 
-  // BTerm (IO)
-  
   // Net
   
+	printf("  Finish DB converting\n");
 }
 
 }

@@ -304,7 +304,7 @@ BookShelfDB::buildBsRowMap()
   int maxX = 0;
   int maxY = 0;
 
-  int minX = std::numeric_limits<int>::min();
+  int minX = std::numeric_limits<int>::max();
   int minY = std::numeric_limits<int>::max();
 
   //printf("  Building Row Map\n");

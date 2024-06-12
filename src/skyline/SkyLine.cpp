@@ -39,6 +39,12 @@ SkyLine::readVerilog(const char* file_path)
 }
 
 void
+SkyLine::readBookShelf(const char* file_path)
+{
+  db_->readBookShelf(file_path);
+}
+
+void
 SkyLine::setTopModuleName(const char* top_name)
 {
   db_->setTopModuleName(top_name);
