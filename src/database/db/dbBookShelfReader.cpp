@@ -146,7 +146,11 @@ dbBookShelfReader::convert2db()
   // These dbMTerms will not be registed to dbTech.
   // These are only to avoid dbITerm making segmentation fault
   // (just same as dbMacros above)
-  std::map<std::pair<int, int>, dbMTerm*> offset2dbMTerm;
+  std::map<dbMacro*, std::map<std::pair<int, int>, dbMTerm*>> mterm_table;
+
+	// To initialize map of map
+	for(auto& kv : size2macro)
+	  mterm_table.insert(std::make_pair(kv.second, std::map<std::pair<int, int>, dbMTerm*>()));
 
   auto convert2dbNet = [&] (BsNet* bsNet)
   {
@@ -156,15 +160,34 @@ dbBookShelfReader::convert2db()
     for(auto bsPinPtr : bsNet->pins())
     {
       BsCell* bsCellPtr = bsPinPtr->cell();
-      auto bterm_itr = bsCell2dbBTerm.find(bsCellPtr);
 
+      auto bterm_itr = bsCell2dbBTerm.find(bsCellPtr);
       if(bterm_itr == bsCell2dbBTerm.end())
       {
         dbITerm* newITerm = new dbITerm;
         newITerm->setNet(newNet);
 
+        // Set dbInst
+        auto inst_itr = bsCell2dbInst.find(bsCellPtr);
+				dbInst* inst_ptr;
+        if(inst_itr == bsCell2dbInst.end())
+        {
+          printf("Error while converting bookshelf to db...\n");
+          exit(1);
+        }
+        else
+        {
+          inst_ptr = inst_itr->second;
+          const std::string iterm_name 
+            = bsCellPtr->name() + std::to_string(inst_ptr->getITerms().size());
+          newITerm->setName(iterm_name);
+          newITerm->setInst(inst_ptr);
+        }
 
         // Set dbMTerm
+				dbMacro* macro_ptr = inst_ptr->macro();
+
+				auto& offset2dbMTerm = mterm_table[macro_ptr];
         int offsetX = dbuBookShelf * bsPinPtr->offsetX();
         int offsetY = dbuBookShelf * bsPinPtr->offsetY();
         std::pair<int, int> offset = {offsetX, offsetY};
@@ -176,6 +199,10 @@ dbBookShelfReader::convert2db()
           mterm = new dbMTerm;
           mterm->addRect( dbRect(offsetX, offsetY, offsetX, offsetY, dummyLayer) );
           mterm->setBoundary();
+					const std::string mterm_name 
+					 = macro_ptr->name() + "_" + std::to_string(macro_ptr->getMTerms().size());
+					mterm->setName(mterm_name);
+					macro_ptr->addMTerm(mterm);
           offset2dbMTerm[offset] = mterm;
         }
         else
@@ -183,23 +210,11 @@ dbBookShelfReader::convert2db()
 
         newITerm->setMTerm(mterm);
 
-        // Set dbInst
-        auto inst_itr = bsCell2dbInst.find(bsCellPtr);
-        if(inst_itr == bsCell2dbInst.end())
-        {
-          printf("Error while converting bookshelf to db...\n");
-          exit(1);
-        }
-        else
-        {
-          dbInst* inst_ptr = inst_itr->second;
-          const std::string iterm_name 
-            = bsCellPtr->name() + std::to_string(inst_ptr->getITerms().size());
-          newITerm->setName(iterm_name);
-          newITerm->setInst(inst_ptr);
-          inst_ptr->addITerm(newITerm);
-        }
+        inst_ptr->addITerm(newITerm); 
+				// addIterm checks if dbMTerm exists in dbITerm.
+				// so this must be called after assign dbMTerm of this ITerm.
 
+				// Finish ITerm
         newNet->addITerm(newITerm);
       }
       else
@@ -208,6 +223,8 @@ dbBookShelfReader::convert2db()
         newNet->addBTerm(bterm);
       }
     }
+
+		return newNet;
   };
 
   // Die
@@ -227,8 +244,9 @@ dbBookShelfReader::convert2db()
   {
     // Bookshelf format does not have IOs explicitly.
     // we have to detect them by context.
-    if(bsCellPtr->dx() == 0 || bsCellPtr->dy() == 0 
-      || (bsCellPtr->isFixed() && bsParser_->isOutsideDie(bsCellPtr)) )
+		// (I think "terminal" keyword does not mean it's IO pin.)
+    if(bsCellPtr->dx() == 0 || bsCellPtr->dy() == 0 || 
+			 (bsCellPtr->isFixed() && bsParser_->isOutsideDie(bsCellPtr)) )
     {
       auto newBTerm = convert2dbBTerm(bsCellPtr);
       dbBTermVector.push_back(newBTerm);
@@ -243,6 +261,13 @@ dbBookShelfReader::convert2db()
   }
 
   // Net
+	auto& bsNetVector = bookshelfDB->netVector();
+	auto& dbNetVector = design_->getNets();
+	for(auto bsNetPtr : bsNetVector)
+	{
+		auto newNet = convert2dbNet(bsNetPtr);
+		dbNetVector.push_back(newNet);
+	}
   
   printf("  Finish DB converting\n");
 }

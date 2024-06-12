@@ -42,6 +42,7 @@ class dbInst
     }
 
     // Getters
+          dbMacro* macro()       { return macro_; }
     const dbMacro* macro() const { return macro_; }
     const std::string& name() const { return name_;  }
     const std::vector<dbITerm*>& getITerms() const { return iterms_; }
