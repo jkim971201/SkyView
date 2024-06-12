@@ -24,7 +24,7 @@ GuiRow::paint(QPainter* painter,
 {
   qreal lod = option->levelOfDetailFromTransform(painter->worldTransform());
 
-  if(lod > 3.0)
+  if(lod > 1.0)
   {
     painter->setPen(QPen(Qt::gray, 0, Qt::PenStyle::SolidLine));
     painter->drawRect(rect_);

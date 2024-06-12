@@ -93,7 +93,8 @@ GuiInst::paint(QPainter* painter,
   painter->setPen(pen);
   painter->drawLine(line);
 
-  drawInstName(painter, Qt::white, lod);
+	if(inst_->isMacro() || (!inst_->isMacro() && lod > 0.4) )
+    drawInstName(painter, Qt::white, lod);
 }
 
 void

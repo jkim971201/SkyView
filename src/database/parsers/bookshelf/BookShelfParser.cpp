@@ -227,9 +227,10 @@ BookShelfDB::makeBsRow(int idx,
 }
 
 void
-BookShelfDB::makeBsNet(int netID)
+BookShelfDB::makeBsNet(int netID, const std::string& name)
 {
   BsNet oneBsNet(netID);
+	oneBsNet.setName(name);
   netInsts_.push_back(oneBsNet);
   // netPtrs will be filled by finishPinsAndNets()
 }
@@ -847,9 +848,12 @@ BookShelfParser::read_nets()
     int netDegree = atoi(token);
 
     token = getNextWord(" \t\n");
-    //std::string netName = std::string(token);
+    std::string netName = std::string(token);
 
-    bookShelfDB_->makeBsNet(netsRead); // netsRead => netID
+    // Some nets have NetDegree : 1 in MMS benchmarks
+		// Ignore these NetDegree 1 nets
+		if(netDegree > 1)
+      bookShelfDB_->makeBsNet(netsRead, netName); // netsRead => netID
 
     char IO;
     double offsetX;
@@ -887,9 +891,13 @@ BookShelfParser::read_nets()
       else 
         offsetY = atof(token);
 
-      bookShelfDB_->makeBsPin(cellOfThesePins, 
-                              netsRead, // netID 
-                              offsetX, offsetY, IO);
+			// Ignore pins of Degree-1 net
+			if(netDegree > 1)
+			{
+        bookShelfDB_->makeBsPin(cellOfThesePins, 
+                                netsRead, // netID 
+                                offsetX, offsetY, IO);
+			}
       pinsRead++;
     }
 

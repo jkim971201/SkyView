@@ -22,6 +22,7 @@ class dbMTerm
     dbMTerm();
 
     void print() const;
+    void setBoundary(); // Set Boundary Box
 
     // Setters
     void setName         (std::string  pinName ) { name_     = pinName;     }
@@ -29,9 +30,12 @@ class dbMTerm
     void setPinUsage     (PinUsage     pinUsage) { pinUsage_ = pinUsage;    }
     void setPinDirection (PinDirection pinDir  ) { pinDir_   = pinDir;      }
     void setPinShape     (PinShape     pinShape) { pinShape  = pinShape_;   }
-    void addRect         (dbRect       rect    ) { rects_.push_back(rect);  }
+    void addRect         (dbRect&      rect    ) { rects_.push_back(rect);  }
+    void addRect         (dbRect       rect    ) { rects_.push_back(rect);  } 
+    // overload of addRect
 
     // Getters
+    // lx ly ux uy are coordinates of LEF PIN BBox
     int lx() const { return lx_;             }
     int ly() const { return ly_;             }
     int ux() const { return ux_;             }

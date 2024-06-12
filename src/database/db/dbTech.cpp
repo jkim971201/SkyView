@@ -295,6 +295,8 @@ dbTech::addPinToMacro(const lefiPin* pi, dbMacro* topMacro)
     }
   }
 
+	newMTerm->setBoundary();
+
   topMacro->addMTerm( newMTerm );
 }
 

@@ -25,6 +25,7 @@ class dbITerm
     void setNet   (dbNet*     net) { net_    = net;    }
     void setInst  (dbInst*   inst) { inst_   = inst;   }
     void setMTerm (dbMTerm* mterm) { mterm_  = mterm;  }
+    void setName  (const std::string& name) { name_ = name; }
 
     // Getters
     const std::string& name()     const { return name_;  }
@@ -35,7 +36,8 @@ class dbITerm
   private:
 
     // Name of dbITerm : 
-    // "InstanceName" + "DividerCharacter" + "MTermName"
+    // "InstanceName" + "DividerCharacter" + "MTermName" 
+    // (this rule is not valid for bookshelf)
     std::string name_;
 
     dbNet*   net_;

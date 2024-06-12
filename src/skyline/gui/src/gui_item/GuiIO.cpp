@@ -69,9 +69,9 @@ GuiIO::paint(QPainter* painter,
   qreal ioLy = rect_.bottom();
   qreal ioUx = rect_.right();
   qreal ioUy = rect_.top();
-  qreal polyLen = std::max(
+  qreal polyLen = std::min(
                   std::abs(rect_.width()), 
-                  std::abs(rect_.height())) * 40.0;
+                  std::abs(rect_.height())) * 4.0;
 
   qreal p1X = 0.0;
   qreal p1Y = 0.0;

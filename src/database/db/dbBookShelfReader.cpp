@@ -4,6 +4,7 @@
 #include "dbRect.h"
 
 #include <map>
+#include <cassert>
 
 namespace db
 {
@@ -32,8 +33,13 @@ dbBookShelfReader::convert2db()
   // will be used in this function, but they are
   // just dummy objects to smoothly
   // convert bookshelf format to LEF/DEF-based database.
-  
   const auto bookshelfDB = bsParser_->getDB();
+
+  // IO pins of MMS benchmark are duplicate in .nets file.
+  // A hash table is necessary to avoid multiple dbBTerm for
+  // an identical IO pin.
+  std::map<BsCell*, dbBTerm*> bsCell2dbBTerm;
+  std::map<BsCell*, dbInst*>  bsCell2dbInst;
 
   // Bookshelf contains micron unit
   // so we need a scaling factor to
@@ -76,8 +82,8 @@ dbBookShelfReader::convert2db()
     return newRow;
   };
 
-  // These dbMacros will not be registed to dbTech
-  // These are only to avoid dbInst makes segmentation fault
+  // These dbMacros will not be registed to dbTech.
+  // These are only to avoid dbInst making segmentation fault
   // due to dbInst methods that use dbMacro pointer.
   std::map<std::pair<int, int>, dbMacro*> size2macro;
 
@@ -122,7 +128,6 @@ dbBookShelfReader::convert2db()
 
   // dummy layer to make dbRect
   dbLayer* dummyLayer = new dbLayer; 
-
   auto convert2dbBTerm = [&] (BsCell* bsCell)
   {
     dbBTerm* newIO = new dbBTerm;
@@ -134,13 +139,75 @@ dbBookShelfReader::convert2db()
                           dbuBookShelf * bsCell->ux(),
                           dbuBookShelf * bsCell->uy(),
                           dummyLayer));
-		newIO->setLocation();
-		return newIO;
+    newIO->setLocation();
+    return newIO;
   };
+
+  // These dbMTerms will not be registed to dbTech.
+  // These are only to avoid dbITerm making segmentation fault
+  // (just same as dbMacros above)
+  std::map<std::pair<int, int>, dbMTerm*> offset2dbMTerm;
 
   auto convert2dbNet = [&] (BsNet* bsNet)
   {
-    
+    dbNet* newNet = new dbNet;
+    newNet->setName(bsNet->name());
+
+    for(auto bsPinPtr : bsNet->pins())
+    {
+      BsCell* bsCellPtr = bsPinPtr->cell();
+      auto bterm_itr = bsCell2dbBTerm.find(bsCellPtr);
+
+      if(bterm_itr == bsCell2dbBTerm.end())
+      {
+        dbITerm* newITerm = new dbITerm;
+        newITerm->setNet(newNet);
+
+
+        // Set dbMTerm
+        int offsetX = dbuBookShelf * bsPinPtr->offsetX();
+        int offsetY = dbuBookShelf * bsPinPtr->offsetY();
+        std::pair<int, int> offset = {offsetX, offsetY};
+
+        dbMTerm* mterm;
+        auto mterm_itr = offset2dbMTerm.find(offset);
+        if(mterm_itr == offset2dbMTerm.end())
+        {
+          mterm = new dbMTerm;
+          mterm->addRect( dbRect(offsetX, offsetY, offsetX, offsetY, dummyLayer) );
+          mterm->setBoundary();
+          offset2dbMTerm[offset] = mterm;
+        }
+        else
+          mterm = mterm_itr->second;
+
+        newITerm->setMTerm(mterm);
+
+        // Set dbInst
+        auto inst_itr = bsCell2dbInst.find(bsCellPtr);
+        if(inst_itr == bsCell2dbInst.end())
+        {
+          printf("Error while converting bookshelf to db...\n");
+          exit(1);
+        }
+        else
+        {
+          dbInst* inst_ptr = inst_itr->second;
+          const std::string iterm_name 
+            = bsCellPtr->name() + std::to_string(inst_ptr->getITerms().size());
+          newITerm->setName(iterm_name);
+          newITerm->setInst(inst_ptr);
+          inst_ptr->addITerm(newITerm);
+        }
+
+        newNet->addITerm(newITerm);
+      }
+      else
+      {
+        dbBTerm* bterm = bterm_itr->second;
+        newNet->addBTerm(bterm);
+      }
+    }
   };
 
   // Die
@@ -152,32 +219,32 @@ dbBookShelfReader::convert2db()
   for(auto bsRowPtr : bsRowVector)
     dbRowVector.push_back(convert2dbRow(bsRowPtr));
 
-  // Inst && BTerm (include ITerm)
+  // Inst && BTerm (Bookshelf describes IOs as same as instance)
   auto& dbInstVector  = design_->getInsts();
   auto& dbBTermVector = design_->getBTerms();
   auto& bsCellVector = bookshelfDB->cellVector();
   for(auto bsCellPtr : bsCellVector)
-	{
-		//printf("BsCell Name : %s\n", bsCellPtr->name().c_str());
-		//printf("Lx Ly : (%d, %d)\n", bsCellPtr->lx(), bsCellPtr->ly());
-		// Bookshelf format does not have IOs explicitly.
-		// we have to detect them by context.
-		if(bsCellPtr->dx() == 0 || bsCellPtr->dy() == 0 
-			|| (bsCellPtr->isFixed() && bsParser_->isOutsideDie(bsCellPtr)) )
-		{
-			auto newBTerm = convert2dbBTerm(bsCellPtr);
+  {
+    // Bookshelf format does not have IOs explicitly.
+    // we have to detect them by context.
+    if(bsCellPtr->dx() == 0 || bsCellPtr->dy() == 0 
+      || (bsCellPtr->isFixed() && bsParser_->isOutsideDie(bsCellPtr)) )
+    {
+      auto newBTerm = convert2dbBTerm(bsCellPtr);
       dbBTermVector.push_back(newBTerm);
-		}
-		else
-		{
-			auto newInst = convert2dbInst(bsCellPtr);
-			dbInstVector.push_back(newInst);
-		}
-	}
+      bsCell2dbBTerm[bsCellPtr] = newBTerm;
+    }
+    else
+    {
+      auto newInst = convert2dbInst(bsCellPtr);
+      dbInstVector.push_back(newInst);
+      bsCell2dbInst[bsCellPtr] = newInst;
+    }
+  }
 
   // Net
   
-	printf("  Finish DB converting\n");
+  printf("  Finish DB converting\n");
 }
 
 }

@@ -226,17 +226,23 @@ class BsPin
 class BsNet
 {
   public:
-    BsNet(int id) : id_ (id) {}
+    BsNet(int id) : id_(id), name_ ("")
+    {
+      pins_.clear();
+    }
+
+    void addNewPin(BsPin* pin) { pins_.push_back(pin); }
+    void setName(const std::string& name) { name_ = name; }
 
     int id() const { return id_; }
     int getDegree() const { return pins_.size(); }
 
-    void addNewPin(BsPin* pin) { pins_.push_back(pin); }
-
+    const std::string& name() const { return name_; }
     const std::vector<BsPin*>& pins() const { return pins_; }
 
   private:
     int id_;
+    std::string name_;
     std::vector<BsPin*> pins_;
 };
 
@@ -247,7 +253,7 @@ class BookShelfDB
     BookShelfDB(int numNodes);
 
     void makeBsCell(std::string& name, int lx, int ly, bool Terminal, bool TerminalNI);
-    void makeBsNet(int netID);
+    void makeBsNet(int netID, const std::string& name);
     void makeBsPin(BsCell* cell, int netID, double offX, double offY, char IO);
 
     void makeBsRow(int idx, int ly, int rowHeight, 
