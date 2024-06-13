@@ -20,9 +20,13 @@ class dbBookShelfReader
 
     void readFile(const std::string& filename);
 
+    int dbuBookShelf() const { return dbuBookShelf_; }
+
   private:
 
     void convert2db();
+
+    int dbuBookShelf_;
 
     std::shared_ptr<dbTypes>         types_;
     std::shared_ptr<dbDesign>        design_;

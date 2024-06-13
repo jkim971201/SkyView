@@ -2,9 +2,9 @@
 #include <vector>
 #include <set>
 
-#include "PlacerDB.h"
+#include "SkyPlaceDB.h"
 
-namespace SkyPlace
+namespace skyplace 
 {
 
 class Vertex;

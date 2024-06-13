@@ -21,7 +21,7 @@ class TargetFunction
 
     // Constructor
     TargetFunction() {}
-    TargetFunction(std::shared_ptr<PlacerDB>           db,
+    TargetFunction(std::shared_ptr<SkyPlaceDB>         db,
                    std::shared_ptr<WireLengthGradient> wireLength,
                    std::shared_ptr<DensityGradient>    density,
                    HyperParam                          param);
@@ -59,7 +59,7 @@ class TargetFunction
     void setMaxPhiCoef         (float val) { maxPhi_  = val; }
     void setRefHpwl            (float val) { refHPWL_ = val; }
     void setInitGammaInv       (float val);
-		void setMacroDensityWeight (bool mode);
+    void setMacroDensityWeight (bool mode);
 
     // Getters
     float getWA             () const { return wa_;             }
@@ -100,8 +100,8 @@ class TargetFunction
     float macroOverflow_;
     float sumPenalty_;
 
-		bool macroDensityWeight_;
-		float coeffSoFar_;
+    bool macroDensityWeight_;
+    float coeffSoFar_;
 
     void updateGammaInv  (float overflow);
     void updateLambda    (float prevHpwl, float curHPWL);
@@ -122,18 +122,18 @@ class TargetFunction
     thrust::device_vector<float> d_cellArea_;
     float* d_ptr_cellArea_;
 
-		// This is also in the DensityGradient
-		// Waste of Memory => TODO: remove this
-		thrust::device_vector<bool> d_isMacro_;
-		bool* d_ptr_isMacro_;
+    // This is also in the DensityGradient
+    // Waste of Memory => TODO: remove this
+    thrust::device_vector<bool> d_isMacro_;
+    bool* d_ptr_isMacro_;
 
-		thrust::device_vector<float> d_macroDecay_;
-		float* d_ptr_macroDecay_;
+    thrust::device_vector<float> d_macroDecay_;
+    float* d_ptr_macroDecay_;
 
     float wlGradSum_;
     float densityGradSum_;
 
-    std::shared_ptr<PlacerDB>           db_;
+    std::shared_ptr<SkyPlaceDB>         db_;
     std::shared_ptr<WireLengthGradient> wireLength_;
     std::shared_ptr<DensityGradient>    density_;
 

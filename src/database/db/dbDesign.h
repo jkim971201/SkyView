@@ -42,7 +42,7 @@ class dbDesign
 
     const char divider() const { return divider_; }
 
-    // TODO: Maybe this is not the best to way to describe a "core region".
+    // TODO: This is definitely not the best to way to describe a "core region".
     int coreLx() const { return coreLx_; }
     int coreLy() const { return coreLy_; }
     int coreUx() const { return coreUx_; }
@@ -76,6 +76,9 @@ class dbDesign
 
           std::vector<dbInst*>& getInsts()       { return insts_; }
     const std::vector<dbInst*>& getInsts() const { return insts_; }
+
+          std::vector<dbITerm*>& getITerms()       { return iterms_; }
+    const std::vector<dbITerm*>& getITerms() const { return iterms_; }
 
           std::vector<dbBTerm*>& getBTerms()       { return bterms_; }
     const std::vector<dbBTerm*>& getBTerms() const { return bterms_; }

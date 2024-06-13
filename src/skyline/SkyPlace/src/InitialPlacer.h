@@ -11,10 +11,10 @@
 #include <set>
 #include <algorithm>
 #include <string>
-#include "PlacerDB.h"
+#include "SkyPlaceDB.h"
 #include "FMPartitioner.h"
 
-namespace SkyPlace
+namespace skyplace 
 {
 
 struct cgError
@@ -37,8 +37,8 @@ class InitialPlacer
 {
   public:
     
-    InitialPlacer();                                     // Default Constructor
-    InitialPlacer(std::shared_ptr<PlacerDB> db);         // Constructor really used
+    InitialPlacer();                               // Default Constructor
+    InitialPlacer(std::shared_ptr<SkyPlaceDB> db); // Constructor really used
 
     // APIs
     void doInitialPlace();
@@ -51,7 +51,7 @@ class InitialPlacer
 
   private:
 
-    std::shared_ptr<PlacerDB> db_;
+    std::shared_ptr<SkyPlaceDB> db_;
 
     bool randomInit_;
     bool qpInit_;
@@ -111,4 +111,4 @@ class InitialPlacer
 		float getMirrorY(float locY, float dieCy, float dieLy, float dieUy) const;
 };
 
-}; // namespace SkyPlace
+}; // namespace skyplace 

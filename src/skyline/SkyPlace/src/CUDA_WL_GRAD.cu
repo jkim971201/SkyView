@@ -334,7 +334,7 @@ WireLengthGradient::WireLengthGradient()
     wlGradTime_          (0.0)
 {}
 
-WireLengthGradient::WireLengthGradient(std::shared_ptr<PlacerDB> db)
+WireLengthGradient::WireLengthGradient(std::shared_ptr<SkyPlaceDB> db)
   : WireLengthGradient()
 {
   printf("[WireLengthGradient] Start Initialization. \n");

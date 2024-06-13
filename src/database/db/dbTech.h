@@ -32,9 +32,10 @@ class dbTech
     dbMacro* getNewMacro (const char* name);
     void fillNewMacro    (const lefiMacro* ma, dbMacro* newMacro); 
 
-    int getDbu() const { return dbu_; }
-    int getDbuLength(double micron) const;
-    int getDbuArea  (double micron) const;
+		void setDbu(int dbu) { dbu_ = dbu; }
+    int  getDbu() const { return dbu_; }
+    int  getDbuLength(double micron) const;
+    int  getDbuArea  (double micron) const;
 
     const char getDivider() const { return divider_;             }
     int getRightBusBit()    const { return right_bus_delimiter_; }

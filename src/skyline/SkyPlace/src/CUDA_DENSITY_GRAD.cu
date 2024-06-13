@@ -971,7 +971,7 @@ DensityGradient::DensityGradient()
     binDenUpTime_            (0.0)
 {}
 
-DensityGradient::DensityGradient(std::shared_ptr<PlacerDB> db)
+DensityGradient::DensityGradient(std::shared_ptr<SkyPlaceDB> db)
   : DensityGradient()
 {
   printf("[DensityGradient] Start Initialization.\n");

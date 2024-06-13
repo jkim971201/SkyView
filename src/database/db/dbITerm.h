@@ -28,10 +28,16 @@ class dbITerm
     void setName  (const std::string& name) { name_ = name; }
 
     // Getters
-    const std::string& name()     const { return name_;  }
-    const dbNet*       getNet()   const { return net_;   }
-    const dbInst*      getInst()  const { return inst_;  }
-    const dbMTerm*     getMTerm() const { return mterm_; }
+    const std::string& name() const { return name_; }
+
+          dbNet*   getNet()         { return net_;   }
+    const dbNet*   getNet()   const { return net_;   }
+
+          dbInst*  getInst()        { return inst_;  }
+    const dbInst*  getInst()  const { return inst_;  }
+
+          dbMTerm* getMTerm()       { return mterm_; }
+    const dbMTerm* getMTerm() const { return mterm_; }
 
   private:
 

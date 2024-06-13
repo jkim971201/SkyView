@@ -1,16 +1,15 @@
-#include <stdio.h>
+#include <cstdio>
 #include <vector>
 #include <map>
 #include <random>
-#include <memory>
 #include <cassert>
 #include <cusolverSp.h>
 
 #include "CUDA_UTIL.h"
-#include "PlacerDB.h"
+#include "SkyPlaceDB.h"
 #include "InitialPlacer.h"
 
-namespace SkyPlace
+namespace skyplace
 {
 
 std::shared_ptr<ndarray<int,1>>     nint(const std::vector<int>    &X) { return new_array_ptr<int>(X);    }
@@ -274,12 +273,6 @@ InitialPlacer::createClusterLaplacian(SMatrix& Lmm, Vector& Lmf_xf, Vector& Lmf_
         // For Adjacency Matrix
         tripletVector.push_back( Triplet(v1, v2, -weight) );
         tripletVector.push_back( Triplet(v2, v1, -weight) );
-
-//        printf("Cluster1 : %d Cluster2 : %d\n", cell1->clusterID(), cell2->clusterID());
-//        if(cell1->bsCellPtr())
-//          std::cout << "Cell1 : " << cell1->bsCellPtr()->name() << std::endl;
-//        if(cell2->bsCellPtr())
-//          std::cout << "Cell2 : " << cell2->bsCellPtr()->name() << std::endl;
       }
     }
   }
@@ -690,4 +683,4 @@ InitialPlacer::getMirrorY(float locY, float dieCy, float dieLy, float dieUy) con
 		return dieUy - (locY - dieCy);
 }
 
-}; // namespace SkyPlace
+}; // namespace skyplace 

@@ -10,10 +10,7 @@
 #include <thrust/host_vector.h>
 #include <thrust/fill.h>
 
-#include "HyperParam.h"
 #include "SkyPlace.h"
-#include "SkyPlaceDB.h"
-
 #include "WireLengthGradient.h"
 #include "DensityGradient.h"
 #include "TargetFunction.h"
@@ -32,7 +29,7 @@ class AdamOptimizer
   public:
 
     AdamOptimizer();
-    AdamOptimizer(SkyPlace::HyperParam             param,
+    AdamOptimizer(HyperParam                       param,
                   std::shared_ptr<SkyPlaceDB>      db,
                   std::shared_ptr<TargetFunction>  func,
                   std::shared_ptr<Painter>         painter);
@@ -53,7 +50,7 @@ class AdamOptimizer
     float dieUx_;
     float dieUy_;
 
-    std::shared_ptr<PlacerDB>        db_;
+    std::shared_ptr<SkyPlaceDB>      db_;
     std::shared_ptr<Painter>         painter_;
     std::shared_ptr<TargetFunction>  targetFunction_;
 

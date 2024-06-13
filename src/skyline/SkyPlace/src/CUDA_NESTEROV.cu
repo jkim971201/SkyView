@@ -1,7 +1,6 @@
 #include <cstdio>
 #include <memory>
 #include <cassert>
-#include <climits> // for MAX FLOAT
 
 #include "CUDA_UTIL.h"
 #include "NesterovOptimizer.h"
@@ -141,8 +140,8 @@ NesterovOptimizer::NesterovOptimizer()
     nesterovTime_               (0.0)
 {}
 
-NesterovOptimizer::NesterovOptimizer(SkyPlace::HyperParam            param,
-                                     std::shared_ptr<PlacerDB>       db,
+NesterovOptimizer::NesterovOptimizer(HyperParam                      param,
+                                     std::shared_ptr<SkyPlaceDB>     db,
                                      std::shared_ptr<TargetFunction> func,
                                      std::shared_ptr<Painter>        painter) 
   : NesterovOptimizer()
@@ -695,4 +694,4 @@ NesterovOptimizer::freeDeviceMemory()
   CUDA_CHECK(cudaFree(d_cellHeight_));
 }
 
-}; // namespace skyline
+}; // namespace skyplace

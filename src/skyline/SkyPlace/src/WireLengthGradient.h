@@ -18,7 +18,7 @@ class WireLengthGradient
   public:
     
     WireLengthGradient();
-    WireLengthGradient(std::shared_ptr<PlacerDB> db);
+    WireLengthGradient(std::shared_ptr<SkyPlaceDB> db);
 
     void computeGrad(float* wlGradX, float* wlGradY);
 
@@ -42,7 +42,7 @@ class WireLengthGradient
 
   private:
 
-    std::shared_ptr<PlacerDB> db_;
+    std::shared_ptr<SkyPlaceDB> db_;
 
     int numNet_;
     int numPin_;
@@ -148,4 +148,4 @@ class WireLengthGradient
     void initForCUDAKernel();
 };
 
-}; // namespace SkyPlace
+}; // namespace skyplace 

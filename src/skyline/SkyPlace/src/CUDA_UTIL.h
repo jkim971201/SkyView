@@ -427,7 +427,7 @@ __device__ inline float getPartialDerivative(const float cellMin,
     return 0.0;
 }                                             
 
-};
+}; // namespace skyplace
 
 inline __device__ __host__ bool isPowerOf2(int val)
 {

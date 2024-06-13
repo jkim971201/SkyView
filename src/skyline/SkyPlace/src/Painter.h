@@ -3,8 +3,8 @@
 #include <vector>
 #include <memory>
 #include "CImg.h"
+
 #include "SkyPlaceDB.h"
-#include "Legalizer.h"
 
 namespace skyplace 
 {
@@ -124,7 +124,7 @@ class Painter
     // Draw Bins
     void drawBinsSpectralPotential (CImgObj *img);
     void drawBinsDensity           (CImgObj *img);
-    void drawBin                   (CImgObj *img, const SkyPlace::Bin* bin, float val, float max, float min);
+    void drawBin                   (CImgObj *img, const Bin* bin, float val, float max, float min);
 
     // Draw Electric Force (Gradient)
     void drawDensityGradSpectral(CImgObj *img);

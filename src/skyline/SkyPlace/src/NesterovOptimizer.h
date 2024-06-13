@@ -1,6 +1,5 @@
 #pragma once
 
-#include <memory>
 #include <ctime>
 
 #include <cuda_runtime.h>
@@ -30,7 +29,7 @@ class NesterovOptimizer
 
     NesterovOptimizer();
     NesterovOptimizer(HyperParam param,
-                      std::shared_ptr<PlacerDB>       db,
+                      std::shared_ptr<SkyPlaceDB>     db,
                       std::shared_ptr<TargetFunction> func,
                       std::shared_ptr<Painter>        painter);
 
@@ -50,7 +49,7 @@ class NesterovOptimizer
     float dieUx_;
     float dieUy_;
 
-    std::shared_ptr<PlacerDB>       db_;
+    std::shared_ptr<SkyPlaceDB>       db_;
     std::shared_ptr<Painter>        painter_;
     std::shared_ptr<TargetFunction> targetFunction_;
 

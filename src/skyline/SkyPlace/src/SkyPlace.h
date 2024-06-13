@@ -9,7 +9,6 @@
 #include "InitialPlacer.h"
 #include "NesterovOptimizer.h"
 #include "AdamOptimizer.h"
-#include "Legalizer.h"
 
 namespace skyplace 
 {
@@ -48,10 +47,8 @@ class SkyPlace
 
     // APIs
     void doPlace();     // global_place
-    void legalize();    // legalize
-    void writeResult(); // write_output
 
-    // 1. Link Parser and Convert Parsed Data to PlacerDB
+    // 1. Link Parser and Convert Parsed Data to SkyPlaceDB
     // 2. Make Initial Placer
     // 3. Construct TargetFunction f (WireLength & Density) 
     void setDB(std::shared_ptr<dbDatabase> db);   
@@ -79,7 +76,7 @@ class SkyPlace
     void setOutputDir       (const std::string& outputDir) { outputDir_ = outputDir; }
 
     // Though targetDensity is also a hyper-parameter,
-    // this has to initialized before dbLefDef_ is initialized.
+    // this has to be initialized before SkyPlaceDB is initialized.
     void setTargetDensity (float density)  
     { 
       if(density > 1.00 || density <= 0.0 || density <= db_->util() )
@@ -115,10 +112,6 @@ class SkyPlace
 
     void showFinalPlace();
 
-    // Legalizer
-		bool isLegalized_;
-    std::shared_ptr<Legalizer> legalizer_;
-
     // Configuration
     OptimizerType opt_;
 
@@ -135,4 +128,4 @@ class SkyPlace
     double totalTime_;
 };
 
-} // namespace SkyPlace
+} // namespace skyplace 

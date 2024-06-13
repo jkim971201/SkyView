@@ -33,7 +33,7 @@ class Cell
   public:
 
     Cell();
-    Cell(dbCell* cell);
+    Cell(dbInst* inst);
     Cell(float cx, float cy, float dx, float dy);
     // Contructor for Filler Cell
 
@@ -69,9 +69,8 @@ class Cell
     const std::vector<Pin*>& pins() const { return pins_; }
 
     // These will return nullptr,
-    // if there is no corresponding dbInst
-    dbInst*  dbInstPtr()  const { return dbInst_;  }
-    dbBTerm* dbBTermPtr() const { return dbBTerm_; }
+    // if there is no corresponding dbInst (e.g. fillerCell)
+    dbInst* dbInstPtr() const { return dbInst_;  }
 
     // Setters
     void setID       (int id) { id_  = id; }
@@ -86,7 +85,6 @@ class Cell
   private:
 
     dbInst* dbInst_;
-    dbBTerm* dbBTerm_;
 
     // ID is required to compute Laplacian
     // Fixed and Movables seperately
@@ -138,18 +136,16 @@ class Net
     dbNet* dbNetPtr() const { return dbNet_; }
 
     // Setters
-    void setWeight  (float weight)  { weight_ = weight;     }
-    void addNewPin  (Pin*     pin)  { pins_.push_back(pin); }
+    void setWeight  (float weight) { weight_ = weight; }
+    void addNewPin  (Pin* pin) { pins_.push_back(pin); }
 
     void updateBBox();
 
   private:
 
     dbNet* dbNet_;
-    BsNet* bsNet_;
 
     int id_;
-
     float lx_; // Lx of BBox
     float ly_; // Ly of BBox
     float ux_; // Ux of BBox
@@ -165,21 +161,18 @@ class Pin
   public:
 
     Pin();
-    Pin(dbPin*   pin, int id); // Constructor for LefDefDB
-    Pin(BsPin* BsPin, int id); // Constructor for BookShelfDB
+    Pin(dbBTerm* bterm, int id); // Constructor for dbBTerm
+    Pin(dbITerm* iterm, int id); // Constructor for dbITerm
 
     // Getters
-    char    io() const { return io_;   }
     int     id() const { return id_;   }
     float   cx() const { return cx_;   }
     float   cy() const { return cy_;   }
     bool  isIO() const { return isIO_; }
 
     Net*   net() const { return net_;  }
-    Cell* cell() const { return cell_; }
-
-    dbPin* dbPinPtr() const { return dbPin_; }
-    BsPin* bsPinPtr() const { return bsPin_; }
+    Cell* cell() const { return cell_; } 
+		// returns nullptr if Pin is made from dbBTerm (== IO pin)
 
     float offsetX() const { return offsetX_; }
     float offsetY() const { return offsetY_; }
@@ -191,11 +184,7 @@ class Pin
 
     // Setters
     void setNet (Net*   net) { net_  =  net; }
-    void setCell(Cell* cell) 
-    { 
-      cell_ = cell; 
-      if(cell->isIO()) isIO_ = true;
-    }
+    void setCell(Cell* cell) { cell_ = cell; }
 
     void updatePinLocation(Cell* cell);
 
@@ -210,11 +199,7 @@ class Pin
 
   private:
 
-    dbPin* dbPin_;
-    BsPin* bsPin_;
-
     int   id_;
-    char  io_;
     float cx_;
     float cy_;
     bool  isIO_;
@@ -236,13 +221,16 @@ class Pin
 // where we just assume that die ly ly is (0, 0).
 // So, if (lx, ly) of DEF DIEAREA is not (0, 0),
 // then this will make bug.
-// TODO: Consider Die Lx Ly
 class Die
 {
   public:
     Die() { lx_ = ly_ = ux_ = uy_ = 0; }
 
-    void init(const dbDie* die);
+    // These are core Lx Ly Ux Uy
+    void setLx(float val) { lx_ = val; }
+    void setLy(float val) { ly_ = val; }
+    void setUx(float val) { ux_ = val; }
+    void setUy(float val) { uy_ = val; }
 
     float lx() const { return lx_; }
     float ly() const { return ly_; }
@@ -394,9 +382,6 @@ class SkyPlaceDB
 
     void updateMacroDensityWeight(float macroWeight);
 
-    void writeBookShelf   (const std::filesystem::path& dir = "", bool isLg = false) const;
-    void writeDef         (const std::filesystem::path& dir = "", bool isLg = false) const;
-
     // Used by Initial Placer
     void moveCellInsideLayout(Cell* cell); 
     void setNumCluster(int numCluster) { numCluster_  = numCluster; }
@@ -414,8 +399,6 @@ class SkyPlaceDB
     const std::vector<Cell*>& movableCells() const { return movablePtrs_; }
 
     Die* die() const { return diePtr_; }
-
-    int dbUnit     ()  const { return dbUnit_;          }
 
     int numFixed   ()  const { return numFixed_;        }
     int numMovable ()  const { return numMovable_;      }
@@ -442,10 +425,6 @@ class SkyPlaceDB
     float binX    () const { return binX_;    }
     float binY    () const { return binY_;    }
 
-    bool ifBookShelf() const { return bookShelfFlag_; }
-    bool ifLefDef   () const { return lefDefFlag_;    }
-
-    float updateBBoxAndGetHpwl();
     void  updateHpwl          ();
     void  updatePinBound      (); // For B2B Model (CG-based Initialization)
   
@@ -460,10 +439,7 @@ class SkyPlaceDB
   private:
 
     // Shared Pointers
-    std::shared_ptr<BookShelfParser> dbBS_;
-    std::shared_ptr<LefDefParser>    dbLefDef_;
-
-    int dbUnit_;
+    std::shared_ptr<dbDatabase> dbDatabase_;
 
     std::string designName_;
     std::string designDir_;
@@ -546,9 +522,6 @@ class SkyPlaceDB
 
     float hpwl_;
 
-    bool bookShelfFlag_;
-    bool lefDefFlag_;
-
     // Database
     std::vector<Cell*> cellPtrs_; 
     std::vector<Cell>  cellInsts_; 
@@ -569,8 +542,8 @@ class SkyPlaceDB
     std::vector<Row*>  rowPtrs_;
     std::vector<Row>   rowInsts_;
 
-    std::unordered_map<int, Cell*>  cellMap_;
-    std::unordered_map<int,  Net*>   netMap_;
+    std::unordered_map<dbInst*, Cell*> dbInst2Cell_;
+    std::unordered_map<dbNet*, Net*>   dbNet2Net_;
 
     Die  die_;
     Die* diePtr_;
@@ -590,4 +563,4 @@ class SkyPlaceDB
     void printNetInfo(Net* net) const;
 };
 
-} // namespace SkyPlace
+} // namespace skyplace 

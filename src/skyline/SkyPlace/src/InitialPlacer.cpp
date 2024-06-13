@@ -1,13 +1,12 @@
-#include <stdio.h>
+#include <cstdio>
 #include <vector>
 #include <map>
 #include <random>
 #include <memory>
 
 #include "InitialPlacer.h"
-#include "PlacerDB.h"
 
-namespace SkyPlace
+namespace skyplace 
 {
 
 InitialPlacer::InitialPlacer()
@@ -17,7 +16,7 @@ InitialPlacer::InitialPlacer()
     randomInit_  (true)
 {}
 
-InitialPlacer::InitialPlacer(std::shared_ptr<PlacerDB> db)
+InitialPlacer::InitialPlacer(std::shared_ptr<SkyPlaceDB> db)
 {
   db_ = db;
 
@@ -28,10 +27,7 @@ InitialPlacer::InitialPlacer(std::shared_ptr<PlacerDB> db)
   minIter_        =           5; 
   netWeightScale_ =           1; // 800?
   minError_       =      1.0e-5;
-  if(db_->ifLefDef() )
-    minLength_    =        1500;
-  else
-    minLength_    =          25;
+  minLength_      =        1500;
 }
 
 void
@@ -264,4 +260,4 @@ InitialPlacer::updateCoordinates()
   }
 }
 
-}; // namespace SkyPlace
+}; // namespace skyplace 

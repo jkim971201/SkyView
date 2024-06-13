@@ -105,6 +105,7 @@ dbDatabase::readBookShelf(const char* fileName)
   std::cout << "Read   " << filenameStr << std::endl;
 
   bsReader_->readFile(filenameStr);
+  tech_->setDbu(bsReader_->dbuBookShelf());
 
   std::cout << "Finish " << filenameStr << std::endl;
 }

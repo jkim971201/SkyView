@@ -1,6 +1,8 @@
+#include <iostream>
+
 #include "FMPartitioner.h"
 
-namespace SkyPlace
+namespace skyplace 
 {
 
 // Graph-related
@@ -57,8 +59,6 @@ Graph::Graph(std::vector<Cell*>& cellList)
             if(pin2->cell() == cell2)
             {
               //std::cout << "Weight" << std::endl;
-              //std::cout << "Cell1 : " << cell1->bsCellPtr()->name() << std::endl;
-              //std::cout << "Cell2 : " << cell2->bsCellPtr()->name() << std::endl;
               edge_table[i][j] += 1;
               edge_table[j][i] += 1;
             }
@@ -90,7 +90,6 @@ Graph::Graph(std::vector<Cell*>& cellList)
 //    // Debugging
 //    Cell* cell1 = cellList[e.v1()->id()];
 //    Cell* cell2 = cellList[e.v2()->id()];
-//    std::cout << cell1->bsCellPtr()->name() << " - " << cell2->bsCellPtr()->name() << " " << e.weight() << std::endl;
   }
 
   for(auto & v : vertices_)

@@ -129,7 +129,7 @@ TargetFunction::setInitGammaInv(float val)
   wireLength_->setGammaInv(gammaInv_);
 }
 
-TargetFunction::TargetFunction(std::shared_ptr<PlacerDB> db, 
+TargetFunction::TargetFunction(std::shared_ptr<SkyPlaceDB> db, 
                                std::shared_ptr<WireLengthGradient> wireLength,
                                std::shared_ptr<DensityGradient> density,
                                HyperParam param)

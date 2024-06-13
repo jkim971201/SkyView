@@ -25,21 +25,21 @@ class dbMTerm
     void setBoundary(); // Set Boundary Box
 
     // Setters
-    void setName         (std::string  pinName ) { name_     = pinName;     }
-    void setMacro        (dbMacro*     lefMacro) { macro_    = lefMacro;    }
-    void setPinUsage     (PinUsage     pinUsage) { pinUsage_ = pinUsage;    }
-    void setPinDirection (PinDirection pinDir  ) { pinDir_   = pinDir;      }
-    void setPinShape     (PinShape     pinShape) { pinShape  = pinShape_;   }
-    void addRect         (dbRect&      rect    ) { rects_.push_back(rect);  }
-    void addRect         (dbRect       rect    ) { rects_.push_back(rect);  } 
+    void setName         (std::string  pinName ) { name_     = pinName;    }
+    void setMacro        (dbMacro*     lefMacro) { macro_    = lefMacro;   }
+    void setPinUsage     (PinUsage     pinUsage) { pinUsage_ = pinUsage;   }
+    void setPinDirection (PinDirection pinDir  ) { pinDir_   = pinDir;     }
+    void setPinShape     (PinShape     pinShape) { pinShape  = pinShape_;  }
+    void addRect         (dbRect&      rect    ) { rects_.push_back(rect); }
+    void addRect         (dbRect       rect    ) { rects_.push_back(rect); } 
     // overload of addRect
 
     // Getters
     // lx ly ux uy are coordinates of LEF PIN BBox
-    int lx() const { return lx_;             }
-    int ly() const { return ly_;             }
-    int ux() const { return ux_;             }
-    int uy() const { return uy_;             }
+    int lx() const { return lx_; }
+    int ly() const { return ly_; }
+    int ux() const { return ux_; }
+    int uy() const { return uy_; }
     int cx() const { return (ux_ + lx_) / 2; } // this works as offsetX
     int cy() const { return (uy_ + ly_) / 2; } // this works as offsetY
 

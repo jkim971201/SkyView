@@ -11,11 +11,8 @@
 
 #include "SkyPlaceDB.h"
 
-namespace SkyPlace
+namespace skyplace
 {
-
-using namespace LefDefDB;
-using namespace BookShelf;
 
 //////////////////////////////////////////////////////////
 
@@ -60,79 +57,32 @@ Cell::Cell()
     dDx_           (      0), 
     dDy_           (      0),
     densityScale_  (      1),
-    isIO_          (  false),
     isMacro_       (  false), 
     isFixed_       (  false),
     isFiller_      (  false),
-    bsCell_        (nullptr),
-    dbCell_        (nullptr)
+    dbInst_        (nullptr)
 {}
 
-Cell::Cell(dbIO* io) : Cell()
+Cell::Cell(dbInst* inst) : Cell()
 {
-  dbIO_ = io;
+  dbInst_  = inst;
+  isFixed_ = inst->isFixed();
+  isMacro_ = inst->isMacro();
 
-  dx_ = static_cast<float>(io->dx());
-  dy_ = static_cast<float>(io->dy());
-
-  cx_ = static_cast<float>(io->lx() + dx_ / 2);
-  cy_ = static_cast<float>(io->ly() + dy_ / 2);
-
-  isIO_    = true;
-  isFixed_ = true;
-}
-
-Cell::Cell(dbCell* cell) : Cell()
-{
-  dbCell_ = cell;
-
-  isFixed_ = cell->isFixed();
-  isMacro_ = cell->isMacro();
-
-  if( !isMacro_ )
+  if(!isMacro_)
   {
-    dx_ = static_cast<float>(cell->dx());
-    dy_ = static_cast<float>(cell->dy());
-
-    cx_ = static_cast<float>(cell->lx() + dx_ / 2);
-    cy_ = static_cast<float>(cell->ly() + dy_ / 2);
+    dx_ = static_cast<float>(inst->dx());
+    dy_ = static_cast<float>(inst->dy());
+    cx_ = static_cast<float>(inst->lx() + dx_ / 2);
+    cy_ = static_cast<float>(inst->ly() + dy_ / 2);
   }
   else
   {
-    dx_ = static_cast<float>(cell->dx() 
-                           + cell->haloR() 
-                           + cell->haloL() );
-
-    dy_ = static_cast<float>(cell->dy() 
-                           + cell->haloT() 
-                           + cell->haloB() );
-
-    cx_ = static_cast<float>(cell->lx() - cell->haloL() + dx_ / 2);
-    cy_ = static_cast<float>(cell->ly() - cell->haloB() + dy_ / 2);
+    dx_ = static_cast<float>(inst->dx() + inst->haloR() + inst->haloL());
+    dy_ = static_cast<float>(inst->dy() + inst->haloT() + inst->haloB());
+    cx_ = static_cast<float>(inst->lx() - inst->haloL() + dx_ / 2);
+    cy_ = static_cast<float>(inst->ly() - inst->haloB() + dy_ / 2);
   }
-}
-
-// height := criterion of macro
-Cell::Cell(BsCell* bsCell, float height) : Cell()
-{
-  bsCell_ = bsCell;
-
-  float bsCellDx = bsCell->dx();
-  float bsCellDy = bsCell->dy();
-
-  dx_ = static_cast<float>(bsCellDx);
-  dy_ = static_cast<float>(bsCellDy);
-
-  cx_ = static_cast<float>(bsCell->lx() + dx_ / 2);
-  cy_ = static_cast<float>(bsCell->ly() + dy_ / 2);
-
-  isFixed_ = bsCell->isFixed();
-
-  if(bsCellDy > height) 
-    isMacro_ = true;
-  else if(bsCellDy < 1.0)  
-    isIO_ = true; 
-  // In the MMS benchmark, IOs have zero size
 }
 
 // Constructor for Filler Cell
@@ -140,7 +90,6 @@ Cell::Cell(float cx, float cy, float dx, float dy) : Cell()
 {
   cx_ = cx;
   cy_ = cy;
-
   dx_ = dx;
   dy_ = dy;
 
@@ -169,8 +118,7 @@ Cell::setDensitySize(float dWidth, float dHeight, float dScale)
 
 // Pin // 
 Pin::Pin()
-  : io_           (    'I'), 
-    id_           (      0), 
+  : id_           (      0), 
     cx_           (      0), 
     cy_           (      0),
     isIO_         (  false),
@@ -181,27 +129,27 @@ Pin::Pin()
     isMaxPinX_    (  false), 
     isMaxPinY_    (  false),
     net_          (nullptr), 
-    cell_         (nullptr),
-    dbPin_        (nullptr),
-    bsPin_        (nullptr)
+    cell_         (nullptr)
 {}
 
-Pin::Pin(dbPin* pin, int id) : Pin()
+Pin::Pin(dbITerm* iterm, int id) : Pin()
 {
   id_ = id;
-  // io_ is not necessary right now...
-  dbPin_   = pin;
-  offsetX_ = static_cast<float>(pin->offsetX());
-  offsetY_ = static_cast<float>(pin->offsetY());
+  offsetX_ = static_cast<float>(iterm->getMTerm()->cx());
+  offsetY_ = static_cast<float>(iterm->getMTerm()->cy());
 }
 
-Pin::Pin(BsPin* bsPin, int id) : Pin()
+Pin::Pin(dbBTerm* bterm, int id) : Pin()
 {
   id_ = id;
-  io_ = bsPin->IO();
-  bsPin_ = bsPin;
-  offsetX_ = static_cast<float>(bsPin->offsetX());
-  offsetY_ = static_cast<float>(bsPin->offsetY());
+	int btermCx = bterm->cx();
+	int btermCy = bterm->cy();
+
+	cx_ = static_cast<float>(btermCx);
+	cy_ = static_cast<float>(btermCy);
+  offsetX_ = static_cast<float>(btermCx - bterm->lx());
+  offsetY_ = static_cast<float>(btermCy - bterm->ly());
+	isIO_ = true;
 }
 
 void
@@ -217,13 +165,12 @@ Pin::updatePinLocation(Cell* cell)
 // Net //
 Net::Net()
   : id_      (0      ),
-    lx_      (INT_MAX), 
+    lx_      (INT_MAX),
     ly_      (INT_MAX), 
     ux_      (INT_MIN), 
     uy_      (INT_MIN),
     weight_  (1.0    ),
-    dbNet_   (nullptr),
-    bsNet_   (nullptr)
+    dbNet_   (nullptr)
 {}
 
 Net::Net(dbNet* net, int id) : Net()
@@ -233,17 +180,10 @@ Net::Net(dbNet* net, int id) : Net()
   dbNet_  = net;
 }
 
-Net::Net(BsNet* bsNet, int id) : Net()
-{
-  id_     =  id;
-  weight_ = 1.0;
-  bsNet_  = bsNet;
-}
-
 void
 Net::updateBBox()
 {
-  if( pins_.size() == 0 )
+  if(pins_.size() == 0)
   {
     std::cout << "Warning - " << dbNetPtr()->name() << " has no pins.\n";
     lx_ = ly_ = ux_ = uy_ = 0;
@@ -251,10 +191,10 @@ Net::updateBBox()
   }
 
   // To detect an error,
-  // We initilize them as INT_MAX
+  // We initilize them as large integer.
   // so that an un-initilized net will
-  // make an invalid HPWL
-  lx_ = ly_ = FLT_MAX;
+  // make total HPWL invalid.
+  lx_ = ly_ = std::numeric_limits<float>::max();
   ux_ = uy_ = 0;
 
   for(auto& p : pins_)
@@ -264,24 +204,6 @@ Net::updateBBox()
     ux_ = std::max(p->cx(), ux_);
     uy_ = std::max(p->cy(), uy_);
   }
-}
-
-void
-Die::init(const BsDie* bsDie)
-{
-  lx_ = static_cast<float>(bsDie->lx());
-  ly_ = static_cast<float>(bsDie->ly());
-  ux_ = static_cast<float>(bsDie->ux());
-  uy_ = static_cast<float>(bsDie->uy());
-}
-
-void
-Die::init(const dbDie* die)
-{
-  lx_ = static_cast<float>(die->coreLx());
-  ly_ = static_cast<float>(die->coreLy());
-  ux_ = static_cast<float>(die->coreUx());
-  uy_ = static_cast<float>(die->coreUy());
 }
 
 // Bin //
@@ -325,39 +247,20 @@ Row::Row(dbRow* row)
   lx_ = row->origX();
   ly_ = row->origY();
 
-  ux_ = lx_ + row->sizeX();
-  uy_ = ly_ + row->sizeY();
+  ux_ = lx_ + row->dx();
+  uy_ = ly_ + row->dy();
 
   stepX_ = row->stepX();
   stepY_ = row->stepY();
 
-  siteWidth_ = row->siteWidth();
-}
-
-Row::Row(BsRow* row)
-{
-  numSiteX_ = row->numSites();
-  numSiteY_ = 1; 
-  // NumSitesY does not exist in Bookshelf .scl
-
-  lx_ = row->lx();
-  ly_ = row->ly();
-
-  ux_ = lx_ + row->ux();
-  uy_ = ly_ + row->uy();
-
-  stepX_ = row->siteWidth();
-  stepY_ = row->dy();
+  siteWidth_ = row->site()->sizeX();
 }
 
 // SkyPlaceDB // 
 SkyPlaceDB::SkyPlaceDB()
-  : dbLefDef_             (nullptr),
-    dbBS_                 (nullptr),
-    dbUnit_               (      1),
+  : dbDatabase_           (nullptr),
     designName_           (     ""),
     targetDensity_        (    1.0),
-    maxRowHeight_         (      0),
     numStdCells_          (      0), 
     numMacro_             (      0),
     numFixed_             (      0), 
@@ -376,222 +279,71 @@ SkyPlaceDB::SkyPlaceDB()
     hpwl_                 (      0), 
     binX_                 (      0), 
     binY_                 (      0),
-    lefDefFlag_           (  false),
-    bookShelfFlag_        (  false), 
     diePtr_               (nullptr),
     fillerWidth_          (      0), 
     fillerHeight_         (      0),
     numInitStep_          (      5)
-{}
-
-void
-SkyPlaceDB::bookShelfDBtoSkyPlaceDB()
 {
-  // Step #1: Build Cell Vector
-  int numCells = dbBS_->numCells();
-  cellInsts_.resize(numCells);
-  cellPtrs_.reserve(numCells);
-  fixedPtrs_.reserve(numFixed_);
-  movablePtrs_.reserve(numMovable_);
-
-  int cIdx = 0;
-  int fixedIdx   = 0;
-  int movableIdx = 0;
-  for(auto& cellInst : cellInsts_)
-  {
-    BsCell* bsCell = dbBS_->cellVector()[cIdx];
-    cellInst = Cell(bsCell, maxRowHeight_);
-    cellPtrs_.push_back(&cellInst);
-    cellMap_[bsCell->id()] = &cellInst;
-    cIdx++;
-
-    // For Information
-    if(cellInst.isFixed()) 
-    {
-      cellInst.setID(fixedIdx++);
-      fixedPtrs_.push_back(&cellInst);
-      if(!isOutsideDie(&cellInst))
-        sumFixedArea_ += cellInst.area();
-      else
-      {
-        // Assign as an IO pin
-        // ( ISPD 2005 adaptec benchmarks )
-        numIO_++;
-        cellInst.setIO(true);
-      }
-
-      if( cellInst.isMacro() )
-        numMacro_++;
-
-    }
-    else                    
-    {
-      cellInst.setID(movableIdx++);
-      movablePtrs_.push_back( &cellInst );
-      auto cellArea = cellInst.area();
-      sumMovableArea_ += cellArea;
-
-      if( cellInst.isMacro() )
-      {
-        sumMovableMacroArea_  += cellArea;
-        sumScaledMovableArea_ += cellArea * targetDensity_;
-        numMacro_++;
-        numMovableMacro_++;
-      }
-      else 
-      {
-        sumMovableStdArea_    += cellArea;
-        sumScaledMovableArea_ += cellArea;
-        numStdCells_++;
-      }
-    }
-
-    if( cellInst.isIO() )
-      numIO_++;
-  }
-
-  //printf("fixedIdx: %d numFixed_: %d numMacro_: %d\n", fixedIdx, numFixed_, numMacro_);
-
-  assert(fixedIdx == numFixed_);
-  assert(movableIdx == numMovable_);
-
-  // Step #2: Build Net Vector
-  int numNets = dbBS_->netVector().size();
-  netInsts_.resize(numNets);
-  netPtrs_.reserve(numNets);
-
-  int nIdx = 0;
-  for(auto& netInst : netInsts_)
-  {
-    BsNet* bsNet = dbBS_->netVector()[nIdx];
-    netInst = Net(bsNet, nIdx);
-    netPtrs_.push_back(&netInst);
-    netMap_[nIdx] = &netInst;
-    nIdx++;
-  }
-
-  // Step #3: Build Pin Vector
-  int numPins = dbBS_->pinVector().size();
-  pinInsts_.resize(numPins);
-  pinPtrs_.reserve(numPins);
-
-  int pIdx = 0;
-
-  auto netMapEnd  = netMap_.end();
-  auto cellMapEnd = cellMap_.end();
-
-  for(auto& pinInst : pinInsts_)
-  {
-    BsPin* bsPin = dbBS_->pinVector()[pIdx];
-    pinInst = Pin(bsPin, pIdx++);
-    pinPtrs_.push_back(&pinInst);
-
-    int bsNetID  = bsPin->net()->id();
-    int bsCellID = bsPin->cell()->id();
-
-    auto findNet  = netMap_.find(bsNetID);
-    auto findCell = cellMap_.find(bsCellID);
-
-    if( findNet != netMapEnd )
-    {
-      auto netPtr = findNet->second;
-      netPtr->addNewPin(&pinInst);
-      pinInst.setNet(netPtr);
-    }
-    else
-    {
-      printf("Net DB Construction Error.\n");
-      exit(0);
-    }
-
-    if( findCell != cellMapEnd )
-    {
-      auto cellPtr = findCell->second;
-      cellPtr->addNewPin(&pinInst);
-      pinInst.setCell(cellPtr);
-    }
-    else
-    {
-      printf("Cell DB Construction Error.\n");
-      exit(0);
-    }
-  }
-
-  // Step #4: Initialize Pin Location and NetBBox
-  updateHpwl();
-
-  // Step #5: Make Rows
-  int numRow = dbBS_->numRows();
-  rowInsts_.resize(numRow);
-  rowPtrs_.reserve(numRow);
-
-  int rowIdx = 0;
-  for(auto& row : rowInsts_)
-  {
-    row = Row(dbBS_->rowVector()[rowIdx++]);
-    rowPtrs_.push_back(&row);
-  }
+  diePtr_ = &die_;
 }
 
 void
-SkyPlaceDB::lefDefDBtoSkyPlaceDB()
+SkyPlaceDB::importDB()
 {
-  // Step #1: Build Cell Vector
-  int numCell    = dbLefDef_->numInst();
-  int numIO      = dbLefDef_->ios().size();
+  const auto design = dbDatabase_->getDesign();
 
-  int numInst    = numCell + numIO;
-  int numFixed   = dbLefDef_->numFixed() + numIO + dbLefDef_->numDummy();
-  int numMovable = numInst - numFixed;
+  const std::vector<dbNet*>&   db_nets   = design->getNets();
+  const std::vector<dbRow*>&   db_rows   = design->getRows();
+  const std::vector<dbInst*>&  db_insts  = design->getInsts();
+  const std::vector<dbITerm*>& db_iterms = design->getITerms();
+  const std::vector<dbBTerm*>& db_bterms = design->getBTerms();
 
-  cellInsts_.resize(numInst);
-  cellPtrs_.reserve(numInst);
-  fixedPtrs_.reserve(numFixed);
-  movablePtrs_.reserve(numMovable);
+  // Step #1: Initialize Die
+	die_.setLx(static_cast<float>(design->coreLx()));
+	die_.setLy(static_cast<float>(design->coreLy()));
+	die_.setUx(static_cast<float>(design->coreUx()));
+	die_.setUy(static_cast<float>(design->coreUy()));
+
+  // Step #2: Initialize Cell
+  int numInst = db_insts.size();
+
+  int numFixed   = 0;
+  int numMovable = 0;
 
   int cIdx = 0;
   int fixedIdx   = 0;
   int movableIdx = 0;
 
-  int cellVectorSize = dbLefDef_->cells().size();
+  cellInsts_.reserve(numInst);
+  cellPtrs_.reserve(numInst);
 
-  for( auto& cellInst : cellInsts_ )
+  for(auto& cellInst : cellInsts_ )
   {
-    if( cIdx < numCell )
-    {
-      dbCell* cell = dbLefDef_->cells()[cIdx];
-      cellInst = Cell(cell);
-      cellMap_[cell->id()] = &cellInst;
-    }
-    else
-    {
-      dbIO* io = dbLefDef_->ios()[cIdx - numCell];
-      cellInst = Cell(io);
-      cellMap_[io->id() + numCell] = &cellInst;
-    }
+    dbInst* inst_ptr = db_insts[cIdx];
+    cellInst = Cell(inst_ptr);
 
+    dbInst2Cell_[inst_ptr] = &cellInst;
     cellPtrs_.push_back(&cellInst);
+
     cIdx++;
 
-    // For Information
-    if(cellInst.isFixed())
-    {
+    if(cellInst.isFixed()) 
+		{
       cellInst.setID(fixedIdx++);
       fixedPtrs_.push_back(&cellInst);
       if(!isOutsideDie(&cellInst))
         sumFixedArea_ += cellInst.area();
-
-      if( cellInst.isMacro() )
+      if(cellInst.isMacro())
         numMacro_++;
     }
     else                    
     {
       cellInst.setID(movableIdx++);
-      movablePtrs_.push_back( &cellInst );
+      movablePtrs_.push_back(&cellInst);
       auto cellArea = cellInst.area();
       sumMovableArea_ += cellArea;
 
-      if( cellInst.isMacro() )
+      if(cellInst.isMacro())
       {
         sumMovableMacroArea_  += cellArea;
         sumScaledMovableArea_ += cellArea * targetDensity_;
@@ -605,34 +357,25 @@ SkyPlaceDB::lefDefDBtoSkyPlaceDB()
         numStdCells_++;
       }
     }
-
-    if( cellInst.isIO() )
-      numIO_++;
   }
 
-  //printf("fixedIdx: %d numFixed_: %d numMacro_: %d\n", fixedIdx, numFixed_, numMacro_);
-  //printf("movableIdx: %d numMovable_: %d\n", movableIdx, numMovable_);
-
-  assert(fixedIdx == numFixed_);
-  assert(movableIdx == numMovable_);
-
-  // Step #2: Build Net Vector
-  int numNets = dbLefDef_->nets().size();
+  // Step #3: Initialize Net
+  int numNets = db_nets.size();
   netInsts_.resize(numNets);
   netPtrs_.reserve(numNets);
 
   int nIdx = 0;
   for(auto& netInst : netInsts_)
   {
-    dbNet* net = dbLefDef_->nets()[nIdx];
-    netInst = Net(net, nIdx);
-    netPtrs_.push_back( &netInst );
-    netMap_[net->id()] = &netInst;
+    dbNet* net_ptr = db_nets[nIdx];
+    netInst = Net(net_ptr, nIdx);
+    netPtrs_.push_back(&netInst);
+    dbNet2Net_[net_ptr] = &netInst;
     nIdx++;
   }
 
-  // Step #3: Build Pin Vector
-  int numPins = dbLefDef_->pins().size();
+  // Step #4: Initialize Pin
+  int numPins = db_iterms.size() + db_bterms.size();
   pinInsts_.resize(numPins);
   pinPtrs_.reserve(numPins);
 
@@ -645,141 +388,88 @@ SkyPlaceDB::lefDefDBtoSkyPlaceDB()
 
   int pIdx = 0;
 
-  for( auto& dbNetPtr : dbLefDef_->nets() )
+  for(auto& dbNetPtr : db_nets)
   {
-    int dbNetID = dbNetPtr->id();
+    auto findNet = dbNet2Net_.find(dbNetPtr);
+    Net* netPtr = nullptr;
 
-    for( auto& dbPinPtr : dbNetPtr->pins() )
-    {
-      if( dbPinPtr->isExternal() )
+    if(findNet != dbNet2Net_.end())
+			netPtr = findNet->second;
+		else
+		{
+      std::cout << "Net " << dbNetPtr->name() << " does not exist in SkyPlaceDB.\n";
+  		exit(1);
+		}
+
+		// For dbBTerm
+    for(auto& bterm : dbNetPtr->getBTerms())
+		{
+			Pin& pinInstanceB = pinInsts_[pIdx];
+			pinInstanceB = Pin(bterm, pIdx);
+			pinInstanceB.setNet(netPtr);
+			netPtr->addNewPin(&pinInstanceB);
+			pinPtrs_.push_back(&pinInstanceB);
+			pIdx++;
+		}
+
+    dbInst* dbInstPtr = nullptr;
+    Cell* cellPtr = nullptr;
+
+		// For dbITerm
+    for(auto& iterm : dbNetPtr->getITerms())
+		{
+			Pin& pinInstanceI = pinInsts_[pIdx];
+			pinInstanceI = Pin(iterm, pIdx);
+			pinInstanceI.setNet(netPtr);
+			netPtr->addNewPin(&pinInstanceI);
+			pinPtrs_.push_back(&pinInstanceI);
+			dbInstPtr = iterm->getInst();
+			pIdx++;
+
+      auto findCell = dbInst2Cell_.find(dbInstPtr);
+      if(findCell != dbInst2Cell_.end())
       {
-        dbIOID = dbPinPtr->ioid();
-        cellIDForThisPin = dbIOID + numCell;
+			  cellPtr = findCell->second;
+				pinInstanceI.setCell(cellPtr);
+				cellPtr->addNewPin(&pinInstanceI);
       }
-      else
-      {
-        dbCellID = dbPinPtr->cid();
-        cellIDForThisPin = dbCellID;
-      }
-
-      auto findNet  = netMap_.find(dbNetID);
-      auto findCell = cellMap_.find(cellIDForThisPin);
-
-      if( findNet == netMap_.end() || findCell == cellMap_.end() )
-      {
-        if(findNet  ==  netMap_.end() )
-          std::cout << "Net " << dbNetPtr->name() << " does not exist\n";
-        if(findCell == cellMap_.end() ) 
-        {
-          if( dbPinPtr->isExternal() )
-            std::cout << "IO " << dbLefDef_->ios()[dbIOID] << " does not exist\n";
-          else
-            std::cout << "Cell " << dbLefDef_->cells()[dbCellID] << " does not exist\n";
-        }
-        exit(0);
-      }
-
-      Pin* pinPtr = &(pinInsts_[pIdx]);
-      int dbPinID = dbPinPtr->id();
-
-      auto netPtr  = findNet->second;
-      auto cellPtr = findCell->second;
-
-      *pinPtr = Pin( dbLefDef_->pins()[dbPinID] , pIdx );
-
-      netPtr->addNewPin(pinPtr);
-      cellPtr->addNewPin(pinPtr);
-
-      pinPtr->setNet(netPtr);
-      pinPtr->setCell(cellPtr);
-
-      pinPtrs_.push_back( pinPtr );
-      pIdx++;
-    }
+			else
+			{
+        std::cout << "Cell " << dbInstPtr->name() << " does not exist in SkyPlaceDB.\n";
+  			exit(1);
+			}
+		}
   }
 
-  // Step #4: Initialize Pin Location and NetBBox
+  // Step #5: Initialize Pin Location and NetBBox
   updateHpwl();
 
-  // Step #5: Make Rows
-  int numRow = dbLefDef_->numRow();
+  // Step #6: Make Rows
+  int numRow = db_rows.size();
   rowInsts_.resize(numRow);
   rowPtrs_.reserve(numRow);
 
   int rowIdx = 0;
   for(auto& row : rowInsts_)
   {
-    row = Row(dbLefDef_->rows()[rowIdx++]);
+    row = Row(db_rows[rowIdx++]);
     rowPtrs_.push_back(&row);
   }
 }
 
 void
-SkyPlaceDB::setDB(std::shared_ptr<BookShelfParser> bsParser)
+SkyPlaceDB::setDB(std::shared_ptr<dbDatabase> db)
 {
   printf("Start SkyPlaceDB Initialization.\n");
 
-  dbBS_        = bsParser;
-  dbUnit_      = 1;
-  designName_  = std::string(bsParser->getBenchName());
-  designDir_   = std::string(bsParser->getDir() );
+  dbDatabase_  = db;
+  designName_  = db->getDesign()->name();
 
-  maxRowHeight_ = dbBS_->rowHeight();
-  if(maxRowHeight_ <= 0)
-  {
-    printf("Error - Row Height must be larger than 0!\n");
-    exit(0);
-  }
-
-  bookShelfFlag_ = true;
-  lefDefFlag_    = false;
-
-  die_.init(dbBS_->getDie());
-  diePtr_ = &die_;
-
-  numFixed_   = dbBS_->numFixed() + dbBS_->numFixedNI();
-  numMovable_ = dbBS_->numMovable();
-
-  bookShelfDBtoSkyPlaceDB();
-  printf("BookShelf to SkyPlaceDB   ---> Finished. (Step 1 / %d)\n", numInitStep_);
+  importDB();
+  printf("Import Database           ---> Finished. (Step 1 / %d)\n", numInitStep_);
 
   init();
-  printf("SkyPlaceDB is initilazed successfully!\n");
 
-  printInfo();
-}
-
-void
-SkyPlaceDB::setDB(std::shared_ptr<LefDefParser> parser)
-{
-  printf("Start SkyPlaceDB Initialization.\n");
-
-  dbLefDef_    = parser;
-  dbUnit_      = parser->dbUnit();
-  designName_  = std::string( parser->designName() );
-  designDir_   = std::string( parser->getDir() );
-
-  // Assume that every row has same height
-  maxRowHeight_ = dbLefDef_->rows()[0]->sizeY();
-  if(maxRowHeight_ <= 0)
-  {
-    printf("Error - Row Height must be larger than 0!\n");
-    exit(0);
-  }
-
-  bookShelfFlag_ = false;
-  lefDefFlag_    = true;
-
-  die_.init( dbLefDef_->die() );
-  diePtr_ = &die_;
-
-  numFixed_   = dbLefDef_->numFixed() + dbLefDef_->ios().size() + dbLefDef_->numDummy();
-  numMovable_ = dbLefDef_->numInst() - dbLefDef_->numFixed() - dbLefDef_->numDummy();
-
-  lefDefDBtoSkyPlaceDB();
-  printf("LefDefDB to SkyPlaceDB    ---> Finished. (Step 1 / %d)\n", numInitStep_);
-
-  init();
   printf("SkyPlaceDB is initilazed successfully!\n");
 
   printInfo();
@@ -801,19 +491,6 @@ SkyPlaceDB::updateHpwl()
     n->updateBBox();
     hpwl_ += n->hpwl();
   }
-}
-
-float
-SkyPlaceDB::updateBBoxAndGetHpwl()
-{
-  hpwl_ = 0;
-  // Initilize Net BBox
-  for(auto& n : netPtrs_)
-  {
-    n->updateBBox();
-    hpwl_ += n->hpwl();
-  }
-  return hpwl_;
 }
 
 bool
@@ -839,8 +516,8 @@ SkyPlaceDB::updatePinBound()
     Pin* maxPinX = nullptr;
     Pin* maxPinY = nullptr;
 
-    float minX = FLT_MAX;
-    float minY = FLT_MAX;
+    float minX = std::numeric_limits<float>::max();
+    float minY = std::numeric_limits<float>::max();
     float maxX = 0;
     float maxY = 0;
 
@@ -952,7 +629,7 @@ SkyPlaceDB::createBins()
     if(numBin >= 8192)
       break;
   }
-	numBin /= 2;
+  numBin /= 2;
 
   if(dieX > dieY)
   {
@@ -1407,10 +1084,8 @@ SkyPlaceDB::printInfo() const
 {
   using namespace std;
 
-  float initHpwl = hpwl_;
-
-  if(lefDefFlag_)
-    initHpwl /= static_cast<float>(dbLefDef_->dbUnit());
+  float initHpwl = hpwl_ / dbDatabase_->getTech()->getDbu();
+	// Zero Check is done in init()
 
   cout << endl;
   cout << "*** Summary of SkyPlaceDB ***" << endl;
@@ -1447,317 +1122,6 @@ SkyPlaceDB::printInfo() const
   cout << " INITIAL HPWL       : " << initHpwl << endl;
   cout << "---------------------------------------------" << endl;
   cout << endl;
-}
-
-void
-SkyPlaceDB::writeBookShelf(const std::filesystem::path& dir, bool isLg) const
-{
-  std::string benchName = designName_;
-  std::string outputDir = designDir_;
-
-  if(dir != "")
-    outputDir = std::string(dir) + "/";
-
-  std::string auxFileName = outputDir + benchName + ".gp.aux";
-  std::string plFileName  = outputDir + benchName + ".gp.pl";
-  
-  std::string command = "mkdir -p " + outputDir;
-
-  std::system(command.c_str());
-
-  // Step #1. Write .aux file 
-  std::ofstream aux_output;
-  aux_output.open(auxFileName);
-
-  aux_output << "RowBasedPlacement : ";
-  aux_output << benchName + ".nodes ";
-  aux_output << benchName + ".nets ";
-  aux_output << benchName + ".wts ";
-  aux_output << benchName + ".gp.pl ";
-  aux_output << benchName + ".scl";
-
-  aux_output.close();
-
-  // Step #2. Write .pl file 
-  // Print Headline
-  std::ofstream pl_output;
-  pl_output.open(plFileName);
-
-  pl_output << "UCLA pl 1.0" << std::endl;
-  pl_output << "# User: Annonymous" << std::endl;
-  pl_output << std::endl;
-
-  for(auto& cell : cellInsts_)
-  {
-    if(cell.isFiller())
-      continue;
-    pl_output << cell.bsCellPtr()->name() << " ";
-    pl_output << cell.lx() << " ";
-    pl_output << cell.ly() << " : N";
-    if(cell.isFixed())
-      pl_output << " /FIXED";
-    pl_output << std::endl;
-  }
-
-  pl_output.close();
-
-  printf("Write results to %s.\n", plFileName.c_str());
-}
-
-// TODO: Be sure about backslash convention of .def and .v
-void modifyComponentName(std::string& compName)
-{
-  bool busComponent = false;
-  size_t bracketPos1 = compName.find("[");
-  while(bracketPos1 != std::string::npos)
-  {
-    compName.replace(bracketPos1, 1, "\\[");
-    bracketPos1 = compName.find("[", bracketPos1 + 2);
-    busComponent = true;
-  }
-  
-  size_t bracketPos2 = compName.find("]");
-  while(bracketPos2 != std::string::npos)
-  {
-    compName.replace(bracketPos2, 1, "\\]");
-    bracketPos2 = compName.find("]", bracketPos2 + 2);
-    busComponent = true;
-  }
-
-  size_t findDollar = compName.find("$");
-  if(findDollar != std::string::npos)
-    busComponent = true;
-
-  if(compName[0] == '\\')
-    compName = compName.substr(1, compName.size() - 1);
-}
-
-void modifyNetName(const dbNet* net, std::string& netName)
-{
-	// Do not insert backslash for PIN NET (ex. input wire key[127:0])
-	for(auto& pin : net->pins())
-	{
-		if(pin->isExternal())
-			return;
-	}
-
-  bool busComponent = false;
-  size_t bracketPos1 = netName.find("[");
-  while(bracketPos1 != std::string::npos)
-  {
-    netName.replace(bracketPos1, 1, "\\[");
-    bracketPos1 = netName.find("[", bracketPos1 + 2);
-    busComponent = true;
-  }
-  
-  size_t bracketPos2 = netName.find("]");
-  while(bracketPos2 != std::string::npos)
-  {
-    netName.replace(bracketPos2, 1, "\\]");
-    bracketPos2 = netName.find("]", bracketPos2 + 2);
-    busComponent = true;
-  }
-
-  size_t findDollar = netName.find("$");
-  if(findDollar != std::string::npos)
-    busComponent = true;
-
-  if(netName[0] == '\\')
-    netName = netName.substr(1, netName.size() - 1);
-}
-
-void
-SkyPlaceDB::writeDef(const std::filesystem::path& dir, bool isLg) const
-{
-  std::string benchName = designName_;
-  std::string outputDir = dbLefDef_->getDir() + "/";
-
-  if(dir != "")
-    outputDir = std::string(dir) + "/";
-
-  std::string defFileName = outputDir + benchName;
-	defFileName += (isLg == true) ? "_lg.def" : "_gp.def";
-
-  int dbUnit = dbLefDef_->dbUnit();
-
-  // Step #1. Copy Coordinates from SkyPlaceDB to LefDefDB
-  for(auto& cell : cellPtrs_)
-  {
-    if(cell->dbCellPtr() == nullptr)
-      continue;
-
-    auto _dbCellPtr = cell->dbCellPtr();
-
-    int lxInt = static_cast<int>( cell->lx() );
-    int lyInt = static_cast<int>( cell->ly() );
-
-    _dbCellPtr->setLx( lxInt );
-    _dbCellPtr->setLy( lyInt );
-  }
-
-  // Step #2. Make Def file
-  std::ofstream def_output;
-  def_output.open(defFileName);
-
-  def_output << "# Created by Annonymous \n";
-  def_output << "# " <<  __DATE__ << " " << __TIME__ << "\n";
-  def_output << "\n";
-  def_output << "VERSION 5.8 ;\n";
-  def_output << "DIVIDERCHAR \"/\" ;\n";
-  def_output << "BUSBITCHARS \"[]\" ;\n";
-  def_output << "DESIGN " << dbLefDef_->designName() << " ;\n";
-  def_output << "UNITS DISTANCE MICRONS " << dbUnit << " ;\n";
-
-  // Step #3. Write DIEAREA
-  int dieLx = dbLefDef_->die()->lx();
-  int dieLy = dbLefDef_->die()->ly();
-  int dieUx = dbLefDef_->die()->ux();
-  int dieUy = dbLefDef_->die()->uy();
-
-  def_output << "DIEAREA ";
-  def_output << "( " << dieLx << " " << dieLy << " ) ";
-  def_output << "( " << dieUx << " " << dieUy << " ) ;\n";
-
-  // Step #4. Write ROW Info
-  for(auto& row : dbLefDef_->rows() )
-  {
-    def_output << "ROW " << row->name() << " " << row->lefSite()->name() << " ";
-    def_output << row->origX() << " " << row->origY() << " ";
-
-    auto orient = row->orient();
-    if(orient == Orient::N)
-      def_output << "N ";
-    else if(orient == Orient::FS)
-      def_output << "FS ";
-    else 
-      def_output << "N ";
-    // We only support N and FS for dbRow yet
-
-    def_output << "DO "   << row->numSiteX() << " BY " << row->numSiteY() << " ";
-    def_output << "STEP " << row->stepX() << " " << row->stepY() << " ;\n";
-  }
-
-  // Step #5. Write COMPONENTS Info
-  def_output << "\n";
-  def_output << "COMPONENTS " << dbLefDef_->cells().size() << " ;\n";
-
-  for(auto& cell : dbLefDef_->cells())
-  {
-    std::string compName = cell->name();
-   
-    modifyComponentName(compName);
-
-    def_output << "    - ";
-    def_output << compName << " ";
-    def_output << cell->lefMacro()->name() << " ";
-
-//    def_output << "+ SOURCE ";
-//    auto source = cell->source();
-//    if(source == Source::DIST)
-//      def_output << "DIST ";
-//    else if(source == Source::NETLIST)
-//      def_output << "NETLIST ";
-//    else if(source == Source::TIMING)
-//      def_output << "TIMING ";
-//    else if(source == Source::USER)
-//      def_output << "USER ";
-
-    def_output << "+";
-    if(cell->isFixed())
-      def_output << " FIXED ";
-    else
-      def_output << " PLACED ";
-
-    def_output << "( " << cell->lx() << " " << cell->ly() << " )";
-
-    auto orient = cell->orient();
-    if(orient == Orient::N)
-      def_output << " N ;\n";
-    else if(orient == Orient::S)
-      def_output << " S ;\n";
-    else if(orient == Orient::FN)
-      def_output << " FN ;\n";
-    else if(orient == Orient::FS)
-      def_output << " FS ;\n";
-  }
-
-  def_output << "END COMPONENTS" << std::endl;
-
-  // Step #6. Write external PINS Info
-  def_output << "\n";
-  def_output << "PINS " << dbLefDef_->ios().size() << " ;\n";
-
-  for(auto& io : dbLefDef_->ios())
-  {
-    def_output << "- ";
-    def_output << io->name() << " + NET " << io->pin()->net()->name() << "\n";
-    def_output << "\t" << "+ DIRECTION ";
-
-    auto direction = io->direction();
-    if(direction == PinDirection::INPUT)
-      def_output << "INPUT\n";
-    else if(direction == PinDirection::OUTPUT)
-      def_output << "OUTPUT\n";
-    else if(direction == PinDirection::INOUT)
-      def_output << "INOUT\n";
-
-    def_output << "\t" << "+ FIXED ";
-    def_output << "( " << io->origX() << " " << io->origY() << " )";
-
-    auto orient = io->orient();
-    if(orient == Orient::N)
-      def_output << " N\n";
-    else if(orient == Orient::E)
-      def_output << " E\n";
-    // For external pins, only N and E are supported yet.
-
-    def_output << "\t" << "+ LAYER ";
-    def_output << io->layer();
-    def_output << " ( " << io->offsetX1() << " " << io->offsetY1() << " )";
-    def_output << " ( " << io->offsetX2() << " " << io->offsetY2() << " ) ;\n";
-  }
-
-  def_output << "END PINS" << std::endl;
-
-  // Step #7. Write NETS Info
-  def_output << "\n";
-  def_output << "NETS " << dbLefDef_->nets().size() << " ;\n";
-
-  for(auto& net : dbLefDef_->nets())
-  {
-    std::string netName = net->name();
-    modifyNetName(net, netName);
-
-    def_output << "- ";
-    def_output << netName << "\n";
-
-    for(auto& pin : net->pins())
-    {
-      def_output << "( ";
-
-      if(pin->isExternal())
-        def_output << "PIN " << pin->name();
-      else
-			{
-				std::string compNameOfThisPin = pin->cell()->name();
-				modifyComponentName(compNameOfThisPin);
-        def_output << compNameOfThisPin << " " << pin->lefPin()->name();
-			}
-
-      def_output << " ) " << std::endl;
-    }
-
-    def_output << ";" << std::endl;
-  }
-
-  def_output << "END NETS" << std::endl;
-
-  def_output << std::endl;
-
-  def_output << "END DESIGN" << std::endl;
-  def_output.close();
-
-  printf("Write results to %s.\n", defFileName.c_str());
 }
 
 void
@@ -1860,4 +1224,4 @@ SkyPlaceDB::printNetInfo(Net* net) const
     printf("ID: %d (%f, %f) Cell: %d\n", pin->id(), pin->cx(), pin->cy(), pin->cell()->id());
 }
 
-} // namespace SkyPlace
+} // namespace skyplace

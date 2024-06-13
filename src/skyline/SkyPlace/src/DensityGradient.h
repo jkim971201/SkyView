@@ -19,7 +19,7 @@ class DensityGradient
   public:
     
     DensityGradient();
-    DensityGradient(std::shared_ptr<PlacerDB> db);
+    DensityGradient(std::shared_ptr<SkyPlaceDB> db);
 
     ~DensityGradient();
 
@@ -88,7 +88,7 @@ class DensityGradient
 
     bool localLambdaMode_;
 
-    std::shared_ptr<PlacerDB>      db_;
+    std::shared_ptr<SkyPlaceDB>      db_;
     std::unique_ptr<PoissonSolver> poissonSolver_;
 
     // Device Data

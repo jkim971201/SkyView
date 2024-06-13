@@ -22,8 +22,7 @@ SkyPlace::SkyPlace()
     localLambdaMode_   (false  ),
     guiMode_           (false  ),
     plotMode_          (false  ),
-    outputDir_         (""     ),
-    isLegalized_       (false  )
+    outputDir_         (""     )
 {
   db_ = std::make_shared<SkyPlaceDB>();
 }
@@ -53,8 +52,6 @@ SkyPlace::makeSubTools()
 
   // Make Target Function
   targetFunc_ = std::make_shared<TargetFunction>(db_, wireLength_, density_, param_);
-
-  legalizer_ = std::make_shared<Legalizer>(db_);
 
   std::clock_t end = std::clock(); // Clock End
 
@@ -134,32 +131,10 @@ SkyPlace::doPlace()
 
   // TODO : Fix mismatch between hpwl_ of Optimizer class and SkyPlaceDB
   db_->updateHpwl();
-  //legalizer_->legalize();
-
-//  if( db_->ifLefDef() )
-//    db_->writeDef(outputDir_);       // Finish : Write results to .def file
-//  else if( db_->ifBookShelf() ) 
-//    db_->writeBookShelf(outputDir_); // Finish : Write results to .pl  file
 
   // GUI
   if(guiMode_)
     showFinalPlace();
-}
-
-void
-SkyPlace::legalize()
-{
-  legalizer_->legalize();
-  isLegalized_ = true;
-}
-
-void
-SkyPlace::writeResult()
-{
-  if( db_->ifLefDef() )
-    db_->writeDef(outputDir_, isLegalized_);       // Finish : Write results to .def file
-  else if( db_->ifBookShelf() ) 
-    db_->writeBookShelf(outputDir_, isLegalized_); // Finish : Write results to .pl  file
 }
 
 void
@@ -206,20 +181,17 @@ SkyPlace::printStat(Stat finalStat)
   printf(" Final Statistic\n");
   printf(" ==================================================\n");
   printf("  | Benchmark      | %-10s    \n", db_->designName().c_str());
-  if( db_->ifLefDef() )
-    printf("  | HPWL           | %-10.1f um\n", finalStat.hpwl / db_->dbUnit());
-  else
-    printf("  | HPWL           | %-10.3f  \n", finalStat.hpwl / 1e6);
+  printf("  | HPWL           | %-10.1f um\n", finalStat.hpwl / db_->getTech()->getDbu());
   printf("  | Overflow       | %-10.3f  \n", finalStat.overflow);
   printf("  | # Iteration    | %-10d    \n", finalStat.iter);
   printf("  | Time DB        | %-5.1f   \n", dbTime);
   printf("  | Time IP        | %-5.1f   \n", ipTime);
   printf("  | Time NonLinOpt | %-5.1f   \n", gpTime);
-  printf("  | Time WL Grad   | %-5.1f (%3.1f%%) \n", wlGradTime    , wlGradTime    / gpTime * 100);
-  printf("  | Time Den Grad  | %-5.1f (%3.1f%%) \n", denGradTime   , denGradTime   / gpTime * 100);
-  printf("    - Time Poisson   | %-5.1f (%3.1f%%) \n", poissonTime   , poissonTime   / gpTime * 100);
+  printf("  | Time WL Grad   | %-5.1f (%3.1f%%) \n", wlGradTime, wlGradTime / gpTime * 100);
+  printf("  | Time Den Grad  | %-5.1f (%3.1f%%) \n", denGradTime, denGradTime / gpTime * 100);
+  printf("    - Time Poisson   | %-5.1f (%3.1f%%) \n", poissonTime, poissonTime/ gpTime * 100);
   printf("    - Time BinDenUp  | %-5.1f (%3.1f%%) \n", binDensityTime, binDensityTime/ gpTime * 100);
-  printf("  | Time OptInit   | %-5.1f (%3.1f%%) \n", initTime      , initTime      / gpTime * 100);
+  printf("  | Time OptInit   | %-5.1f (%3.1f%%) \n", initTime, initTime / gpTime * 100);
   printf("  | Time Total     | %-5.1f   \n", totalTime);
   printf("  | Converge?      | %-5d     \n", finalStat.converge);
   printf(" ==================================================\n");

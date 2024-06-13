@@ -11,8 +11,9 @@ namespace db
 
 dbBookShelfReader::dbBookShelfReader(std::shared_ptr<dbTypes>  types,
                                      std::shared_ptr<dbDesign> design)
-  : types_  ( types),
-    design_ (design)
+  : types_        (types),
+    design_       (design),
+		dbuBookShelf_ (0)
 {
   bsParser_ = std::make_unique<BookShelfParser>();
 }
@@ -45,7 +46,12 @@ dbBookShelfReader::convert2db()
   // so we need a scaling factor to
   // convert to integer data of dbInst, dbDie, ...
   // 10 is just a magic number.
+	// (but this has be an even number because
+	// all the numbers of bookshelf files are
+	// multiplies of 0.5)
   constexpr int dbuBookShelf = 10;
+	assert(dbuBookShelf >= 2);
+	dbuBookShelf_ = dbuBookShelf;
 
   auto convert2dbDie = [&] (BsDie* bsDie)
   {
@@ -82,7 +88,7 @@ dbBookShelfReader::convert2db()
     return newRow;
   };
 
-  // These dbMacros will not be registed to dbTech.
+  // These dbMacros will not be registered to dbTech.
   // These are only to avoid dbInst making segmentation fault
   // due to dbInst methods that use dbMacro pointer.
   std::map<std::pair<int, int>, dbMacro*> size2macro;
@@ -143,10 +149,12 @@ dbBookShelfReader::convert2db()
     return newIO;
   };
 
-  // These dbMTerms will not be registed to dbTech.
+  // These dbMTerms will not be registered to dbTech.
   // These are only to avoid dbITerm making segmentation fault
   // (just same as dbMacros above)
   std::map<dbMacro*, std::map<std::pair<int, int>, dbMTerm*>> mterm_table;
+
+  auto& dbITermVector = design_->getITerms();
 
 	// To initialize map of map
 	for(auto& kv : size2macro)
@@ -216,6 +224,8 @@ dbBookShelfReader::convert2db()
 
 				// Finish ITerm
         newNet->addITerm(newITerm);
+				dbITermVector.push_back(newITerm); 
+				// new dbITerm should be added to dbDatabse
       }
       else
       {

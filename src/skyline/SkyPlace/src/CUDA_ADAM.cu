@@ -2,7 +2,6 @@
 #include <memory>
 #include <cassert>
 #include <cmath>
-#include <climits> // for MAX FLOAT
 
 #include "CUDA_UTIL.h"
 #include "AdamOptimizer.h"
@@ -106,8 +105,8 @@ AdamOptimizer::AdamOptimizer()
     adTime_                     (0.0)
 {}
 
-AdamOptimizer::AdamOptimizer(SkyPlace::HyperParam            param,
-                             std::shared_ptr<PlacerDB>       db,
+AdamOptimizer::AdamOptimizer(HyperParam                      param,
+                             std::shared_ptr<SkyPlaceDB>     db,
                              std::shared_ptr<TargetFunction> func,
                              std::shared_ptr<Painter>        painter) 
   : AdamOptimizer()

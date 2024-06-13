@@ -601,7 +601,6 @@ Painter::drawIO(CImgObj *img, const Cell* cell,
   }
   else
   {
-    //std::cout << "CellName: " << cell->bsCellPtr()->name() << std::endl;
     //printf("IO  (%10.0f, %10.0f) - (%10.0f, %10.0f)\n",  ioLx,  ioLy,  ioUx,  ioUy);
     //printf("Die (%10.0f, %10.0f) - (%10.0f, %10.0f)\n", dieLx, dieLy, dieUx, dieUy);
     p1X = ioLx - 0.5   * (lenIO_ * 0.1);
@@ -622,7 +621,6 @@ Painter::drawIO(CImgObj *img, const Cell* cell,
   p3Xi = getX(p3X);
   p3Yi = getY(p3Y);
 
-//  std::cout << "Name: " << cell->bsCellPtr()->name() << std::endl;
 //  std::cout << "Lx: " << ioLx << std::endl;
 //  std::cout << "Ly: " << ioLy << std::endl;
 //  std::cout << "Ux: " << ioUx << std::endl;
@@ -1064,8 +1062,7 @@ Painter::makeDir()
   std::string benchName = db_->designName();
   std::string benchDir  = db_->designDir();
 
-  if(db_->ifLefDef())
-    benchDir += "/";
+  benchDir += "/";
 
   outputDir_ = benchDir + "cell_plot/";
 
