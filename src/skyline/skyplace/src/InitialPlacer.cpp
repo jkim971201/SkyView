@@ -57,6 +57,7 @@ InitialPlacer::InitialPlacer()
 {}
 
 InitialPlacer::InitialPlacer(std::shared_ptr<SkyPlaceDB> db)
+	: InitialPlacer()
 {
   db_ = db;
 

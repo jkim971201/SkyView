@@ -31,6 +31,7 @@ SkyPlace::SkyPlace(std::shared_ptr<dbDatabase> db)
     plotMode_          (false  ),
     outputDir_         (""     )
 {
+	opt_ = OptimizerType::Nesterov;
   db_ = std::make_shared<SkyPlaceDB>();
 }
 
@@ -107,6 +108,9 @@ SkyPlace::preamble()
   db_->init(dbDatabase_);
 
   // 2. Make SubTools
+    // Make HyperParameter
+    param_ = std::make_shared<HyperParam>();
+
     // Make InitialPlacer
     initialPlacer_ = std::make_unique<InitialPlacer>(db_);
 
@@ -171,6 +175,8 @@ SkyPlace::run()
     adOptimizer_ = std::make_unique<AdamOptimizer>(param_, db_, targetFunc_, painter_);
   else if(opt_ == OptimizerType::Nesterov)
     ntOptimizer_ =std::make_unique<NesterovOptimizer>(param_, db_, targetFunc_, painter_);
+	else
+		assert(0);
 
   printf("[SkyPlace] Local Lambda Mode : %s\n", (localLambdaMode_  ? "ON" : "OFF"));
   printf("[SkyPlace] GIF Plot Mode     : %s\n", (plotMode_         ? "ON" : "OFF"));
@@ -188,6 +194,8 @@ SkyPlace::run()
     finalStat = ntOptimizer_->startOptimize(plotMode_);
   else if(opt_ == OptimizerType::Adam)
     finalStat = adOptimizer_->startOptimize(plotMode_);
+	else
+		assert(0);
 
   auto t2 = std::chrono::high_resolution_clock::now();
 
@@ -212,7 +220,13 @@ void
 SkyPlace::doInitialPlace()
 {
   printf("[SkyPlace] Start Initial Place.\n");
-  initialPlacer_->doInitialPlace();
+  if(initialPlacer_ != nullptr)
+    initialPlacer_->doInitialPlace();
+	else
+	{
+		printf("InitialPlacer is not made...\n");
+		exit(1);
+	}
   printf("[SkyPlace] Finish Initial Place.\n");
 }
 

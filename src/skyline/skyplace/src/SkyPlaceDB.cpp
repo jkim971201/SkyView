@@ -340,14 +340,11 @@ SkyPlaceDB::importDB(std::shared_ptr<dbDatabase> _dbDatabase)
   // Step #2: Initialize Cell
   int numInst = db_insts.size();
 
-  int numFixed   = 0;
-  int numMovable = 0;
-
   int cIdx = 0;
   int fixedIdx   = 0;
   int movableIdx = 0;
 
-  cellInsts_.reserve(numInst);
+  cellInsts_.resize(numInst);
   cellPtrs_.reserve(numInst);
 
   for(auto& cellInst : cellInsts_ )
@@ -488,6 +485,10 @@ SkyPlaceDB::importDB(std::shared_ptr<dbDatabase> _dbDatabase)
     row = Row(db_rows[rowIdx++]);
     rowPtrs_.push_back(&row);
   }
+
+	// Finish -> assign number variables
+	numMovable_ = movablePtrs_.size();
+	numFixed_   = fixedPtrs_.size();
 }
 
 void
@@ -497,6 +498,7 @@ SkyPlaceDB::init(std::shared_ptr<dbDatabase> db)
 
   reset();
 
+	dbu_ = db->getTech()->getDbu();
   designName_ = db->getDesign()->name();
 
   // Step#1: Import dbDatabase to SkyPlaceDB
@@ -613,11 +615,6 @@ SkyPlaceDB::updatePinBound()
     }
   }
 }
-
-void
-SkyPlaceDB::init()
-{
- }
 
 void
 SkyPlaceDB::createBins()

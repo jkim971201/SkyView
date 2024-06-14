@@ -377,7 +377,7 @@ class SkyPlaceDB
 
     // Important APIs
     void reset();
-    void init(std::shared_ptr<dbDatabase> db);
+    void init(std::shared_ptr<dbDatabase> db); // Initialization to run placement 
     void setTargetDensity (float density) { targetDensity_ = density; }
     void setNumBinX       (int   numBinX) { numBinX_       = numBinX; }     
     void setNumBinY       (int   numBinY) { numBinY_       = numBinY; }     
@@ -464,14 +464,13 @@ class SkyPlaceDB
     // Technology-Related
     float maxRowHeight_;
 
-    // Sub-Routines after setDB()
-    void importDB(std::shared_ptr<dbDatabase> _dbDatabase);
-    void init(); // Initialization for main placement iteration
-    void createBins               ();  // Step#1
-    void createFillers            ();  // Step#2
-    void updateDensitySize        ();  // Step#3
-    void updateFixedOverlapArea   ();  // Step#4
-    int  numInitStep_;                 // For messaging
+    // Sub-Routines of init                         
+    void importDB(std::shared_ptr<dbDatabase> _dbDatabase); // Step#1
+    void createBins            ();  // Step#2
+    void createFillers         ();  // Step#3
+    void updateDensitySize     ();  // Step#4
+    void updateFixedOverlapArea();  // Step#5
+    int  numInitStep_;              // For messaging
 
     // Bin-related Methods
     OverlapBins findBin                  (const Cell* cell);
