@@ -1,4 +1,5 @@
-#pragma once
+#ifndef PAINTER_H
+#define PAINTER_H
 
 #include <vector>
 #include <memory>
@@ -132,4 +133,6 @@ class Painter
     bool check_inside(int lx, int ly, int w, int h);
 };
 
-} // namespace 
+} // namespace skyline
+
+#endif

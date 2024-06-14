@@ -12,13 +12,11 @@ target_sources(skyline
 
 target_include_directories(skyline
   PUBLIC
-  ${PROJECT_SOURCE_DIR}/src/database
   ${PROJECT_SOURCE_DIR}/src/skyline
 )
 
 target_link_libraries(skyline
-  PUBLIC
   db
   gui
-	SkyPlace
+  skyplace
 )

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SKYPLACE_H
+#define SKYPLACE_H
 
 #include <string>
 #include <memory>
@@ -13,8 +14,6 @@ enum class OptimizerType
   Nesterov,
   Adam
 };
-
-using namespace db;
 
 typedef struct Stat
 {
@@ -45,10 +44,10 @@ class SkyPlace
 {
   public:
 
-    SkyPlace(std::shared_ptr<dbDatabase> db);
+    SkyPlace(std::shared_ptr<db::dbDatabase> db);
 
     // APIs
-    void runGlobalPlace(); // global_place
+    void run(); // global_place
 
     void setGUIMode()         { guiMode_         = true; }
     void setPlotMode()        { plotMode_        = true; }
@@ -72,7 +71,7 @@ class SkyPlace
   private:
 
     // dbDatabase from SkyLine Core
-    std::shared_ptr<dbDatabase> dbDatabase_;
+    std::shared_ptr<db::dbDatabase> dbDatabase_;
 
     // Hyper-Parameters
     std::shared_ptr<HyperParam> param_;
@@ -115,3 +114,5 @@ class SkyPlace
 };
 
 } // namespace skyplace 
+
+#endif

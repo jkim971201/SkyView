@@ -1,4 +1,5 @@
-#pragma once
+#ifndef INITIAL_PLACE_H
+#define INITIAL_PLACE_H
 
 #include <Eigen/IterativeLinearSolvers>
 #include <Eigen/SparseCore>
@@ -112,3 +113,5 @@ class InitialPlacer
 };
 
 }; // namespace skyplace 
+
+#endif

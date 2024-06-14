@@ -1,10 +1,5 @@
 cmake_minimum_required(VERSION 3.1)
 
-project(SkyPlace LANGUAGES CXX CUDA)
-
-set(CMAKE_C_COMPILER "g++")
-set(CMAKE_CXX_STANDARD 17)
-
 set(CMAKE_THREAD_LIBS_INIT "-lpthread")
 set(CMAKE_HAVE_THREADS_LIBRARY 1)
 set(CMAKE_USE_PTHREADS_INIT 1)
@@ -24,20 +19,20 @@ find_package(JPEG REQUIRED)
 find_package(Threads REQUIRED)
 
 # Source Code
-add_library(SkyPlace
-	src/SkyPlace.cpp
-	src/SkyPlaceDB.cpp
+add_library(skyplace
+  src/SkyPlace.cpp
+  src/SkyPlaceDB.cpp
   src/InitialPlacer.cpp
   src/FMPartitioner.cpp
   src/Painter.cpp
 )
 
 # Include Directory
-target_include_directories(${PROJECT_NAME}
+target_include_directories(skyplace
   PUBLIC
-	${CMAKE_CURRENT_SOURCE_DIR}/include
-	PRIVATE
-	db
+  include
+
+  PRIVATE
   ${X11_INCLUDE_DIR}
   ${CIMG_HOME}
   ${EIGEN_HOME}
@@ -48,10 +43,10 @@ target_include_directories(${PROJECT_NAME}
 )
 
 # Link Library
-target_link_libraries(${PROJECT_NAME} 
-	PRIVATE
-	db
-   ${X11_LIBRARIES}
+target_link_libraries(skyplace
+  PRIVATE
+  db
+  ${X11_LIBRARIES}
   Threads::Threads
   Louvain
   /home/jkim/mosek/10.1/tools/platform/linux64x86/bin/libmosek64.so.10.1
@@ -59,46 +54,35 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 # Enable CUDA
-option(GPU "Enable GPU" ON)
-if (GPU)
-  message(STATUS "GPU Mode ON")
-  find_package(CUDAToolkit)
-  if (CUDAToolkit_FOUND)
-    message(STATUS "CUDA Found")
-    enable_language(CUDA)
+find_package(CUDAToolkit)
+if (CUDAToolkit_FOUND)
+  enable_language(CUDA)
 
-    set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} --expt-relaxed-constexpr")
-    set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} --use_fast_math")
+  find_package(Thrust)
 
-    find_package(Thrust)
+  set_target_properties(skyplace PROPERTIES CUDA_ARCHITECTURES "75")
+  set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -arch=sm_61")
+  set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} --expt-relaxed-constexpr")
 
-    set_target_properties(${PROJECT_NAME} PROPERTIES CUDA_ARCHITECTURES "75")
-    string(APPEND CMAKE_CUDA_FLAGS " -arch=sm_61")
+  target_sources(skyplace
+                 PRIVATE
+                 src/CUDA_WL_GRAD.cu
+                 src/CUDA_NESTEROV.cu
+                 src/CUDA_ADAM.cu
+                 src/CUDA_POISSON_SOLVER.cu
+                 src/CUDA_DCT.cu
+                 src/CUDA_DENSITY_GRAD.cu
+                 src/CUDA_INITIAL_PLACE.cu
+                 src/CUDA_TARGET_FUNCTION.cu)
 
-    target_sources(${PROJECT_NAME} 
-                   PRIVATE
-                   src/CUDA_WL_GRAD.cu
-                   src/CUDA_NESTEROV.cu
-                   src/CUDA_ADAM.cu
-                   src/CUDA_POISSON_SOLVER.cu
-                   src/CUDA_DCT.cu
-                   src/CUDA_DENSITY_GRAD.cu
-									 src/CUDA_INITIAL_PLACE.cu
-                   src/CUDA_TARGET_FUNCTION.cu)
+  target_link_libraries(skyplace
+                        PRIVATE
+                        CUDA::cudart
+                        CUDA::cublas
+                        CUDA::cusparse
+                        CUDA::cufft
+                        CUDA::cusolver)
 
-    target_link_libraries(${PROJECT_NAME} 
-                          PRIVATE
-                          CUDA::cudart
-                          CUDA::cublas
-                          CUDA::cusparse
-                          CUDA::cufft
-                          CUDA::cusolver)
-
-    target_compile_definitions(${PROJECT_NAME} PRIVATE ENABLE_GPU)
-
-  else()
-    message(STATUS "CUDA Not Found")
-  endif()
 else()
-  message(STATUS "GPU Mode Off")
+  message(STATUS "CUDA Not Found")
 endif()

@@ -1,11 +1,19 @@
-#include <memory>
-#include "db/dbDatabase.h"
-#include "gui/SkyView.h"
-#include "SkyPlaceGP/SkyPlace.h"
+#ifndef SKYLINE_H
+#define SKYLINE_H
 
-using namespace db;
-using namespace gui;
-using namespace skyplace;
+#include <memory>
+
+namespace db { 
+	class dbDatabase; 
+}
+
+namespace gui { 
+	class SkyView;    
+}
+
+namespace skyplace { 
+	class SkyPlace;   
+}
 
 namespace skyline
 {
@@ -22,6 +30,7 @@ class SkyLine
     void readBookShelf    (const char* file_path);
 		void setTopModuleName (const char*  top_name);
 
+    void runGlobalPlace();
     void display();
 
   private:
@@ -31,9 +40,11 @@ class SkyLine
     SkyLine();
     ~SkyLine();
 
-    std::shared_ptr<dbDatabase> db_;
-    std::shared_ptr<SkyPlace>   skyPlace_;
-    std::shared_ptr<SkyView>    gui_;
+    std::shared_ptr<db::dbDatabase>     db_;
+    std::shared_ptr<gui::SkyView>       gui_;
+    std::shared_ptr<skyplace::SkyPlace> skyplace_;
 };
 
 }
+
+#endif

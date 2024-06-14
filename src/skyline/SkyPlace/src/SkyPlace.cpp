@@ -2,6 +2,8 @@
 #include <chrono>
 
 #include "SkyPlaceGP/SkyPlace.h"
+
+#include "db/dbDatabase.h"
 #include "InitialPlacer.h"
 #include "TargetFunction.h"
 #include "DensityGradient.h"
@@ -13,7 +15,6 @@
 
 namespace skyplace 
 {
-
 
 SkyPlace::SkyPlace(std::shared_ptr<dbDatabase> db)
   : dbDatabase_        (db),
@@ -158,7 +159,7 @@ SkyPlace::setMacroWeight(float macroWeight)
 }
 
 void
-SkyPlace::runGlobalPlace()
+SkyPlace::run()
 {
   // Prepare for Global Placement
   // (Import dbDatabase to SkyPlaceDB + Make sub-tools...)

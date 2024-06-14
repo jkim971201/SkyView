@@ -1,4 +1,5 @@
-#pragma once
+#ifndef ADAM_OPTIMIZER_H
+#define ADAM_OPTIMIZER_H
 
 #include <memory>
 #include <ctime>
@@ -186,3 +187,5 @@ class AdamOptimizer
 };
 
 }; // namespace skyline
+
+#endif

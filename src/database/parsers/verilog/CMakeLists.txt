@@ -1,6 +1,9 @@
 find_package(FLEX REQUIRED)
 find_package(BISON REQUIRED)
 
+set(CMAKE_C_COMPILER "g++")
+set(CMAKE_CXX_STANDARD 17)
+
 BISON_TARGET(verilog_parser
              src/verilog_parser.yy
              ${CMAKE_CURRENT_BINARY_DIR}/verilog_parser.tab.cc)
@@ -9,7 +12,7 @@ FLEX_TARGET(verilog_lexer
             src/verilog_lexer.l
             ${CMAKE_CURRENT_BINARY_DIR}/verilog_lexer.yy.cc)
 
-#ADD_FLEX_BISON_DEPENDENCY(verilog_lexer verilog_parser)
+ADD_FLEX_BISON_DEPENDENCY(verilog_lexer verilog_parser)
 
 add_library(verilog
   ${FLEX_verilog_lexer_OUTPUTS}

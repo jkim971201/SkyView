@@ -54,6 +54,13 @@ set_top_module_name_cmd(const char* topname)
 }
 
 void
+global_place_cmd()
+{
+  skyline::SkyLine* sky = skyline::getSkyLine();
+  sky->runGlobalPlace();
+}
+
+void
 display_cmd()
 {
   skyline::SkyLine* sky = skyline::getSkyLine();

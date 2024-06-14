@@ -1,3 +1,6 @@
+#ifndef SKY_VIEW_H
+#define SKY_VIEW_H
+
 #include <memory>
 
 #include "db/dbDatabase.h"
@@ -24,3 +27,5 @@ class SkyView
 };
 
 }
+
+#endif

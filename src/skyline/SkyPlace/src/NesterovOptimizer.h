@@ -1,4 +1,5 @@
-#pragma once
+#ifndef NESTEROV_OPTIMIZER_H
+#define NESTEROV_OPTIMIZER_H
 
 #include <memory>
 #include <ctime>
@@ -192,3 +193,5 @@ class NesterovOptimizer
 };
 
 }; // namespace skyplace 
+
+#endif

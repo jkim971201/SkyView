@@ -1,5 +1,9 @@
 #include "SkyLine.h"
 
+#include "db/dbDatabase.h"
+#include "gui/SkyView.h"
+#include "SkyPlaceGP/SkyPlace.h"
+
 namespace skyline
 {
 
@@ -12,8 +16,9 @@ SkyLine* SkyLine::getStaticPtr()
 
 SkyLine::SkyLine()
 {
-  db_  = std::make_shared<dbDatabase>();
-  gui_ = std::make_shared<SkyView>(db_);
+  db_       = std::make_shared<db::dbDatabase>();
+  gui_      = std::make_shared<gui::SkyView>(db_);
+	skyplace_ = std::make_shared<skyplace::SkyPlace>(db_);
 }
 
 SkyLine::~SkyLine()
@@ -48,6 +53,12 @@ void
 SkyLine::setTopModuleName(const char* top_name)
 {
   db_->setTopModuleName(top_name);
+}
+
+void
+SkyLine::runGlobalPlace()
+{
+  skyplace_->run();
 }
 
 void

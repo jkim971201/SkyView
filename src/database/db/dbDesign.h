@@ -40,7 +40,7 @@ class dbDesign
     dbNet*   getNetByName   (const std::string& name);
     dbBTerm* getBTermByName (const std::string& name);
 
-    const char divider() const { return divider_; }
+    char divider() const { return divider_; }
 
     // TODO: This is definitely not the best to way to describe a "core region".
     int coreLx() const { return coreLx_; }

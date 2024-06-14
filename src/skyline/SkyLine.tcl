@@ -19,5 +19,9 @@ proc set_top_name { arg } {
 }
 
 proc display { } {
+  skyline::global_place_cmd
+}
+
+proc display { } {
   skyline::display_cmd
 }
