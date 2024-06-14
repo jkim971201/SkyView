@@ -1,5 +1,5 @@
 add_subdirectory(gui)
-add_subdirectory(SkyPlace)
+add_subdirectory(skyplace)
 
 add_swig(I_FILE    SkyLine.i 
          NAME      skyline

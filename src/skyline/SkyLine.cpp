@@ -2,7 +2,7 @@
 
 #include "db/dbDatabase.h"
 #include "gui/SkyView.h"
-#include "SkyPlaceGP/SkyPlace.h"
+#include "skyplace/SkyPlace.h"
 
 namespace skyline
 {
