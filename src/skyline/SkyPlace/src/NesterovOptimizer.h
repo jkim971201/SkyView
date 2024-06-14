@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <ctime>
 
 #include <cuda_runtime.h>
@@ -8,10 +9,11 @@
 #include <thrust/device_vector.h>
 #include <thrust/host_vector.h>
 
+#include "SkyPlaceGP/SkyPlace.h"
 #include "HyperParam.h"
-#include "SkyPlace.h"
 #include "SkyPlaceDB.h"
 
+#include "Painter.h"
 #include "WireLengthGradient.h"
 #include "DensityGradient.h"
 #include "TargetFunction.h"
@@ -28,7 +30,7 @@ class NesterovOptimizer
   public:
 
     NesterovOptimizer();
-    NesterovOptimizer(HyperParam param,
+    NesterovOptimizer(std::shared_ptr<HyperParam>     param,
                       std::shared_ptr<SkyPlaceDB>     db,
                       std::shared_ptr<TargetFunction> func,
                       std::shared_ptr<Painter>        painter);
@@ -73,7 +75,7 @@ class NesterovOptimizer
     float backTracking(int iter, float coeff, int& backTrackIter);
 
     // Hyper Parameters
-    HyperParam param_;
+		std::shared_ptr<HyperParam> param_;
 
     // For WireLength Gradient & HPWL Computation
     // Host Array

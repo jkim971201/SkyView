@@ -1,14 +1,9 @@
 #pragma once
 
+#include <string>
 #include <memory>
-#include <ctime>
 
-#include "HyperParam.h"
-#include "Painter.h"
-#include "SkyPlaceDB.h"
-#include "InitialPlacer.h"
-#include "NesterovOptimizer.h"
-#include "AdamOptimizer.h"
+#include "db/dbDatabase.h"
 
 namespace skyplace 
 {
@@ -36,6 +31,13 @@ typedef struct Stat
   double  initTime;
 } Stat;
 
+class HyperParam;
+class Painter;
+class SkyPlaceDB;
+class InitialPlacer;
+class DensityGradient;
+class WireLengthGradient;
+class TargetFunction;
 class NesterovOptimizer;
 class AdamOptimizer;
 
@@ -52,41 +54,28 @@ class SkyPlace
     void setPlotMode()        { plotMode_        = true; }
     void setLocalLambdaMode() { localLambdaMode_ = true; }
     void setInitMethod(const std::string& init_method);
-    void setOptimizer(const std::string& opt_type);
+    void setOptimizer (const std::string& opt_type);
 
-    // TODO: Fix mismatch between HyperParam
     // Hyper-Parameter Setting command
-    void setTargetOverflow  (float val) { param_->targetOverflow = val;      }
-    void setInitLambda      (float val) { targetFunc_->setInitLambda(val);   }
-    void setMaxPhiCoef      (float val) { targetFunc_->setMaxPhiCoef(val);   }
-    void setRefHpwl         (float val) { targetFunc_->setRefHpwl(val);      }
-    void setInitGammaInv    (float val) { targetFunc_->setInitGammaInv(val); }
-    void setAdamAlpha       (float val) { param_->adam_alpha = val;          }
-    void setAdamBeta1       (float val) { param_->adam_beta1 = val;          }
-    void setAdamBeta2       (float val) { param_->adam_beta2 = val;           }
+    void setTargetOverflow  (float val);
+    void setInitLambda      (float val);
+    void setMaxPhiCoef      (float val);
+    void setRefHpwl         (float val);
+    void setInitGammaInv    (float val);
+    void setAdamAlpha       (float val);
+    void setAdamBeta1       (float val);
+    void setAdamBeta2       (float val);
     void setMacroWeight     (float val);
+    void setTargetDensity   (float density);
     void setOutputDir       (const std::string& outputDir) { outputDir_ = outputDir; }
-
-    // Though targetDensity is also a hyper-parameter,
-    // this has to be initialized before SkyPlaceDB is initialized.
-    void setTargetDensity (float density)  
-    { 
-      if(density > 1.00 || density <= 0.0 || density <= db_->util() )
-      {
-        std::cout << "Warning - Invalid target density." << std::endl;
-        std::cout << "Given value will be ignored" << std::endl;
-      }
-      else
-        db_->setTargetDensity(density);
-    }
 
   private:
 
     // dbDatabase from SkyLine Core
-		std::shared_ptr<dbDatabase> dbDatabase_;
+    std::shared_ptr<dbDatabase> dbDatabase_;
 
     // Hyper-Parameters
-		std::shared_ptr<HyperParam> param_;
+    std::shared_ptr<HyperParam> param_;
 
     // 1. Import dbDatabase to SkyPlaceDB
     // 2. Make Sub Tools 

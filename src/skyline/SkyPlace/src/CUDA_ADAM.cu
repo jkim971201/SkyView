@@ -90,7 +90,7 @@ AdamOptimizer::AdamOptimizer()
     overflow_                   (0.0),
     sumPenalty_                 (0.0),
 
-    param_                      ( ),
+    param_                      (nullptr),
     alpha_                      (100.0),
     beta1_                      (0.9  ),
     beta2_                      (0.999),
@@ -105,7 +105,7 @@ AdamOptimizer::AdamOptimizer()
     adTime_                     (0.0)
 {}
 
-AdamOptimizer::AdamOptimizer(HyperParam                      param,
+AdamOptimizer::AdamOptimizer(std::shared_ptr<HyperParam>     param,
                              std::shared_ptr<SkyPlaceDB>     db,
                              std::shared_ptr<TargetFunction> func,
                              std::shared_ptr<Painter>        painter) 
@@ -121,9 +121,9 @@ AdamOptimizer::AdamOptimizer(HyperParam                      param,
   dieUx_ = db_->die()->ux();
   dieUy_ = db_->die()->uy();
 
-  alpha_  = param.adam_alpha;
-  beta1_  = param.adam_beta1;
-  beta2_  = param.adam_beta2;
+  alpha_  = param->adam_alpha;
+  beta1_  = param->adam_beta1;
+  beta2_  = param->adam_beta2;
   beta1k_ = beta1_;
   beta2k_ = beta2_;
 }
@@ -140,7 +140,7 @@ AdamOptimizer::initOptimizer()
 
   std::clock_t start = std::clock();
 
-  param_.printHyperParameters();
+  param_->printHyperParameters();
 
   initForCUDAKernel();
 
@@ -266,7 +266,7 @@ AdamOptimizer::startOptimize(bool plotMode)
   if(plotMode)
     painter_->prepareForPlot();
 
-  for(; iter < param_.maxOptIter; iter++)
+  for(; iter < param_->maxOptIter; iter++)
   {
     // Step #1: Compute Next Gradient
     targetFunction_->updatePointAndGetGrad(d_curX_,
@@ -317,7 +317,7 @@ AdamOptimizer::startOptimize(bool plotMode)
       painter_->saveImage(iter, hpwl_, overflow_, false);
     }
 
-    if(overflow_ <= param_.targetOverflow)
+    if(overflow_ <= param_->targetOverflow)
     {
       if(hpwl_ < prevHpwl_)
         continue;

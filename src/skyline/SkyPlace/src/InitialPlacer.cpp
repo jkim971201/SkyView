@@ -3,6 +3,7 @@
 #include <map>
 #include <random>
 #include <memory>
+#include <chrono>
 
 #include "InitialPlacer.h"
 
@@ -33,16 +34,17 @@ InitialPlacer::InitialPlacer(std::shared_ptr<SkyPlaceDB> db)
 void
 InitialPlacer::doInitialPlace()
 {
-  std::clock_t start = std::clock();
+  auto t1 = std::chrono::high_resolution_clock::now();
 
   if(randomInit_)
     doRandomInit();
   else
     doClusterQuadratic();
 
-  std::clock_t end = std::clock();
+  auto t2 = std::chrono::high_resolution_clock::now();
 
-  runtime_ = (double)(end - start);
+  std::chrono::duration<double> runtime = t2 - t1;
+  runtime_ = runtime.count();
 }
 
 void

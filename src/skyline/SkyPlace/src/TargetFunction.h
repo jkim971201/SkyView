@@ -24,7 +24,7 @@ class TargetFunction
     TargetFunction(std::shared_ptr<SkyPlaceDB>         db,
                    std::shared_ptr<WireLengthGradient> wireLength,
                    std::shared_ptr<DensityGradient>    density,
-                   HyperParam                          param);
+                   std::shared_ptr<HyperParam>         param);
 
     // APIs
     void updatePointAndGetGrad(const thrust::device_vector<float>& d_curX,

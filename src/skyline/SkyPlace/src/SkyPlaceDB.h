@@ -172,7 +172,7 @@ class Pin
 
     Net*   net() const { return net_;  }
     Cell* cell() const { return cell_; } 
-		// returns nullptr if Pin is made from dbBTerm (== IO pin)
+    // returns nullptr if Pin is made from dbBTerm (== IO pin)
 
     float offsetX() const { return offsetX_; }
     float offsetY() const { return offsetY_; }
@@ -375,7 +375,8 @@ class SkyPlaceDB
     SkyPlaceDB(); // Constructor (Just for Initialization)
 
     // Important APIs
-    void setDB(std::shared_ptr<dbDatabase> db);
+    void reset();
+    void init(std::shared_ptr<dbDatabase> db);
     void setTargetDensity (float density) { targetDensity_ = density; }
     void setNumBinX       (int   numBinX) { numBinX_       = numBinX; }     
     void setNumBinY       (int   numBinY) { numBinY_       = numBinY; }     
@@ -400,14 +401,15 @@ class SkyPlaceDB
 
     Die* die() const { return diePtr_; }
 
-    int numFixed   ()  const { return numFixed_;        }
-    int numMovable ()  const { return numMovable_;      }
-    int numFiller  ()  const { return numFiller_;       }
-    int numNet     ()  const { return netPtrs_.size();  }
-    int numPin     ()  const { return pinPtrs_.size();  }
-    int numIO      ()  const { return numIO_;           }
-    int numCluster ()  const { return numCluster_;      }
-    int numMacro   ()  const { return numMovableMacro_; }
+    int numFixed   () const { return numFixed_;        }
+    int numMovable () const { return numMovable_;      }
+    int numFiller  () const { return numFiller_;       }
+    int numNet     () const { return netPtrs_.size();  }
+    int numPin     () const { return pinPtrs_.size();  }
+    int numIO      () const { return numIO_;           }
+    int numCluster () const { return numCluster_;      }
+    int numMacro   () const { return numMovableMacro_; }
+    int getDbu     () const { return dbu_;             }
 
     float util                 () const { return util_;                 }
     float density              () const { return density_;              }
@@ -425,8 +427,8 @@ class SkyPlaceDB
     float binX    () const { return binX_;    }
     float binY    () const { return binY_;    }
 
-    void  updateHpwl          ();
-    void  updatePinBound      (); // For B2B Model (CG-based Initialization)
+    void  updateHpwl     ();
+    void  updatePinBound (); // For B2B Model (CG-based Initialization)
   
     // To plot density gradient arrows, these will be delivered to Painter
     std::vector<float>& densityGradX() { return densityGradX_; }
@@ -438,13 +440,12 @@ class SkyPlaceDB
 
   private:
 
-    // Shared Pointers
-    std::shared_ptr<dbDatabase> dbDatabase_;
-
     std::string designName_;
     std::string designDir_;
 
     float targetDensity_;
+
+		int dbu_; // This is from dbDatabase->dbTech->getDbu()
 
     // Number of Objects
     int numStdCells_;
@@ -463,7 +464,7 @@ class SkyPlaceDB
     float maxRowHeight_;
 
     // Sub-Routines after setDB()
-    void importDB();
+    void importDB(std::shared_ptr<dbDatabase> _dbDatabase);
     void init(); // Initialization for main placement iteration
     void createBins               ();  // Step#1
     void createFillers            ();  // Step#2

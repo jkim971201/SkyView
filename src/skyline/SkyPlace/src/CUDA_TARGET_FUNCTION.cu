@@ -132,7 +132,7 @@ TargetFunction::setInitGammaInv(float val)
 TargetFunction::TargetFunction(std::shared_ptr<SkyPlaceDB> db, 
                                std::shared_ptr<WireLengthGradient> wireLength,
                                std::shared_ptr<DensityGradient> density,
-                               HyperParam param)
+                               std::shared_ptr<HyperParam>      param)
 {
   db_ = db;
   
@@ -141,17 +141,17 @@ TargetFunction::TargetFunction(std::shared_ptr<SkyPlaceDB> db,
 
   N_ = db_->numMovable();
 
-  gammaInv_ = 2.0 * param.initGammaInvCoef 
+  gammaInv_ = 2.0 * param->initGammaInvCoef 
             / (db_->binX() + db_->binY());
 
   wireLength_->setGammaInv(gammaInv_);
 
-  lambda_       = param.initLambda;
-  initGammaInv_ = param.initGammaInvCoef;
-  minPrecond_   = param.minPrecond;
-  refHPWL_      = param.referenceHpwl;
-  minPhi_       = param.minPhiCoef;
-  maxPhi_       = param.maxPhiCoef;
+  lambda_       = param->initLambda;
+  initGammaInv_ = param->initGammaInvCoef;
+  minPrecond_   = param->minPrecond;
+  refHPWL_      = param->referenceHpwl;
+  minPhi_       = param->minPhiCoef;
+  maxPhi_       = param->maxPhiCoef;
 
 	macroDensityWeight_ = false;
 	coeffSoFar_ = 1.0;

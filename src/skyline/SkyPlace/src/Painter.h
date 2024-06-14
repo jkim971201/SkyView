@@ -39,7 +39,7 @@ class Painter
     // APIs
     void drawChip();
     void setDB(std::shared_ptr<SkyPlaceDB> db) { db_ = db; init(); }
-		void prepareForPlot();
+    void prepareForPlot();
     void saveImage(int iter, float hpwl, float overflow, bool filler = true);
 
   private:
@@ -75,10 +75,10 @@ class Painter
 
     float lenIO_; // Length for IO Triangle
 
-		// Cluster-related
-		bool clusterHighlight_;
-		std::vector<Color> color_map_; // ClusterID <-> Color
-		void genColorMap();
+    // Cluster-related
+    bool clusterHighlight_;
+    std::vector<Color> color_map_; // ClusterID <-> Color
+    void genColorMap();
 
     //CImg library
     CImgObj*       canvas_;
@@ -111,7 +111,7 @@ class Painter
     void drawMovable  (CImgObj *img, const Cell* cell);
     void drawCells    (CImgObj *img, const std::vector<Cell*>& cells, bool filler = false);
     void drawDie      (CImgObj *img, const Die*   die);
-		void drawCluster  (CImgObj* img, const Cell* cell);
+    void drawCluster  (CImgObj* img, const Cell* cell);
 
     // Draw Rows
     void drawRows     (CImgObj *img);

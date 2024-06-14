@@ -1,9 +1,11 @@
 #include <memory>
 #include "db/dbDatabase.h"
 #include "gui/SkyView.h"
+#include "SkyPlaceGP/SkyPlace.h"
 
 using namespace db;
 using namespace gui;
+using namespace skyplace;
 
 namespace skyline
 {
@@ -30,6 +32,7 @@ class SkyLine
     ~SkyLine();
 
     std::shared_ptr<dbDatabase> db_;
+    std::shared_ptr<SkyPlace>   skyPlace_;
     std::shared_ptr<SkyView>    gui_;
 };
 

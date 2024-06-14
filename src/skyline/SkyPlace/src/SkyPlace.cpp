@@ -1,16 +1,23 @@
 #include <cstdio>
-#include <iostream>
 #include <chrono>
 
-#include "SkyPlace.h"
+#include "SkyPlaceGP/SkyPlace.h"
 #include "InitialPlacer.h"
+#include "TargetFunction.h"
+#include "DensityGradient.h"
+#include "WireLengthGradient.h"
+#include "NesterovOptimizer.h"
+#include "AdamOptimizer.h"
+#include "HyperParam.h"
+#include "Painter.h"
 
 namespace skyplace 
 {
 
 
-SkyPlace::SkyPlace()
-  : param_             ( ),
+SkyPlace::SkyPlace(std::shared_ptr<dbDatabase> db)
+  : dbDatabase_        (db),
+    param_             (nullptr),
     db_                (nullptr),
     painter_           (nullptr),
     initialPlacer_     (nullptr),
@@ -27,48 +34,106 @@ SkyPlace::SkyPlace()
   db_ = std::make_shared<SkyPlaceDB>();
 }
 
-void
-SkyPlace::setDB(std::shared_ptr<dbDatabase> db)
-{
-  db_->setDB(db);
-  makeSubTools();
-}
-
 void 
-SkyPlace::makeSubTools()
-{
-  std::clock_t start = std::clock(); // Clock Start
-  
-  // Make InitialPlacer
-  initialPlacer_ = std::make_unique<InitialPlacer>(db_);
-
-  // Make Density Function
-  density_ = std::make_shared<DensityGradient>(db_);
-
-  density_->setLocalLambdaMode(localLambdaMode_);
-
-  // Make WireLength Function
-  wireLength_ = std::make_shared<WireLengthGradient>(db_);
-
-  // Make Target Function
-  targetFunc_ = std::make_shared<TargetFunction>(db_, wireLength_, density_, param_);
-
-  std::clock_t end = std::clock(); // Clock End
-
-  dbTime_ = (double)(end - start);
-}
-
-void 
-SkyPlace::setPainter(std::shared_ptr<Painter> painter) 
+SkyPlace::setTargetOverflow(float val) 
 { 
-  painter_ = painter; 
-  painter_->setDB(db_);
+  param_->targetOverflow = val;      
+}
+
+void 
+SkyPlace::setInitLambda(float val) 
+{ 
+  targetFunc_->setInitLambda(val);   
+}
+
+void 
+SkyPlace::setMaxPhiCoef(float val) 
+{ 
+  targetFunc_->setMaxPhiCoef(val);   
+}
+
+void 
+SkyPlace::setRefHpwl(float val) 
+{ 
+  targetFunc_->setRefHpwl(val);      
+}
+
+void 
+SkyPlace::setInitGammaInv(float val) 
+{ 
+  targetFunc_->setInitGammaInv(val); 
+}
+
+void 
+SkyPlace::setAdamAlpha(float val) 
+{ 
+  param_->adam_alpha = val;           
+}
+
+void 
+SkyPlace::setAdamBeta1(float val) 
+{ 
+  param_->adam_beta1 = val;           
+}
+
+void 
+SkyPlace::setAdamBeta2(float val) 
+{ 
+  param_->adam_beta2 = val;           
+}
+
+// Though targetDensity is also a hyper-parameter,
+// this has to be initialized before SkyPlaceDB is initialized.
+void 
+SkyPlace::setTargetDensity(float density)  
+{ 
+  if(density > 1.00 || density <= 0.0 || density <= db_->util() )
+  {
+    printf("Warning - Invalid target density.\n");
+    printf("Given value will be ignored.\n");
+  }
+  else
+    db_->setTargetDensity(density);
+}
+
+void
+SkyPlace::preamble()
+{
+  auto t1 = std::chrono::high_resolution_clock::now();
+
+  // 1. SkyPlaceDB Initialization
+  db_->init(dbDatabase_);
+
+  // 2. Make SubTools
+    // Make InitialPlacer
+    initialPlacer_ = std::make_unique<InitialPlacer>(db_);
+
+    // Make Density Function
+    density_ = std::make_shared<DensityGradient>(db_);
+    density_->setLocalLambdaMode(localLambdaMode_);
+
+    // Make WireLength Function
+    wireLength_ = std::make_shared<WireLengthGradient>(db_);
+
+    // Make Target Function
+    targetFunc_ 
+      = std::make_shared<TargetFunction>(db_, wireLength_, density_, param_);
+
+    // Make Painter
+    painter_ = std::make_shared<Painter>();
+    painter_->setDB(db_);
+
+  auto t2 = std::chrono::high_resolution_clock::now();
+
+  std::chrono::duration<double> runtime = t2 - t1;
+  dbTime_ = runtime.count();
 }
 
 void
 SkyPlace::setInitMethod(const std::string& init_method)
 {
-  initialPlacer_->setInitMethod(init_method);
+  if(initialPlacer_ != nullptr)
+    initialPlacer_->setInitMethod(init_method);
 }
 
 void
@@ -80,8 +145,8 @@ SkyPlace::setOptimizer(const std::string& opt_type)
     opt_ = OptimizerType::Nesterov;
   else
   {
-    std::cout << "Undefined Optimizer " << opt_type << std::endl;
-    std::cout << "Argument is ignored and Nesterov will be used..." << std::endl;
+    printf("Undefined Optimizer %s\n", opt_type.c_str());
+    printf("Argument is ignored and Nesterov will be used...\n");
   }
 }
 
@@ -93,8 +158,12 @@ SkyPlace::setMacroWeight(float macroWeight)
 }
 
 void
-SkyPlace::doPlace()
+SkyPlace::runGlobalPlace()
 {
+  // Prepare for Global Placement
+  // (Import dbDatabase to SkyPlaceDB + Make sub-tools...)
+  preamble();
+
   // Make Optimizer
   if(opt_ == OptimizerType::Adam)
     adOptimizer_ = std::make_unique<AdamOptimizer>(param_, db_, targetFunc_, painter_);
@@ -126,11 +195,11 @@ SkyPlace::doPlace()
 
   printf("[SkyPlace] Placement Finished!\n");
 
-  // Finish : Print Statistic
-  printStat(finalStat);
-
   // TODO : Fix mismatch between hpwl_ of Optimizer class and SkyPlaceDB
   db_->updateHpwl();
+
+  // Finish : Print Statistic
+  printStat(finalStat);
 
   // GUI
   if(guiMode_)
@@ -148,11 +217,8 @@ SkyPlace::doInitialPlace()
 void
 SkyPlace::printStat(Stat finalStat)
 {
-  float dbTime            
-    = static_cast<float>(dbTime_) / CLOCKS_PER_SEC;
-
-  float ipTime 
-    = static_cast<float>(initialPlacer_->getRuntime()) / CLOCKS_PER_SEC;
+  float dbTime = dbTime_;
+  float ipTime = initialPlacer_->getRuntime();
 
   float gpTime = 
     static_cast<float>(finalStat.totalPlaceTime) / CLOCKS_PER_SEC;
@@ -172,16 +238,13 @@ SkyPlace::printStat(Stat finalStat)
   float initTime = 
     static_cast<float>(finalStat.initTime) / CLOCKS_PER_SEC;
 
-  //float totalTime
-  //  = static_cast<float>(totalTime_) / CLOCKS_PER_SEC;
-  
   float totalTime = totalTime_ + dbTime + ipTime;
 
   printf(" ==================================================\n");
   printf(" Final Statistic\n");
   printf(" ==================================================\n");
   printf("  | Benchmark      | %-10s    \n", db_->designName().c_str());
-  printf("  | HPWL           | %-10.1f um\n", finalStat.hpwl / db_->getTech()->getDbu());
+  printf("  | HPWL           | %-10.1f um\n", finalStat.hpwl / db_->getDbu());
   printf("  | Overflow       | %-10.3f  \n", finalStat.overflow);
   printf("  | # Iteration    | %-10d    \n", finalStat.iter);
   printf("  | Time DB        | %-5.1f   \n", dbTime);

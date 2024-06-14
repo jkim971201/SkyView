@@ -10,12 +10,14 @@
 #include <thrust/host_vector.h>
 #include <thrust/fill.h>
 
-#include "SkyPlace.h"
+#include "SkyPlaceGP/SkyPlace.h"
+#include "HyperParam.h"
+#include "SkyPlaceDB.h"
+
+#include "Painter.h"
 #include "WireLengthGradient.h"
 #include "DensityGradient.h"
 #include "TargetFunction.h"
-
-#define GOLDEN_RATIO 1.618033988
 
 namespace skyplace
 {
@@ -29,7 +31,7 @@ class AdamOptimizer
   public:
 
     AdamOptimizer();
-    AdamOptimizer(HyperParam                       param,
+    AdamOptimizer(std::shared_ptr<HyperParam>      param,
                   std::shared_ptr<SkyPlaceDB>      db,
                   std::shared_ptr<TargetFunction>  func,
                   std::shared_ptr<Painter>         painter);
@@ -87,7 +89,7 @@ class AdamOptimizer
     float densityGradSum_;
 
     // Hyper Parameters
-    HyperParam param_;
+		std::shared_ptr<HyperParam> param_;
 
     // For WireLength Gradient & HPWL Computation
     // Host Array

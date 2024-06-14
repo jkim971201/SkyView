@@ -258,9 +258,9 @@ Row::Row(dbRow* row)
 
 // SkyPlaceDB // 
 SkyPlaceDB::SkyPlaceDB()
-  : dbDatabase_           (nullptr),
-    designName_           (     ""),
+  : designName_           (     ""),
     targetDensity_        (    1.0),
+		dbu_                  (      0),
     numStdCells_          (      0), 
     numMacro_             (      0),
     numFixed_             (      0), 
@@ -284,13 +284,45 @@ SkyPlaceDB::SkyPlaceDB()
     fillerHeight_         (      0),
     numInitStep_          (      5)
 {
-  diePtr_ = &die_;
+	reset();
 }
 
 void
-SkyPlaceDB::importDB()
+SkyPlaceDB::reset()
 {
-  const auto design = dbDatabase_->getDesign();
+	dbu_ = 0;
+  
+	designName_ = std::string();
+
+  diePtr_ = nullptr;
+
+  cellPtrs_.clear();
+  cellInsts_.clear();
+
+  movableMacroPtrs_.clear();
+  fixedPtrs_.clear();
+  movablePtrs_.clear();
+
+  netPtrs_.clear();
+  netInsts_.clear();
+
+  pinPtrs_.clear();
+  pinInsts_.clear();
+
+  binPtrs_.clear();
+  binInsts_.clear();
+
+  rowPtrs_.clear();
+  rowInsts_.clear();
+
+  dbInst2Cell_.clear();
+  dbNet2Net_.clear();
+}
+
+void
+SkyPlaceDB::importDB(std::shared_ptr<dbDatabase> _dbDatabase)
+{
+  const auto design = _dbDatabase->getDesign();
 
   const std::vector<dbNet*>&   db_nets   = design->getNets();
   const std::vector<dbRow*>&   db_rows   = design->getRows();
@@ -303,6 +335,7 @@ SkyPlaceDB::importDB()
 	die_.setLy(static_cast<float>(design->coreLy()));
 	die_.setUx(static_cast<float>(design->coreUx()));
 	die_.setUy(static_cast<float>(design->coreUy()));
+  diePtr_ = &die_;
 
   // Step #2: Initialize Cell
   int numInst = db_insts.size();
@@ -458,17 +491,33 @@ SkyPlaceDB::importDB()
 }
 
 void
-SkyPlaceDB::setDB(std::shared_ptr<dbDatabase> db)
+SkyPlaceDB::init(std::shared_ptr<dbDatabase> db)
 {
   printf("Start SkyPlaceDB Initialization.\n");
 
-  dbDatabase_  = db;
-  designName_  = db->getDesign()->name();
+  reset();
 
-  importDB();
-  printf("Import Database           ---> Finished. (Step 1 / %d)\n", numInitStep_);
+  designName_ = db->getDesign()->name();
 
-  init();
+  // Step#1: Import dbDatabase to SkyPlaceDB
+  importDB(db);
+  printf("Import Database         ---> Finished. (Step 1 / %d)\n", numInitStep_);
+
+  // Step#2: Bin Initialization
+  createBins();
+  printf("Bin Grid Initialization ---> Finished. (Step 2 / %d)\n", numInitStep_); 
+  
+  // Step#3: Filler Insertion
+  createFillers();
+  printf("Filler Cell Insertion   ---> Finished. (Step 3 / %d)\n", numInitStep_); 
+
+  // Step#4: Update Density Size
+  updateDensitySize();
+  printf("Density Size Update     ---> Finished. (Step 4 / %d)\n", numInitStep_); 
+
+  // Step#5: Update Fixed Overlap Area
+  updateFixedOverlapArea();
+  printf("FixedOverlapArea Update ---> Finished. (Step 5 / %d)\n", numInitStep_); 
 
   printf("SkyPlaceDB is initilazed successfully!\n");
 
@@ -568,22 +617,7 @@ SkyPlaceDB::updatePinBound()
 void
 SkyPlaceDB::init()
 {
-  // Step#1: Bin Initialization
-  createBins();
-  printf("Bin Grid Initialization ---> Finished. (Step 2 / %d)\n", numInitStep_); 
-  
-  // Step#2: Filler Insertion
-  createFillers();
-  printf("Filler Cell Insertion   ---> Finished. (Step 3 / %d)\n", numInitStep_); 
-
-  // Step#3: Update Density Size
-  updateDensitySize();
-  printf("Density Size Update     ---> Finished. (Step 4 / %d)\n", numInitStep_); 
-
-  // Step#4: Update Fixed Overlap Area
-  updateFixedOverlapArea();
-  printf("FixedOverlapArea Update ---> Finished. (Step 5 / %d)\n", numInitStep_); 
-}
+ }
 
 void
 SkyPlaceDB::createBins()
@@ -1084,7 +1118,7 @@ SkyPlaceDB::printInfo() const
 {
   using namespace std;
 
-  float initHpwl = hpwl_ / dbDatabase_->getTech()->getDbu();
+  float initHpwl = hpwl_ / static_cast<float>(dbu_);
 	// Zero Check is done in init()
 
   cout << endl;

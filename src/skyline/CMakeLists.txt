@@ -20,4 +20,5 @@ target_link_libraries(skyline
   PUBLIC
   db
   gui
+	SkyPlace
 )

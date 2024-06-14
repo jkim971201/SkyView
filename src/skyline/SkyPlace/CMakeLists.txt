@@ -34,9 +34,10 @@ add_library(SkyPlace
 
 # Include Directory
 target_include_directories(${PROJECT_NAME}
+  PUBLIC
+	${CMAKE_CURRENT_SOURCE_DIR}/include
 	PRIVATE
 	db
-	${CMAKE_CURRENT_SOURCE_DIR}/src
   ${X11_INCLUDE_DIR}
   ${CIMG_HOME}
   ${EIGEN_HOME}

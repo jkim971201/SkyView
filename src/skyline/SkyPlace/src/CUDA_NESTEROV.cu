@@ -109,7 +109,7 @@ NesterovOptimizer::NesterovOptimizer()
 
     curA_                       (0),
     stepLength_                 (0),
-    param_                      ( ),
+    param_                      (nullptr),
     onlyGradMode_               (true   ),
     isDiverge_                  (false  ),
     db_                         (nullptr),
@@ -140,7 +140,7 @@ NesterovOptimizer::NesterovOptimizer()
     nesterovTime_               (0.0)
 {}
 
-NesterovOptimizer::NesterovOptimizer(HyperParam                      param,
+NesterovOptimizer::NesterovOptimizer(std::shared_ptr<HyperParam>     param,
                                      std::shared_ptr<SkyPlaceDB>     db,
                                      std::shared_ptr<TargetFunction> func,
                                      std::shared_ptr<Painter>        painter) 
@@ -169,7 +169,7 @@ NesterovOptimizer::initOptimizer()
 
   std::clock_t start = std::clock();
 
-  param_.printHyperParameters();
+  param_->printHyperParameters();
 
   initForCUDAKernel();
   
@@ -182,7 +182,7 @@ NesterovOptimizer::initOptimizer()
   // Step #2. Compute Initial Previous Coordinates
   // Since we don't have the previous predicted coordinates
   // at the first iteration, we have to make it up.
-  moveBackward(param_.initOptCoef,
+  moveBackward(param_->initOptCoef,
                d_ptr_curPreX_,
                d_ptr_curPreY_,
                d_ptr_curPreTotalGradX_,
@@ -252,7 +252,7 @@ NesterovOptimizer::startOptimize(bool plotMode)
   if(plotMode)
     painter_->prepareForPlot();
 
-  for(; iter < param_.maxOptIter; iter++)
+  for(; iter < param_->maxOptIter; iter++)
   {
     float prevA = curA_;
     curA_ = 0.5 * (1.0 + std::sqrt(4.0 * prevA * prevA + 1.0));
@@ -269,7 +269,7 @@ NesterovOptimizer::startOptimize(bool plotMode)
       painter_->saveImage(iter, hpwl_, overflow_, false);
     }
 
-    if(overflow_ <= param_.targetOverflow)
+    if(overflow_ <= param_->targetOverflow)
     {
       if(hpwl_ < prevHpwl_)
         continue;
@@ -312,9 +312,9 @@ float
 NesterovOptimizer::backTracking(int iter, float coeff, int& backTrackIter)
 {
   backTrackIter = 0;
-  float newStepLength = param_.minStepLength;
+  float newStepLength = param_->minStepLength;
 
-  for(; backTrackIter < param_.maxBackTrackIter; backTrackIter++)
+  for(; backTrackIter < param_->maxBackTrackIter; backTrackIter++)
   {
     moveForward(stepLength_, 
                 coeff,
@@ -345,9 +345,9 @@ NesterovOptimizer::backTracking(int iter, float coeff, int& backTrackIter)
   
     if(newStepLength >= stepLength_ * 0.95)
       break;
-    else if(newStepLength < param_.minStepLength) // minStepLength = 0.1
+    else if(newStepLength < param_->minStepLength) // minStepLength = 0.1
     {
-      newStepLength = param_.minStepLength;
+      newStepLength = param_->minStepLength;
       break;
     }
   }
