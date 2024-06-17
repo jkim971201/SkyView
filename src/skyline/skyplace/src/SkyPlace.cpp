@@ -25,11 +25,11 @@ SkyPlace::SkyPlace(std::shared_ptr<dbDatabase> db)
     ntOptimizer_       (nullptr),
     adOptimizer_       (nullptr),
     density_           (nullptr),
-    dbTime_            (0      ),
     localLambdaMode_   (false  ),
     guiMode_           (false  ),
     plotMode_          (false  ),
-    outputDir_         (""     )
+    outputDir_         (""     ),
+    dbTime_            (0.0    )
 {
 	opt_ = OptimizerType::Nesterov;
   db_ = std::make_shared<SkyPlaceDB>();
@@ -260,7 +260,7 @@ SkyPlace::printStat(Stat finalStat)
   printf(" Final Statistic\n");
   printf(" ==================================================\n");
   printf("  | Benchmark      | %-10s    \n", db_->designName().c_str());
-  printf("  | HPWL           | %-10.1f um\n", finalStat.hpwl / db_->getDbu());
+  printf("  | HPWL           | %-10.1f  \n", finalStat.hpwl / 1e6 / db_->getDbu());
   printf("  | Overflow       | %-10.3f  \n", finalStat.overflow);
   printf("  | # Iteration    | %-10d    \n", finalStat.iter);
   printf("  | Time DB        | %-5.1f   \n", dbTime);

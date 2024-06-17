@@ -21,6 +21,9 @@ class dbRow
     int dx() const { return numSiteX_ * stepX_ + siteWidth_;  }
     int dy() const { return numSiteY_ * stepY_ + siteHeight_; }
 
+    int siteWidth()  const { return siteWidth_;  }
+    int siteHeight() const { return siteHeight_; }
+
     // Setters
     void setName(const std::string& name) { name_ = name; }
     void setSite(dbSite* site) 

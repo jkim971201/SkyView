@@ -253,7 +253,7 @@ Row::Row(dbRow* row)
   stepX_ = row->stepX();
   stepY_ = row->stepY();
 
-  siteWidth_ = row->site()->sizeX();
+  siteWidth_ = row->siteWidth();
 }
 
 // SkyPlaceDB // 
@@ -480,6 +480,7 @@ SkyPlaceDB::importDB(std::shared_ptr<dbDatabase> _dbDatabase)
   rowPtrs_.reserve(numRow);
 
   int rowIdx = 0;
+
   for(auto& row : rowInsts_)
   {
     row = Row(db_rows[rowIdx++]);

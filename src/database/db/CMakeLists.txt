@@ -1,5 +1,8 @@
 add_library(db)
 
+set(CMAKE_C_COMPILER "g++")
+set(CMAKE_CXX_STANDARD 17)
+
 target_sources(db
   PRIVATE
   dbDatabase.cpp

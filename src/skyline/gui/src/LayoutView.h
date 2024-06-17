@@ -15,24 +15,24 @@ class LayoutView : public QGraphicsView
     LayoutView(QWidget* parent = nullptr);
 
     void zoomFit();
-		void zoomIn();
-		void zoomOut();
+    void zoomIn();
+    void zoomOut();
 
   protected:
 
     void wheelEvent(QWheelEvent* event)  override;
     void paintEvent(QPaintEvent* event)  override;
-		void keyPressEvent(QKeyEvent* event) override;
+    void keyPressEvent(QKeyEvent* event) override;
 
   private:
 
     bool firstShow_;
 
-	public slots:
+  public slots:
 
-		void zoomIn_slot();
-		void zoomOut_slot();
-		void zoomFit_slot();
+    void zoomIn_slot();
+    void zoomOut_slot();
+    void zoomFit_slot();
 };
 
 }

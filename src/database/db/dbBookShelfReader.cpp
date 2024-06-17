@@ -35,6 +35,7 @@ dbBookShelfReader::convert2db()
   // just dummy objects to smoothly
   // convert bookshelf format to LEF/DEF-based database.
   const auto bookshelfDB = bsParser_->getDB();
+  design_->setName(bsParser_->getBenchName()); 
 
   // IO pins of MMS benchmark are duplicate in .nets file.
   // A hash table is necessary to avoid multiple dbBTerm for
@@ -45,11 +46,11 @@ dbBookShelfReader::convert2db()
   // Bookshelf contains micron unit
   // so we need a scaling factor to
   // convert to integer data of dbInst, dbDie, ...
-  // 10 is just a magic number.
+  // This is just a magic number.
 	// (but this has be an even number because
 	// all the numbers of bookshelf files are
 	// multiplies of 0.5)
-  constexpr int dbuBookShelf = 10;
+  constexpr int dbuBookShelf = 2;
 	assert(dbuBookShelf >= 2);
 	dbuBookShelf_ = dbuBookShelf;
 

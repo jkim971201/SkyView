@@ -50,7 +50,7 @@ MainWindow::init()
   layout_scene_->setBackgroundBrush( Qt::black );
   layout_scene_->setDatabase(db_);
 
-	// View
+  // View
   layout_view_ = new LayoutView;
   layout_view_->setScene(layout_scene_);
   setCentralWidget(layout_view_);
@@ -62,7 +62,7 @@ MainWindow::init()
   createDock();
 
   // Tool Bar
-	createToolBar();
+  createToolBar();
 
   // Status Bar
   statusBar()->showMessage(tr("Ready"));
@@ -87,9 +87,9 @@ MainWindow::createMenu()
 {
   QMenu* menu;
 
-	QFont font = menuBar()->font();
+  QFont font = menuBar()->font();
   font.setPointSize(12);
-	menuBar()->setFont( font );
+  menuBar()->setFont( font );
 
   menu = menuBar()->addMenu(tr("&File"));
   menu = menuBar()->addMenu(tr("&View"));
@@ -118,21 +118,21 @@ MainWindow::createToolBar()
 {
   QToolBar* toolBar;
 
-	QAction* zoomIn  = new QAction(QIcon(":/zoom_in.png") , tr("Zoom In") , this);
-	QAction* zoomOut = new QAction(QIcon(":/zoom_out.png"), tr("Zoom Out"), this);
-	QAction* zoomFit = new QAction(QIcon(":/zoom_fit.png"), tr("Zoom Fit"), this);
+  QAction* zoomIn  = new QAction(QIcon(":/zoom_in.png") , tr("Zoom In") , this);
+  QAction* zoomOut = new QAction(QIcon(":/zoom_out.png"), tr("Zoom Out"), this);
+  QAction* zoomFit = new QAction(QIcon(":/zoom_fit.png"), tr("Zoom Fit"), this);
 
   toolBar = addToolBar(tr("Tool Bar"));
   toolBar->addAction( zoomIn  );
-	toolBar->setStatusTip(tr("Zoom In Layout View"));
+  toolBar->setStatusTip(tr("Zoom In Layout View"));
   connect(zoomIn, SIGNAL(triggered()), layout_view_, SLOT(zoomIn_slot()));
 
   toolBar->addAction( zoomOut );
-	toolBar->setStatusTip(tr("Zoom Out Layout View"));
+  toolBar->setStatusTip(tr("Zoom Out Layout View"));
   connect(zoomOut, SIGNAL(triggered()), layout_view_, SLOT(zoomOut_slot()));
 
   toolBar->addAction( zoomFit );
-	toolBar->setStatusTip(tr("Zoom Fit Layout View"));
+  toolBar->setStatusTip(tr("Zoom Fit Layout View"));
   connect(zoomFit, SIGNAL(triggered()), layout_view_, SLOT(zoomFit_slot()));
 }
 
@@ -143,7 +143,14 @@ MainWindow::createItem()
   layout_scene_->createGuiRow();
   layout_scene_->createGuiInst();
   layout_scene_->createGuiIO();
-	layout_scene_->expandScene();
+  layout_scene_->expandScene();
+}
+
+void
+MainWindow::keyPressEvent(QKeyEvent* event)
+{
+  if(event->key() == Qt::Key_Q)
+    close();
 }
 
 }

@@ -27,7 +27,7 @@ SkyView::display()
   window.init();
   window.show();
   int exit_code = app.exec();
-  exit(exit_code);
+  //exit(exit_code);
 }
 
 }

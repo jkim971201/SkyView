@@ -10,12 +10,12 @@ namespace gui
 LayoutView::LayoutView(QWidget* parent)
   : firstShow_ (false)
 {
-	scale(1.0, -1.0);
+  scale(1.0, -1.0);
   setDragMode(QGraphicsView::ScrollHandDrag);
   setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
 
-	// This is to remove the residual line along the scene when moving the viewport
-	setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
+  // This is to remove the residual line along the scene when moving the viewport
+  setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
 }
 
 void 
@@ -61,47 +61,47 @@ LayoutView::paintEvent(QPaintEvent* event)
 void
 LayoutView::keyPressEvent(QKeyEvent* event)
 {
-	if(event->key() == Qt::Key_F)
-	{
-		// Zoom Fit
-		zoomFit();
-	}
-	else if(event->key() == Qt::Key_Z && event->modifiers() != Qt::ShiftModifier)
-	{
-		// Zoom In
-		zoomIn();
-	}
-	else if(event->key() == Qt::Key_Z && event->modifiers() == Qt::ShiftModifier)
-	{
-		// Zoom Out
-		zoomOut();
-	}
-	else if(event->key() == Qt::Key_Q)
-	{
-    close();
-		exit(0);
-	}
-	else
-	  QGraphicsView::keyPressEvent(event);
+  if(event->key() == Qt::Key_F)
+  {
+    // Zoom Fit
+    zoomFit();
+  }
+  else if(event->key() == Qt::Key_Z && event->modifiers() != Qt::ShiftModifier)
+  {
+    // Zoom In
+    zoomIn();
+  }
+  else if(event->key() == Qt::Key_Z && event->modifiers() == Qt::ShiftModifier)
+  {
+    // Zoom Out
+    zoomOut();
+  }
+  // We have to implement close() in Main Window
+//  else if(event->key() == Qt::Key_Q)
+//  {
+//    close();
+//  }
+  else
+    QGraphicsView::keyPressEvent(event);
 }
 
 // Slots
 void
 LayoutView::zoomIn_slot()
 {
-	zoomIn();
+  zoomIn();
 }
 
 void
 LayoutView::zoomOut_slot()
 {
-	zoomOut();
+  zoomOut();
 }
 
 void
 LayoutView::zoomFit_slot()
 {
-	zoomFit();
+  zoomFit();
 }
 
 }

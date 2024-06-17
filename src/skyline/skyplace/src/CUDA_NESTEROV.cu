@@ -598,8 +598,8 @@ NesterovOptimizer::updateOneIteration(int iter, int backTrackIter)
   overflow_      = targetFunction_->getOverflow();
   macroOverflow_ = targetFunction_->getMacroOverflow();
 
-  printf("[Nesterov] [Iter%03d] HPWL : %-6.3f  Overflow : %-3.3f\n", 
-                          iter,     hpwl_ / 1e6,       overflow_); 
+  printf("[Nesterov] [Iter%04d] HPWL : %-6.3f  Overflow : %-3.3f\n", 
+                          iter,     hpwl_ / 1e6 / 2,       overflow_); 
 
  // printf("[Nesterov] [Iter%04d] HPWL : %-6.3f  Overflow : %-3.3f  MacroOverflow : %-4.4f\n", 
   //                        iter,     hpwl_ / 1e6,       overflow_,     macroOverflow_); 

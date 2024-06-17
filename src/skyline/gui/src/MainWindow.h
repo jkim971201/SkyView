@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QGraphicsScene>
+#include <QKeyEvent>
 
 #include "db/dbDatabase.h"
 #include "LayoutView.h"
@@ -27,6 +28,8 @@ class MainWindow : public QMainWindow
     LayoutScene* getScene() { return layout_scene_; }
     LayoutView*  getView()  { return layout_view_;  }
 
+    void keyPressEvent(QKeyEvent* event) override;
+
   private:
 
     std::shared_ptr<dbDatabase> db_;
@@ -36,8 +39,8 @@ class MainWindow : public QMainWindow
 
     void createMenu();
     void createDock();
-		void createToolBar();
-		void createItem();
+    void createToolBar();
+    void createItem();
 };
 
 }
