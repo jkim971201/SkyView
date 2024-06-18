@@ -6,7 +6,6 @@
 #include <chrono>
 
 #include "gpulouvain.h"
-#include "SkyPlaceDB.h"
 #include "InitialPlacer.h"
 
 namespace skyplace 
