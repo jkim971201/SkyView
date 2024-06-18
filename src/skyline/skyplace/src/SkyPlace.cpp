@@ -26,12 +26,11 @@ SkyPlace::SkyPlace(std::shared_ptr<dbDatabase> db)
     adOptimizer_       (nullptr),
     density_           (nullptr),
     localLambdaMode_   (false  ),
-    guiMode_           (false  ),
     plotMode_          (false  ),
     outputDir_         (""     ),
     dbTime_            (0.0    )
 {
-	opt_ = OptimizerType::Nesterov;
+  opt_ = OptimizerType::Nesterov;
   db_ = std::make_shared<SkyPlaceDB>();
 }
 
@@ -175,12 +174,11 @@ SkyPlace::run()
     adOptimizer_ = std::make_unique<AdamOptimizer>(param_, db_, targetFunc_, painter_);
   else if(opt_ == OptimizerType::Nesterov)
     ntOptimizer_ =std::make_unique<NesterovOptimizer>(param_, db_, targetFunc_, painter_);
-	else
-		assert(0);
+  else
+    assert(0);
 
   printf("[SkyPlace] Local Lambda Mode : %s\n", (localLambdaMode_  ? "ON" : "OFF"));
   printf("[SkyPlace] GIF Plot Mode     : %s\n", (plotMode_         ? "ON" : "OFF"));
-  printf("[SkyPlace] GUI Mode          : %s\n", (guiMode_          ? "ON" : "OFF"));
   printf("[SkyPlace] Start Placement!\n");
 
   // Step#1: Initial Placement
@@ -194,8 +192,10 @@ SkyPlace::run()
     finalStat = ntOptimizer_->startOptimize(plotMode_);
   else if(opt_ == OptimizerType::Adam)
     finalStat = adOptimizer_->startOptimize(plotMode_);
-	else
-		assert(0);
+  else
+    assert(0);
+
+  db_->exportDB(dbDatabase_);  // Deliver new coorindates to dbDatabase
 
   auto t2 = std::chrono::high_resolution_clock::now();
 
@@ -210,10 +210,6 @@ SkyPlace::run()
 
   // Finish : Print Statistic
   printStat(finalStat);
-
-  // GUI
-  if(guiMode_)
-    showFinalPlace();
 }
 
 void
@@ -222,11 +218,11 @@ SkyPlace::doInitialPlace()
   printf("[SkyPlace] Start Initial Place.\n");
   if(initialPlacer_ != nullptr)
     initialPlacer_->doInitialPlace();
-	else
-	{
-		printf("InitialPlacer is not made...\n");
-		exit(1);
-	}
+  else
+  {
+    printf("InitialPlacer is not made...\n");
+    exit(1);
+  }
   printf("[SkyPlace] Finish Initial Place.\n");
 }
 
@@ -274,13 +270,6 @@ SkyPlace::printStat(Stat finalStat)
   printf("  | Time Total     | %-5.1f   \n", totalTime);
   printf("  | Converge?      | %-5d     \n", finalStat.converge);
   printf(" ==================================================\n");
-}
-
-void
-SkyPlace::showFinalPlace()
-{
-  printf("[SkyPlace] Draw from SkyPlaceDB.\n");
-  painter_->drawChip();
 }
 
 } // namespace SkyPlace

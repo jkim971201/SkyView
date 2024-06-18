@@ -1,5 +1,3 @@
-#include "MainWindow.h"
-
 #include <QMenu>
 #include <QAction>
 #include <QMenuBar>
@@ -18,6 +16,11 @@
 
 #include <cassert>
 #include <iostream>
+
+#include "MainWindow.h"
+
+#include "db/dbTech.h"
+#include "db/dbDesign.h"
 
 static void loadResources()
 {

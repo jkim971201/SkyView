@@ -54,7 +54,6 @@ class SkyPlace
     // APIs
     void run(); // global_place
 
-    void setGUIMode()         { guiMode_         = true; }
     void setPlotMode()        { plotMode_        = true; }
     void setLocalLambdaMode() { localLambdaMode_ = true; }
     void setInitMethod(const std::string& init_method);
@@ -100,14 +99,12 @@ class SkyPlace
     std::unique_ptr<AdamOptimizer>      adOptimizer_;
 
     void doInitialPlace();
-    void showFinalPlace();
 
     // Configuration
     OptimizerType opt_;
 
     // ETC
     void printStat(Stat finalStat);
-    bool guiMode_;
     bool plotMode_;
     bool localLambdaMode_;
 

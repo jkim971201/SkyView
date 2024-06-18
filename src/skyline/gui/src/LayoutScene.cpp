@@ -1,11 +1,20 @@
+#include <cassert>
+#include <iostream>
+
+#include "db/dbTech.h"
+#include "db/dbDesign.h"
+#include "db/dbDie.h"
+#include "db/dbInst.h"
+#include "db/dbNet.h"
+#include "db/dbITerm.h"
+#include "db/dbBTerm.h"
+#include "db/dbRow.h"
+
 #include "LayoutScene.h"
 #include "gui_item/GuiDie.h"
 #include "gui_item/GuiRow.h"
 #include "gui_item/GuiInst.h"
 #include "gui_item/GuiIO.h"
-
-#include <cassert>
-#include <iostream>
 
 namespace gui
 {

@@ -6,13 +6,12 @@
 #include <filesystem>
 #include <memory>
 
-#include "dbTypes.h"
-#include "dbTech.h"
-#include "dbDesign.h"
-
 namespace db
 {
 
+class dbTypes;
+class dbTech;
+class dbDesign;
 class dbLefReader;
 class dbDefReader;
 class dbVerilogReader;
@@ -24,6 +23,8 @@ class dbDatabase
 
     dbDatabase();
 
+    ~dbDatabase() {}
+
     void readLef          (const char* filename);
     void readDef          (const char* filename);
     void readVerilog      (const char* filename);
@@ -33,7 +34,11 @@ class dbDatabase
     std::shared_ptr<dbTech>   getTech()   { return tech_;   }
     std::shared_ptr<dbDesign> getDesign() { return design_; }
 
+    bool isBookShelf() const { return bookShelfFlag_; }
+
   private:
+
+    bool bookShelfFlag_;
 
     // Parsing
     std::shared_ptr<dbLefReader>       lefReader_;

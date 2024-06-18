@@ -9,6 +9,16 @@
 #include <cfloat>    // For FLT_MAX
 #include <fstream>
 
+#include "db/dbTech.h"
+#include "db/dbDesign.h"
+#include "db/dbTypes.h"
+#include "db/dbDie.h"
+#include "db/dbInst.h"
+#include "db/dbNet.h"
+#include "db/dbITerm.h"
+#include "db/dbBTerm.h"
+#include "db/dbRow.h"
+
 #include "SkyPlaceDB.h"
 
 namespace skyplace
@@ -142,14 +152,14 @@ Pin::Pin(dbITerm* iterm, int id) : Pin()
 Pin::Pin(dbBTerm* bterm, int id) : Pin()
 {
   id_ = id;
-	int btermCx = bterm->cx();
-	int btermCy = bterm->cy();
+  int btermCx = bterm->cx();
+  int btermCy = bterm->cy();
 
-	cx_ = static_cast<float>(btermCx);
-	cy_ = static_cast<float>(btermCy);
+  cx_ = static_cast<float>(btermCx);
+  cy_ = static_cast<float>(btermCy);
   offsetX_ = static_cast<float>(btermCx - bterm->lx());
   offsetY_ = static_cast<float>(btermCy - bterm->ly());
-	isIO_ = true;
+  isIO_ = true;
 }
 
 void
@@ -260,7 +270,7 @@ Row::Row(dbRow* row)
 SkyPlaceDB::SkyPlaceDB()
   : designName_           (     ""),
     targetDensity_        (    1.0),
-		dbu_                  (      0),
+    dbu_                  (      0),
     numStdCells_          (      0), 
     numMacro_             (      0),
     numFixed_             (      0), 
@@ -284,15 +294,15 @@ SkyPlaceDB::SkyPlaceDB()
     fillerHeight_         (      0),
     numInitStep_          (      5)
 {
-	reset();
+  reset();
 }
 
 void
 SkyPlaceDB::reset()
 {
-	dbu_ = 0;
+  dbu_ = 0;
   
-	designName_ = std::string();
+  designName_ = std::string();
 
   diePtr_ = nullptr;
 
@@ -320,6 +330,21 @@ SkyPlaceDB::reset()
 }
 
 void
+SkyPlaceDB::exportDB(std::shared_ptr<dbDatabase> _dbDatabase)
+{
+  for(auto cell : movablePtrs_)
+  {
+    if(!cell->isFiller())
+    {
+      dbInst* inst_ptr = cell->dbInstPtr();
+      int newLx = static_cast<int>( cell->lx() );
+      int newLy = static_cast<int>( cell->ly() );
+      inst_ptr->setLocation(newLx, newLy);
+    }
+  }
+}
+
+void
 SkyPlaceDB::importDB(std::shared_ptr<dbDatabase> _dbDatabase)
 {
   const auto design = _dbDatabase->getDesign();
@@ -331,10 +356,10 @@ SkyPlaceDB::importDB(std::shared_ptr<dbDatabase> _dbDatabase)
   const std::vector<dbBTerm*>& db_bterms = design->getBTerms();
 
   // Step #1: Initialize Die
-	die_.setLx(static_cast<float>(design->coreLx()));
-	die_.setLy(static_cast<float>(design->coreLy()));
-	die_.setUx(static_cast<float>(design->coreUx()));
-	die_.setUy(static_cast<float>(design->coreUy()));
+  die_.setLx(static_cast<float>(design->coreLx()));
+  die_.setLy(static_cast<float>(design->coreLy()));
+  die_.setUx(static_cast<float>(design->coreUx()));
+  die_.setUy(static_cast<float>(design->coreUy()));
   diePtr_ = &die_;
 
   // Step #2: Initialize Cell
@@ -358,7 +383,7 @@ SkyPlaceDB::importDB(std::shared_ptr<dbDatabase> _dbDatabase)
     cIdx++;
 
     if(cellInst.isFixed()) 
-		{
+    {
       cellInst.setID(fixedIdx++);
       fixedPtrs_.push_back(&cellInst);
       if(!isOutsideDie(&cellInst))
@@ -424,51 +449,51 @@ SkyPlaceDB::importDB(std::shared_ptr<dbDatabase> _dbDatabase)
     Net* netPtr = nullptr;
 
     if(findNet != dbNet2Net_.end())
-			netPtr = findNet->second;
-		else
-		{
+      netPtr = findNet->second;
+    else
+    {
       std::cout << "Net " << dbNetPtr->name() << " does not exist in SkyPlaceDB.\n";
-  		exit(1);
-		}
+      exit(1);
+    }
 
-		// For dbBTerm
+    // For dbBTerm
     for(auto& bterm : dbNetPtr->getBTerms())
-		{
-			Pin& pinInstanceB = pinInsts_[pIdx];
-			pinInstanceB = Pin(bterm, pIdx);
-			pinInstanceB.setNet(netPtr);
-			netPtr->addNewPin(&pinInstanceB);
-			pinPtrs_.push_back(&pinInstanceB);
-			pIdx++;
-		}
+    {
+      Pin& pinInstanceB = pinInsts_[pIdx];
+      pinInstanceB = Pin(bterm, pIdx);
+      pinInstanceB.setNet(netPtr);
+      netPtr->addNewPin(&pinInstanceB);
+      pinPtrs_.push_back(&pinInstanceB);
+      pIdx++;
+    }
 
     dbInst* dbInstPtr = nullptr;
     Cell* cellPtr = nullptr;
 
-		// For dbITerm
+    // For dbITerm
     for(auto& iterm : dbNetPtr->getITerms())
-		{
-			Pin& pinInstanceI = pinInsts_[pIdx];
-			pinInstanceI = Pin(iterm, pIdx);
-			pinInstanceI.setNet(netPtr);
-			netPtr->addNewPin(&pinInstanceI);
-			pinPtrs_.push_back(&pinInstanceI);
-			dbInstPtr = iterm->getInst();
-			pIdx++;
+    {
+      Pin& pinInstanceI = pinInsts_[pIdx];
+      pinInstanceI = Pin(iterm, pIdx);
+      pinInstanceI.setNet(netPtr);
+      netPtr->addNewPin(&pinInstanceI);
+      pinPtrs_.push_back(&pinInstanceI);
+      dbInstPtr = iterm->getInst();
+      pIdx++;
 
       auto findCell = dbInst2Cell_.find(dbInstPtr);
       if(findCell != dbInst2Cell_.end())
       {
-			  cellPtr = findCell->second;
-				pinInstanceI.setCell(cellPtr);
-				cellPtr->addNewPin(&pinInstanceI);
+        cellPtr = findCell->second;
+        pinInstanceI.setCell(cellPtr);
+        cellPtr->addNewPin(&pinInstanceI);
       }
-			else
-			{
+      else
+      {
         std::cout << "Cell " << dbInstPtr->name() << " does not exist in SkyPlaceDB.\n";
-  			exit(1);
-			}
-		}
+        exit(1);
+      }
+    }
   }
 
   // Step #5: Initialize Pin Location and NetBBox
@@ -487,9 +512,9 @@ SkyPlaceDB::importDB(std::shared_ptr<dbDatabase> _dbDatabase)
     rowPtrs_.push_back(&row);
   }
 
-	// Finish -> assign number variables
-	numMovable_ = movablePtrs_.size();
-	numFixed_   = fixedPtrs_.size();
+  // Finish -> assign number variables
+  numMovable_ = movablePtrs_.size();
+  numFixed_   = fixedPtrs_.size();
 }
 
 void
@@ -499,7 +524,7 @@ SkyPlaceDB::init(std::shared_ptr<dbDatabase> db)
 
   reset();
 
-	dbu_ = db->getTech()->getDbu();
+  dbu_ = db->getTech()->getDbu();
   designName_ = db->getDesign()->name();
 
   // Step#1: Import dbDatabase to SkyPlaceDB
@@ -1117,7 +1142,7 @@ SkyPlaceDB::printInfo() const
   using namespace std;
 
   float initHpwl = hpwl_ / static_cast<float>(dbu_);
-	// Zero Check is done in init()
+  // Zero Check is done in init()
 
   cout << endl;
   cout << "*** Summary of SkyPlaceDB ***" << endl;

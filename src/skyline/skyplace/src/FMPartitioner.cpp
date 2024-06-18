@@ -1,4 +1,5 @@
 #include <iostream>
+#include <climits>
 
 #include "FMPartitioner.h"
 
@@ -236,7 +237,7 @@ FMPartitioner::doPartitioning()
 Vertex*
 FMPartitioner::findMaxGain()
 {
-  int MAX_GAIN = INT_MIN;
+  int MAX_GAIN = std::numeric_limits<int>::min();
   Vertex* maxVertex = nullptr;
 
   for(auto& v : graph_->vertices())

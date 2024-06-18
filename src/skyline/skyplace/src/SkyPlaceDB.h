@@ -5,11 +5,25 @@
 #include <memory>
 #include <string>
 #include <filesystem>
+#include <unordered_map>
 
 #include "db/dbDatabase.h"
 
 #define SQRT2 1.414213562373095048801L
 #define DENSITY_SCALE SQRT2
+
+namespace db 
+{
+class dbTech;
+class dbDesign;
+class dbTypes;
+class dbDie;
+class dbInst;
+class dbNet;
+class dbITerm;
+class dbBTerm;
+class dbRow;
+}
 
 namespace skyplace 
 {
@@ -377,6 +391,7 @@ class SkyPlaceDB
 
     // Important APIs
     void reset();
+    void exportDB(std::shared_ptr<dbDatabase> _dbDatabase); 
     void init(std::shared_ptr<dbDatabase> db); // Initialization to run placement 
     void setTargetDensity (float density) { targetDensity_ = density; }
     void setNumBinX       (int   numBinX) { numBinX_       = numBinX; }     
@@ -428,8 +443,8 @@ class SkyPlaceDB
     float binX    () const { return binX_;    }
     float binY    () const { return binY_;    }
 
-    void  updateHpwl     ();
-    void  updatePinBound (); // For B2B Model (CG-based Initialization)
+    void  updateHpwl();
+    void  updatePinBound(); // For B2B Model (CG-based Initialization)
   
     // To plot density gradient arrows, these will be delivered to Painter
     std::vector<float>& densityGradX() { return densityGradX_; }

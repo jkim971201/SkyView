@@ -3,6 +3,9 @@
 
 #include "dbDatabase.h"
 
+#include "dbTypes.h"
+#include "dbTech.h"
+#include "dbDesign.h"
 #include "dbLefReader.h"
 #include "dbDefReader.h"
 #include "dbVerilogReader.h"
@@ -12,9 +15,10 @@ namespace db
 {
 
 dbDatabase::dbDatabase()
-  : auxFile_ (""),
-    vFile_   (""),
-    defFile_ ("")
+  : auxFile_       (""),
+    vFile_         (""),
+    defFile_       (""),
+    bookShelfFlag_ (false)
 {
   lefList_.clear();  
 
@@ -106,6 +110,8 @@ dbDatabase::readBookShelf(const char* fileName)
 
   bsReader_->readFile(filenameStr);
   tech_->setDbu(bsReader_->dbuBookShelf());
+
+  bookShelfFlag_ = true;
 
   std::cout << "Finish " << filenameStr << std::endl;
 }
