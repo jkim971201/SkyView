@@ -1,6 +1,6 @@
 %{
 
-#include "SkyLine.h"
+#include "skyline/SkyLine.h"
 
 
 namespace skyline

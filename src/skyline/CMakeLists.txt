@@ -1,4 +1,5 @@
-add_subdirectory(gui)
+add_subdirectory(database)
+add_subdirectory(skygui)
 add_subdirectory(skyplace)
 
 add_swig(I_FILE    SkyLine.i 
@@ -12,7 +13,7 @@ target_sources(skyline
 
 target_include_directories(skyline
   PUBLIC
-  ${PROJECT_SOURCE_DIR}/src/skyline
+	include
 )
 
 target_link_libraries(skyline
