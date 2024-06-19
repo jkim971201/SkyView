@@ -8,9 +8,9 @@
 #include "tclCmd/CmdReadVerilog.hpp"
 #include "tclCmd/CmdReadBookshelf.hpp"
 #include "tclCmd/CmdSetTopModule.hpp"
-
+#include "tclCmd/CmdWriteBookshelf.hpp"
+#include "tclCmd/CmdWriteDef.hpp"
 #include "tclCmd/CmdGlobalPlace.hpp"
-
 #include "tclCmd/CmdDisplay.hpp"
 
 namespace skyline
@@ -105,6 +105,9 @@ CmdCore::initTclCmds(Tcl_Interp* interp)
   TclCmdList::addTclCmd(interp, std::make_unique<CmdReadVerilog>("read_verilog"));
   TclCmdList::addTclCmd(interp, std::make_unique<CmdReadBookshelf>("read_bookshelf"));
   TclCmdList::addTclCmd(interp, std::make_unique<CmdSetTopModule>("set_top_module"));
+
+  TclCmdList::addTclCmd(interp, std::make_unique<CmdWriteDef>("write_def"));
+  TclCmdList::addTclCmd(interp, std::make_unique<CmdWriteBookshelf>("write_bookshelf"));
 
 	// GUI-related API
   TclCmdList::addTclCmd(interp, std::make_unique<CmdDisplay>("display"));

@@ -1,8 +1,29 @@
 #include <iostream>
 #include <fstream>
+#include <ctime>
+#include <chrono> // to write date to output file
 
 #include "dbDesign.h"
 #include "dbUtil.h"
+
+inline std::string getCalenderDate()
+{
+  auto now = std::chrono::system_clock::now();
+  std::time_t now_ctime = std::chrono::system_clock::to_time_t(now);
+
+  auto parts = std::localtime(&now_ctime);
+
+  int year = parts->tm_year + 1900;
+  int mon  = parts->tm_mon + 1;
+  int day  = parts->tm_mday;
+  
+  std::string calenderDate =
+      std::to_string(mon) + "/" 
+    + std::to_string(day) + "/" 
+    + std::to_string(year);
+
+  return calenderDate;
+}
 
 namespace db
 {
@@ -409,31 +430,46 @@ dbDesign::writeBookShelf(const char* path) const
 {
   const int dbu = tech_->getDbu();
 
-  std::string benchName;
-  if(path = "")
+  std::string auxFileName = std::string(path); 
+  std::string auxFileNameWithOutSuffix = "";
+  std::string auxFileNameWithOutSlash  = "";
+
+  if(auxFileName == "")
   {
-    benchName = name_;
+    auxFileName = name_ + ".aux";
     std::cout << "File name is not given... ";
     std::cout << "design name will be used by default..." << std::endl;
   }
   else
   {
-    benchName = std::string(path);
+    size_t dot   = auxFileName.find_last_of('.');
+    size_t slash = auxFileName.find_last_of('/');
+
+    std::string suffix = auxFileName.substr(dot + 1);
+    auxFileNameWithOutSuffix = auxFileName.substr(0, dot);
+    auxFileNameWithOutSlash  = auxFileName.substr(slash + 1, dot - slash - 1);
+
+    if(suffix != "aux")
+    {
+      printf("BookShelf output should be .aux file!\n");
+      exit(1);
+    }
   }
 
-  std::string auxFileName = benchName + ".gp.aux";
-  std::string plFileName  = benchName + ".gp.pl";
+  std::string plFileName = auxFileNameWithOutSuffix + ".pl";
   
   // Step #1. Write .aux file 
   std::ofstream aux_output;
   aux_output.open(auxFileName);
 
-  aux_output << "RowBasedPlacement : ";
-  aux_output << benchName + ".nodes ";
-  aux_output << benchName + ".nets ";
-  //aux_output << benchName + ".wts ";
-  aux_output << benchName + ".gp.pl ";
-  aux_output << benchName + ".scl";
+  aux_output << "RowBasedPlacement :" << " ";
+  aux_output << name_ + ".nodes" << " ";
+  aux_output << name_ + ".nets" << " ";
+  aux_output << name_ + ".wts" << " ";
+  // If wts filename is not written in aux, 
+  // ntuplace3 binaray makes segmentation fault.
+  aux_output << auxFileNameWithOutSlash + ".pl" << " ";
+  aux_output << name_ + ".scl";
 
   aux_output.close();
 
@@ -443,6 +479,7 @@ dbDesign::writeBookShelf(const char* path) const
   pl_output.open(plFileName);
 
   pl_output << "UCLA pl 1.0" << std::endl;
+  pl_output << "# Created: " << getCalenderDate() << std::endl;
   pl_output << "# User: Jaekyung Im (jkim97@postech.ac.kr)" << std::endl;
   pl_output << std::endl;
 
@@ -457,8 +494,8 @@ dbDesign::writeBookShelf(const char* path) const
   }
 
   pl_output.close();
-
-  printf("Write results to %s.\n", plFileName.c_str());
+  printf("Write results to .aux (%s) and .pl (%s).\n", 
+          auxFileName.c_str(), plFileName.c_str());
 }
 
 void

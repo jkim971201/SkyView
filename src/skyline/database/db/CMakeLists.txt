@@ -34,7 +34,7 @@ target_sources(db
 )
 
 target_link_libraries(db
-	PUBLIC
+  PUBLIC
   lef
   def
   verilog
@@ -43,5 +43,5 @@ target_link_libraries(db
 
 target_include_directories(db
   PUBLIC
-	${CMAKE_CURRENT_SOURCE_DIR}/.. # TODO Fix this
+  ${CMAKE_CURRENT_SOURCE_DIR}/.. # TODO Fix this
 )

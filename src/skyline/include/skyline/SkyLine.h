@@ -28,6 +28,10 @@ class SkyLine
     void readDef          (const char* file_path);
     void readVerilog      (const char* file_path);
     void readBookShelf    (const char* file_path);
+
+    void writeDef         (const char* file_path);
+    void writeBookShelf   (const char* file_path);
+
     void setTopModuleName (const char*  top_name);
 
     void runGlobalPlace(double target_ovf = 0.07, double target_den = 1.0);

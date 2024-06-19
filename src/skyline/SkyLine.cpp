@@ -50,6 +50,18 @@ SkyLine::readBookShelf(const char* file_path)
 }
 
 void
+SkyLine::writeDef(const char* file_path)
+{
+  db_->writeDef(file_path);
+}
+
+void
+SkyLine::writeBookShelf(const char* file_path)
+{
+  db_->writeBookShelf(file_path);
+}
+
+void
 SkyLine::setTopModuleName(const char* top_name)
 {
   db_->setTopModuleName(top_name);

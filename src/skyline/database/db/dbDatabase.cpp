@@ -117,21 +117,21 @@ dbDatabase::readBookShelf(const char* fileName)
 }
 
 void
+dbDatabase::writeBookShelf(const char* filename) const
+{
+	design_->writeBookShelf(filename);
+}
+
+void
+dbDatabase::writeDef(const char* filename) const
+{
+	design_->writeDef(filename);
+}
+
+void
 dbDatabase::setTopModuleName(const char* topName)
 { 
   verilogReader_->setTopModuleName(std::string(topName));
-}
-
-void
-dbDatabase::writeBookShelf(const char* path) const
-{
-  design_->writeBookShelf(path);
-}
-
-void
-dbDatabase::writeDef(const char* path) const
-{
-  design_->writeDef(path);
 }
 
 }

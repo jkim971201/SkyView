@@ -29,10 +29,11 @@ class dbDatabase
     void readDef          (const char* filename);
     void readVerilog      (const char* filename);
     void readBookShelf    (const char* filename);
-    void setTopModuleName (const char*  topname);
 
-    void writeBookShelf   (const char* path) const;
-    void writeDef         (const char* path) const;
+    void writeBookShelf   (const char* filename) const;
+    void writeDef         (const char* filename) const;
+
+    void setTopModuleName (const char*  topname);
 
     std::shared_ptr<dbTech>   getTech()   { return tech_;   }
     std::shared_ptr<dbDesign> getDesign() { return design_; }
