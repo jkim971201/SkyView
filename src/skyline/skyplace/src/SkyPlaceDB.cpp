@@ -687,7 +687,7 @@ SkyPlaceDB::createBins()
     if(numBin >= 8192)
       break;
   }
-  numBin /= 2;
+  // numBin /= 2;
 
   if(dieX > dieY)
   {

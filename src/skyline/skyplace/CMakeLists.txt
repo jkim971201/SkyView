@@ -6,7 +6,6 @@ set(CMAKE_USE_PTHREADS_INIT 1)
 set(THREADS_PREFER_PTHREAD_FLAG ON) # For CImg
 
 # Home Directory
-set(Placer_HOME ${CMAKE_CURRENT_SOURCE_DIR})
 set(CIMG_HOME ${CMAKE_CURRENT_SOURCE_DIR}/extern/CImg)
 set(Louvain_HOME ${CMAKE_CURRENT_SOURCE_DIR}/extern/Louvain)
 

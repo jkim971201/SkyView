@@ -122,4 +122,16 @@ dbDatabase::setTopModuleName(const char* topName)
   verilogReader_->setTopModuleName(std::string(topName));
 }
 
+void
+dbDatabase::writeBookShelf(const char* path) const
+{
+  design_->writeBookShelf(path);
+}
+
+void
+dbDatabase::writeDef(const char* path) const
+{
+  design_->writeDef(path);
+}
+
 }

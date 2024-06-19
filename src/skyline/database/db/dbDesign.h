@@ -29,6 +29,9 @@ class dbDesign
              const std::shared_ptr<dbTech>  tech);
     ~dbDesign();
 
+    void writeDef       (const char* path = "") const;
+    void writeBookShelf (const char* path = "") const;
+
     // Setters
     void setName(const char* name) { name_ = std::string(name); }
     void setDbu(int dbu);

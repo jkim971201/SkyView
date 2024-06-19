@@ -32,7 +32,7 @@ __device__ inline float computeGaussian(float sigma,
   float gaussianY = __expf( -0.5 * (y / sigma) * (y / sigma) );
 
 	// wmax = 1.0?
-  return gaussianX * gaussianY / ( 2 * float(PI) * sigma * sigma);
+  return gaussianX * gaussianY / ( 2 * float(FFT_PI) * sigma * sigma);
 }
 
 __device__ inline OVBIN findBinWithDensitySizeDevice(const int   numBinX,

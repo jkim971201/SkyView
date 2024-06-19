@@ -11,7 +11,7 @@
 #include <thrust/host_vector.h>
 #include <thrust/inner_product.h>
 
-#define PI (3.141592653589793238462643383279502884197169)
+#define FFT_PI 3.141592653589793238462643383279502884197169
 
 #ifndef CUDA_CHECK
 #define CUDA_CHECK(status) __CUDA_CHECK(status, __FILE__, __LINE__)

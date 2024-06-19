@@ -1,3 +1,6 @@
+#include <iostream>
+#include <fstream>
+
 #include "dbDesign.h"
 #include "dbUtil.h"
 
@@ -163,7 +166,7 @@ dbDesign::addNewRow(const defiRow* ro)
 
   rows_.push_back(newRow);
   //newRow->print();
-	
+  
   if(coreLx_ > newRow->lx()) coreLx_ = newRow->lx();
   if(coreLy_ > newRow->ly()) coreLy_ = newRow->ly();
   if(coreUx_ < newRow->ux()) coreUx_ = newRow->ux();
@@ -399,6 +402,69 @@ dbDesign::makeITermName(const std::string& instName, const std::string& mTermNam
   const std::string divStr = std::string(1, divider_); 
   // convert a single char to std::string
   return instName + divStr + mTermName;
+}
+
+void
+dbDesign::writeBookShelf(const char* path) const
+{
+  const int dbu = tech_->getDbu();
+
+  std::string benchName;
+  if(path = "")
+  {
+    benchName = name_;
+    std::cout << "File name is not given... ";
+    std::cout << "design name will be used by default..." << std::endl;
+  }
+  else
+  {
+    benchName = std::string(path);
+  }
+
+  std::string auxFileName = benchName + ".gp.aux";
+  std::string plFileName  = benchName + ".gp.pl";
+  
+  // Step #1. Write .aux file 
+  std::ofstream aux_output;
+  aux_output.open(auxFileName);
+
+  aux_output << "RowBasedPlacement : ";
+  aux_output << benchName + ".nodes ";
+  aux_output << benchName + ".nets ";
+  //aux_output << benchName + ".wts ";
+  aux_output << benchName + ".gp.pl ";
+  aux_output << benchName + ".scl";
+
+  aux_output.close();
+
+  // Step #2. Write .pl file 
+  // Print Headline
+  std::ofstream pl_output;
+  pl_output.open(plFileName);
+
+  pl_output << "UCLA pl 1.0" << std::endl;
+  pl_output << "# User: Jaekyung Im (jkim97@postech.ac.kr)" << std::endl;
+  pl_output << std::endl;
+
+  for(auto& inst : insts_)
+  {
+    pl_output << inst->name() << " ";
+    pl_output << inst->lx() / dbu << " ";
+    pl_output << inst->ly() / dbu << " : N";
+    if(inst->isFixed())
+      pl_output << " /FIXED";
+    pl_output << std::endl;
+  }
+
+  pl_output.close();
+
+  printf("Write results to %s.\n", plFileName.c_str());
+}
+
+void
+dbDesign::writeDef(const char* path) const
+{
+
 }
 
 }

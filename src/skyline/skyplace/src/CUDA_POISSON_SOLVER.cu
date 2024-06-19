@@ -25,15 +25,15 @@ __global__ void precomputeExpk(cufftComplex *expkM,
   if(tID <= M / 2)
   {
     int hID = tID;
-    cufftComplex W_h_4M = make_float2(__cosf((float)PI * hID / (2 * M)), 
-                                     -__sinf((float)PI * hID / (M * 2)));
+    cufftComplex W_h_4M = make_float2(__cosf((float)FFT_PI * hID / (2 * M)), 
+                                     -__sinf((float)FFT_PI * hID / (M * 2)));
     expkM[hID] = W_h_4M;
   }
   if(tID <= N / 2)
   {
     int wid = tID;
-    cufftComplex W_w_4N = make_float2(__cosf((float)PI * wid / (2 * N)), 
-                                     -__sinf((float)PI * wid / (N * 2)));
+    cufftComplex W_w_4N = make_float2(__cosf((float)FFT_PI * wid / (2 * N)), 
+                                     -__sinf((float)FFT_PI * wid / (N * 2)));
     expkN[wid] = W_w_4N;
   }
 }
@@ -49,29 +49,29 @@ __global__ void precomputeExpkForInverse(cufftComplex *expkM,
   if(tid < M)
   {
     int hid = tid;
-    cufftComplex W_h_4M = make_float2(__cosf((float)PI * hid / (2 * M)), 
-                                       -__sinf((float)PI * hid / (M * 2)));
+    cufftComplex W_h_4M = make_float2(__cosf((float)FFT_PI * hid / (2 * M)), 
+                                       -__sinf((float)FFT_PI * hid / (M * 2)));
     expkM[hid] = W_h_4M;
     // expkMN_1
-    cufftComplex W_h_4M_offset = make_float2(__cosf((float)PI * (hid + M) / (2 * M)), 
-                                              -__sinf((float)PI * (hid + M) / (M * 2)));
+    cufftComplex W_h_4M_offset = make_float2(__cosf((float)FFT_PI * (hid + M) / (2 * M)), 
+                                              -__sinf((float)FFT_PI * (hid + M) / (M * 2)));
     expkMN_1[hid] = W_h_4M;
     expkMN_1[hid + M] = W_h_4M_offset;
   
     //expkMN_2
-    W_h_4M = make_float2(-__sinf((float)PI * (hid - (N - 1)) / (M * 2)), 
-                         -__cosf((float)PI * (hid - (N - 1)) / (2 * M)));
+    W_h_4M = make_float2(-__sinf((float)FFT_PI * (hid - (N - 1)) / (M * 2)), 
+                         -__cosf((float)FFT_PI * (hid - (N - 1)) / (2 * M)));
 
-    W_h_4M_offset = make_float2(-__sinf((float)PI * (hid - (N - 1) + M) / (M * 2)), 
-                                  -__cosf((float)PI * (hid - (N - 1) + M) / (2 * M)));
+    W_h_4M_offset = make_float2(-__sinf((float)FFT_PI * (hid - (N - 1) + M) / (M * 2)), 
+                                  -__cosf((float)FFT_PI * (hid - (N - 1) + M) / (2 * M)));
     expkMN_2[hid] = W_h_4M;
     expkMN_2[hid + M] = W_h_4M_offset;
   }
   if(tid <= N / 2)
   {
     int wid = tid;
-    cufftComplex W_w_4N = make_float2(__cosf((float)PI * wid / (2 * N)), 
-                                     -__sinf((float)PI * wid / (N * 2)));
+    cufftComplex W_w_4N = make_float2(__cosf((float)FFT_PI * wid / (2 * N)), 
+                                     -__sinf((float)FFT_PI * wid / (N * 2)));
     expkN[wid] = W_w_4N;
   }
 }

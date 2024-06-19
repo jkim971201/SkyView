@@ -31,6 +31,9 @@ class dbDatabase
     void readBookShelf    (const char* filename);
     void setTopModuleName (const char*  topname);
 
+    void writeBookShelf   (const char* path) const;
+    void writeDef         (const char* path) const;
+
     std::shared_ptr<dbTech>   getTech()   { return tech_;   }
     std::shared_ptr<dbDesign> getDesign() { return design_; }
 

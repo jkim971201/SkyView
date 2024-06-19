@@ -459,7 +459,7 @@ class SkyPlaceDB
 
     float targetDensity_;
 
-		int dbu_; // This is from dbDatabase->dbTech->getDbu()
+    int dbu_; // This is from dbDatabase->dbTech->getDbu()
 
     // Number of Objects
     int numStdCells_;

@@ -5,10 +5,6 @@
 #include <cstdio>
 #include <cufft.h>
 
-#include "SkyPlaceDB.h"
-
-#define FFT_PI 3.141592653589793238462L
-
 namespace skyplace 
 {
 
