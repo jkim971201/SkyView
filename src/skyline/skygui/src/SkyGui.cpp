@@ -1,4 +1,4 @@
-#include "gui/SkyView.h"
+#include "skygui/SkyGui.h"
 #include "MainWindow.h"
 
 #include <QApplication>
@@ -9,17 +9,17 @@ extern char** cmd_argv;
 namespace gui
 {
 
-SkyView::SkyView(std::shared_ptr<dbDatabase> db)
+SkyGui::SkyGui(std::shared_ptr<dbDatabase> db)
   : db_ (db)
 {
 }
 
-SkyView::~SkyView()
+SkyGui::~SkyGui()
 {
 }
 
 void
-SkyView::display()
+SkyGui::display()
 {
   QApplication app(cmd_argc, cmd_argv);
   MainWindow window;

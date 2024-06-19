@@ -1,7 +1,7 @@
 #include "skyline/SkyLine.h"
 
 #include "db/dbDatabase.h"
-#include "gui/SkyView.h"
+#include "skygui/SkyGui.h"
 #include "skyplace/SkyPlace.h"
 
 namespace skyline
@@ -17,7 +17,7 @@ SkyLine* SkyLine::getStaticPtr()
 SkyLine::SkyLine()
 {
   db_       = std::make_shared<db::dbDatabase>();
-  gui_      = std::make_unique<gui::SkyView>(db_);
+  gui_      = std::make_unique<gui::SkyGui>(db_);
   skyplace_ = std::make_unique<skyplace::SkyPlace>(db_);
 }
 

@@ -8,7 +8,7 @@ namespace db {
 }
 
 namespace gui { 
-  class SkyView;    
+  class SkyGui;    
 }
 
 namespace skyplace { 
@@ -40,7 +40,7 @@ class SkyLine
     ~SkyLine();
 
     std::shared_ptr<db::dbDatabase>     db_;
-    std::unique_ptr<gui::SkyView>       gui_;
+    std::unique_ptr<gui::SkyGui>        gui_;
     std::unique_ptr<skyplace::SkyPlace> skyplace_;
 
 };

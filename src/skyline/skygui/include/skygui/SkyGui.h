@@ -1,5 +1,5 @@
-#ifndef SKY_VIEW_H
-#define SKY_VIEW_H
+#ifndef SKY_GUI_H
+#define SKY_GUI_H
 
 #include <memory>
 
@@ -10,13 +10,12 @@ using namespace db;
 namespace gui
 {
 
-class SkyView
+class SkyGui
 {
-
   public:
 
-    SkyView(std::shared_ptr<dbDatabase> db);
-    ~SkyView();
+    SkyGui(std::shared_ptr<dbDatabase> db);
+    ~SkyGui();
 
     void linkDatabase(std::shared_ptr<dbDatabase> db);
     void display();

@@ -6,7 +6,7 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Widgets)
 
 set(gui_sources 
-    src/SkyView.cpp
+    src/SkyGui.cpp
     src/MainWindow.cpp
     src/LayoutView.cpp
     src/LayoutScene.cpp
@@ -32,11 +32,12 @@ set(gui_headers
 # when headers (with Q_OBJECT) are added in library list)
 
 add_library(gui 
-            ${gui_sources} 
-            ${gui_headers}
+  ${gui_sources} 
+  ${gui_headers}
 )
 
 target_link_libraries(gui
+	PRIVATE
   db
   Qt${QT_VERSION_MAJOR}::Widgets
 )
