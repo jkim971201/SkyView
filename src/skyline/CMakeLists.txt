@@ -2,9 +2,7 @@ add_subdirectory(database)
 add_subdirectory(skygui)
 add_subdirectory(skyplace)
 
-add_swig(I_FILE    SkyLine.i 
-         NAME      skyline
-         NAMESPACE skyline)
+add_library(skyline)
 
 target_sources(skyline
   PRIVATE

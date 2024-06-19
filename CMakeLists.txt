@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.1)
 cmake_policy(SET CMP0078 NEW)
 cmake_policy(SET CMP0086 NEW)
 
-project(Viewer VERSION 1 LANGUAGES CXX)
+project(Viewer LANGUAGES CXX)
 
 set(CMAKE_C_COMPILER "g++")
 set(CMAKE_CXX_STANDARD 17)
@@ -28,8 +28,8 @@ include(UseSWIG)
 # Home Directory
 set(PROJECT_HOME ${PROJECT_SOURCE_DIR})
 
-add_subdirectory(${PROJECT_HOME}/src/database)
 add_subdirectory(${PROJECT_HOME}/src/skyline)
+add_subdirectory(${PROJECT_HOME}/src/tclCmd)
 
 # Source Code
 set(PROJECT_SRC 
@@ -49,14 +49,12 @@ target_compile_definitions(Viewer
 target_include_directories(${PROJECT_NAME}
   PUBLIC
   ${TK_INCLUDE_PATH} 
-	src/database
-	src/skyline
 )
 
 # Link Library
 target_link_libraries(${PROJECT_NAME} 
   PUBLIC
   ${TCL_LIBRARY}
-	db
 	skyline
+  tcl_cmd	
 )

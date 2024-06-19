@@ -2,11 +2,6 @@
 #define SKYLINE_H
 
 #include <memory>
-#include <unordered_map>
-
-extern "C" {
-struct Tcl_Interp;
-}
 
 namespace db { 
   class dbDatabase; 
@@ -23,25 +18,11 @@ namespace skyplace {
 namespace skyline
 {
 
-class TclCmd;
-
-class TclCmdList
-{
-  public:
-    static void addTclCmd(Tcl_Interp* interp, std::unique_ptr<TclCmd> newCmd);
-    static TclCmd* getCmdByName(const char* name);
-
-  private:
-    static std::unordered_map<std::string, std::unique_ptr<TclCmd>> name2Cmd_;
-};
-
 class SkyLine
 {
   public:
 
     static SkyLine* getStaticPtr();
-
-    void initSkyLine(Tcl_Interp* interp);
 
     void readLef          (const char* file_path);
     void readDef          (const char* file_path);
@@ -49,7 +30,7 @@ class SkyLine
     void readBookShelf    (const char* file_path);
     void setTopModuleName (const char*  top_name);
 
-    void runGlobalPlace();
+    void runGlobalPlace(double target_ovf = 0.07, double target_den = 1.0);
     void display();
 
   private:
@@ -61,11 +42,6 @@ class SkyLine
     std::shared_ptr<db::dbDatabase>     db_;
     std::unique_ptr<gui::SkyView>       gui_;
     std::unique_ptr<skyplace::SkyPlace> skyplace_;
-
-    // Tcl Interface
-    Tcl_Interp* interp_;
-
-    void initTclCmds();
 
 };
 

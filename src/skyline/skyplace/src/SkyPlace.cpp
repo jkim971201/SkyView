@@ -30,8 +30,9 @@ SkyPlace::SkyPlace(std::shared_ptr<dbDatabase> db)
     outputDir_         (""     ),
     dbTime_            (0.0    )
 {
-  opt_ = OptimizerType::Nesterov;
-  db_ = std::make_shared<SkyPlaceDB>();
+  opt_   = OptimizerType::Nesterov;
+  db_    = std::make_shared<SkyPlaceDB>();
+  param_ = std::make_shared<HyperParam>();
 }
 
 SkyPlace::~SkyPlace() {}
@@ -107,9 +108,6 @@ SkyPlace::preamble()
   db_->init(dbDatabase_);
 
   // 2. Make SubTools
-    // Make HyperParameter
-    param_ = std::make_shared<HyperParam>();
-
     // Make InitialPlacer
     initialPlacer_ = std::make_unique<InitialPlacer>(db_);
 
