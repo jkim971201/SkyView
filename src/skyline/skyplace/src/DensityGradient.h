@@ -2,7 +2,6 @@
 #define DENSITY_GRAD_H
 
 #include <memory>
-#include <ctime>
 
 #include <thrust/transform_reduce.h>
 #include <thrust/functional.h>

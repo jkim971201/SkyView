@@ -2,7 +2,6 @@
 #define ADAM_OPTIMIZER_H
 
 #include <memory>
-#include <ctime>
 
 #include <cuda_runtime.h>
 #include <thrust/transform_reduce.h>

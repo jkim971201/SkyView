@@ -1,6 +1,6 @@
 #include <cmath>
-#include <cassert>
 #include <vector>
+#include <chrono>
 #include <random>    // For mt19937
 #include <algorithm> // For sort
 #include <cstdio>
@@ -458,7 +458,7 @@ DensityGradient::computeGrad(float* densityGradX,
   int numThreadCell = 256;
   int numBlockCell  = (numMovable_ * 2 - 1 + numThreadCell) / numThreadCell;
 
-  std::clock_t start1 = std::clock();
+  auto t0 = std::chrono::high_resolution_clock::now();
 
   /////////////////
   // CUDA Kernel //
@@ -512,7 +512,7 @@ DensityGradient::computeGrad(float* densityGradX,
 //                                                      d_ptr_scaledBinArea_,
 //                                                      d_ptr_macroOverflowArea_);
 
-  std::clock_t end1 = std::clock();
+  auto t1 = std::chrono::high_resolution_clock::now();
 
   overflow_ = thrust::reduce(d_overflowArea_.begin(),
                              d_overflowArea_.end()) / sumMovableArea_;
@@ -520,7 +520,8 @@ DensityGradient::computeGrad(float* densityGradX,
   macroOverflow_ = thrust::reduce(d_macroOverflowArea_.begin(), 
                                   d_macroOverflowArea_.end()) / sumMovableArea_;
 
-  binDenUpTime_ += (double)(end1 - start1);
+  std::chrono::duration<double> runtime1 = t1 - t0;
+  binDenUpTime_ += runtime1.count();
 
   // Step 4. Solve Poisson Equation
   poissonSolver_->solvePoisson(d_ptr_binDensity_, 
@@ -528,9 +529,10 @@ DensityGradient::computeGrad(float* densityGradX,
                                d_ptr_electroForceX_, 
                                d_ptr_electroForceY_);
 
-  std::clock_t end2 = std::clock();
+  auto t2 = std::chrono::high_resolution_clock::now();
+  std::chrono::duration<double> runtime2 = t2 - t1;
 
-  poissonTime_ += (double)(end2 - start1);
+  poissonTime_ += runtime2.count();
 
   // Step 5. Compute Density Gradient based on Electric Force XY
   getDensityGradForEachCell<<<numBlockCell, numThreadCell>>>(numMovable_, 
@@ -601,9 +603,10 @@ DensityGradient::computeGrad(float* densityGradX,
                                                      d_ptr_binLambda_);
   }
 
-  std::clock_t end3 = std::clock();
+  auto t3 = std::chrono::high_resolution_clock::now();
+  std::chrono::duration<double> runtime3 = t3 - t0;
 
-  densityTime_ += (double)(end3 - start1);
+  densityTime_ += runtime3.count();
 }
 
 void
@@ -615,7 +618,7 @@ DensityGradient::computeGradAfterValue(float* densityGradX,
   int numThreadCell = 256;
   int numBlockCell  = (numMovable_ * 2 - 1 + numThreadCell) / numThreadCell;
 
-  std::clock_t start = std::clock();
+  auto t1 = std::chrono::high_resolution_clock::now();
 
   // Step 4. Solve Poisson Equation
   poissonSolver_->solvePoissonForce(d_ptr_electroForceX_, 
@@ -647,9 +650,10 @@ DensityGradient::computeGradAfterValue(float* densityGradX,
                                                              densityGradY,
                                                              d_ptr_densityPreconditioner_);
 
-  std::clock_t end = std::clock();
+  auto t2 = std::chrono::high_resolution_clock::now();
+  std::chrono::duration<double> runtime = t2 - t1;
 
-  densityTime_ += (double)(end - start);
+  densityTime_ += runtime.count();
 }
 
 float 
@@ -661,8 +665,6 @@ DensityGradient::computePenalty(const float* d_ptr_cellCx,
 
   int numThreadCell = 256;
   int numBlockCell  = (numMovable_ * 2 - 1 + numThreadCell) / numThreadCell;
-
-  std::clock_t start1 = std::clock();
 
   /////////////////
   // CUDA Kernel //

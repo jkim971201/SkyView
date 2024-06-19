@@ -1,6 +1,6 @@
 #include <cstdio>
 #include <memory>
-#include <cassert>
+#include <chrono>
 #include <cmath>
 
 #include "CUDA_UTIL.h"
@@ -138,7 +138,7 @@ AdamOptimizer::initOptimizer()
 {
   printf("[Adam] Optimizer Initialization\n");
 
-  std::clock_t start = std::clock();
+  auto t1 = std::chrono::high_resolution_clock::now();
 
   param_->printHyperParameters();
 
@@ -157,9 +157,10 @@ AdamOptimizer::initOptimizer()
   if(!onlyGradMode_)
     sumPenalty_ = targetFunction_->getPenalty();
 
-  std::clock_t end = std::clock();
+  auto t2 = std::chrono::high_resolution_clock::now();
+  std::chrono::duration<double> runtime = t2 - t1;
 
-  initTime_ += (double)(end - start);
+  initTime_ += runtime.count();
 
   printf("[Adam] Optimizer Initialization Finished.\n");
 }
@@ -254,7 +255,7 @@ AdamOptimizer::updateDirection(const thrust::device_vector<float>& d_nextMX,
 Stat
 AdamOptimizer::startOptimize(bool plotMode)
 {
-  std::clock_t start = std::clock();
+  auto t1 = std::chrono::high_resolution_clock::now();
 
   initOptimizer();
 
@@ -337,9 +338,10 @@ AdamOptimizer::startOptimize(bool plotMode)
   if(plotMode)
     painter_->saveImage(iter, hpwl_, overflow_, false); // no Filler
 
-  std::clock_t end = std::clock();
+  auto t2 = std::chrono::high_resolution_clock::now();
+  std::chrono::duration<double> runtime = t2 - t1;
 
-  adTime_ = (double)(end - start);
+  adTime_ = runtime.count();
 
   Stat finalStat 
     = {!isDiverge_, 

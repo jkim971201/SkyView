@@ -119,16 +119,6 @@ TargetFunction::multiplyPreconditioner(thrust::device_vector<float>& inputVector
                                                             getRawPointer(inputVectorY));
 }
 
-void
-TargetFunction::setInitGammaInv(float val)
-{
-  initGammaInv_ = 2.0 * val / (db_->binX() + db_->binY());
-
-  gammaInv_ = initGammaInv_;
-
-  wireLength_->setGammaInv(gammaInv_);
-}
-
 TargetFunction::TargetFunction(std::shared_ptr<SkyPlaceDB> db, 
                                std::shared_ptr<WireLengthGradient> wireLength,
                                std::shared_ptr<DensityGradient> density,

@@ -54,12 +54,7 @@ class TargetFunction
 
     void updateParameters(bool onlyGrad = true);
 
-    // TODO: Fix mismatch between HyperParam
     // Setters
-    void setInitLambda         (float val) { lambda_  = val; }
-    void setMaxPhiCoef         (float val) { maxPhi_  = val; }
-    void setRefHpwl            (float val) { refHPWL_ = val; }
-    void setInitGammaInv       (float val);
     void setMacroDensityWeight (bool mode);
 
     // Getters

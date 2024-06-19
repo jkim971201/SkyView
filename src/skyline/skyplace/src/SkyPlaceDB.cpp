@@ -20,6 +20,7 @@
 #include "db/dbRow.h"
 
 #include "SkyPlaceDB.h"
+#include "db/dbDatabase.h"
 
 namespace skyplace
 {

@@ -4,25 +4,23 @@
 #include <vector>
 #include <memory>
 #include <string>
-#include <filesystem>
 #include <unordered_map>
-
-#include "db/dbDatabase.h"
 
 #define SQRT2 1.414213562373095048801L
 #define DENSITY_SCALE SQRT2
 
 namespace db 
 {
-class dbTech;
-class dbDesign;
-class dbTypes;
-class dbDie;
-class dbInst;
-class dbNet;
-class dbITerm;
-class dbBTerm;
-class dbRow;
+  class dbDatabase;
+  class dbTech;
+  class dbDesign;
+  class dbTypes;
+  class dbDie;
+  class dbInst;
+  class dbNet;
+  class dbITerm;
+  class dbBTerm;
+  class dbRow;
 }
 
 namespace skyplace 

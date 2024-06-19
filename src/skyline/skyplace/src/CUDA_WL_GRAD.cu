@@ -1,6 +1,6 @@
 #include <cstdio>
 #include <cmath>
-#include <cassert>
+#include <chrono>
 #include <climits> // for MAX FLOAT
 #include <cfloat>
 
@@ -359,7 +359,7 @@ WireLengthGradient::computeGrad(float* wlGradX,
   int numBlockNet  = (numNet_  * 2 - 1 + numThread) / numThread; 
   int numBlockCell = (numCell_ * 2 - 1 + numThread) / numThread; 
 
-  std::clock_t start = std::clock();
+  auto t1 = std::chrono::high_resolution_clock::now();
 
   // Step #1 : Compute Min Max
   computeMinMax<<<numBlockNet, numThread>>>(numNet_, 
@@ -444,9 +444,10 @@ WireLengthGradient::computeGrad(float* wlGradX,
                                           wlGradX, 
                                           wlGradY);
 
-  std::clock_t end = std::clock();
+  auto t2 = std::chrono::high_resolution_clock::now();
+  std::chrono::duration<double> runtime = t2 - t1;
 
-  wlGradTime_ += (double)(end - start);
+  wlGradTime_ += runtime.count();
 }
 
 void 
@@ -498,7 +499,7 @@ WireLengthGradient::computeGradAfterValue(float* wlGradX, float* wlGradY)
   int numBlockPin  = (numPin_      - 1 + numThread) / numThread; 
   int numBlockCell = (numCell_ * 2 - 1 + numThread) / numThread; 
 
-  std::clock_t start = std::clock();
+  auto t1 = std::chrono::high_resolution_clock::now();
 
   // Step #5 : Compute Pin Gradient
   computePinGrad<<<numBlockPin, numThread>>>(numPin_,
@@ -532,9 +533,10 @@ WireLengthGradient::computeGradAfterValue(float* wlGradX, float* wlGradY)
                                           wlGradX, 
                                           wlGradY);
 
-  std::clock_t end = std::clock();
+  auto t2 = std::chrono::high_resolution_clock::now();
+  std::chrono::duration<double> runtime = t2 - t1;
 
-  wlGradTime_ += (double)(end - start);
+  wlGradTime_ += runtime.count();
 }
 
 float

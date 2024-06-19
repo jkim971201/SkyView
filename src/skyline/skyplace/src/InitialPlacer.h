@@ -6,7 +6,6 @@
 #include "fusion.h"
 
 #include <memory>
-#include <ctime>
 #include <set>
 #include <algorithm>
 #include <string>

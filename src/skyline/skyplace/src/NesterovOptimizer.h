@@ -2,7 +2,6 @@
 #define NESTEROV_OPTIMIZER_H
 
 #include <memory>
-#include <ctime>
 
 #include <cuda_runtime.h>
 #include <thrust/transform_reduce.h>
@@ -82,8 +81,10 @@ class NesterovOptimizer
     thrust::host_vector<float> h_cellCy_;
 
     // Device Array
-    float* d_cellWidth_;
-    float* d_cellHeight_;
+    float* d_ptr_cellWidth_;
+    float* d_ptr_cellHeight_;
+		thrust::device_vector<float> d_cellWidth_;
+		thrust::device_vector<float> d_cellHeight_;
 
     // Placer Coordinates
     // Previous Predicted Coordinates

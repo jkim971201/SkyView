@@ -4,6 +4,8 @@
 #include <cfloat>    // For FLT_MAX
 #include <cmath>
 #include <random>
+#include <sstream> // for ostringstream
+#include <iomanip> // for setw, setfill
 
 #include "Painter.h"
 
@@ -440,26 +442,6 @@ Painter::drawNet(CImgObj *img, const Net* net)
 void
 Painter::drawNets(CImgObj* img)
 {
-//  bool exist_macro = false;
-//  bool exist_io    = false;
-//
-//  for(auto& net : db_->nets())
-//  {
-//    for(auto& pin : net->pins())
-//    {
-//      if(pin->cell()->isMacro()) 
-//        exist_macro = true;
-//      if(pin->cell()->isIO()) 
-//        exist_io    = true;
-//    }
-//
-//    if(exist_macro && exist_io)
-//      drawNet(img, net);
-//
-//    exist_macro = false;
-//    exist_io    = false;
-//  }
-
   int num_macro = 0;
   int num_io    = 0;
 
@@ -620,18 +602,6 @@ Painter::drawIO(CImgObj *img, const Cell* cell,
   p2Yi = getY(p2Y);
   p3Xi = getX(p3X);
   p3Yi = getY(p3Y);
-
-//  std::cout << "Lx: " << ioLx << std::endl;
-//  std::cout << "Ly: " << ioLy << std::endl;
-//  std::cout << "Ux: " << ioUx << std::endl;
-//  std::cout << "Uy: " << ioUy << std::endl;
-//  std::cout << "dieLx: " << dieLx << std::endl;
-//  std::cout << "dieLy: " << dieLy << std::endl;
-//  std::cout << "dieUx: " << dieUx << std::endl;
-//  std::cout << "dieUy: " << dieUy << std::endl;
-//  std::cout << "p1: " << p1X << " " << p1Y << std::endl;
-//  std::cout << "p2: " << p2X << " " << p2Y << std::endl;
-//  std::cout << "p3: " << p3X << " " << p3Y << std::endl;
 
   img->draw_triangle(p1Xi, p1Yi, 
                      p2Xi, p2Yi, 

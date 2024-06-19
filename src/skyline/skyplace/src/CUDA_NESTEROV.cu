@@ -1,5 +1,6 @@
 #include <cstdio>
 #include <memory>
+#include <chrono>
 #include <cassert>
 
 #include "CUDA_UTIL.h"
@@ -116,8 +117,8 @@ NesterovOptimizer::NesterovOptimizer()
     painter_                    (nullptr),
     targetFunction_             (nullptr),
 
-    d_cellWidth_                (nullptr),
-    d_cellHeight_               (nullptr),
+    d_ptr_cellWidth_            (nullptr),
+    d_ptr_cellHeight_           (nullptr),
 
     d_ptr_prevPreX_             (nullptr),
     d_ptr_prevPreTotalGradX_    (nullptr),
@@ -167,7 +168,7 @@ NesterovOptimizer::initOptimizer()
 {
   printf("[Nesterov] Optimizer Initialization\n");
 
-  std::clock_t start = std::clock();
+  auto t1 = std::chrono::high_resolution_clock::now();
 
   param_->printHyperParameters();
 
@@ -218,9 +219,10 @@ NesterovOptimizer::initOptimizer()
   if(!onlyGradMode_)
     sumPenalty_ = targetFunction_->getPenalty();
 
-  std::clock_t end = std::clock();
+  auto t2 = std::chrono::high_resolution_clock::now();
+  std::chrono::duration<double> runtime = t2 - t1;
 
-  initTime_ += (double)(end - start);
+  initTime_ += runtime.count();
 
   printf("[Nesterov] Initial StepLength: %.1E\n", stepLength_);
   printf("[Nesterov] Optimizer Initialization Finished.\n");
@@ -238,7 +240,7 @@ NesterovOptimizer::diverge()
 Stat
 NesterovOptimizer::startOptimize(bool plotMode)
 {
-  std::clock_t start = std::clock();
+  auto t1 = std::chrono::high_resolution_clock::now();
 
   initOptimizer();
 
@@ -289,9 +291,10 @@ NesterovOptimizer::startOptimize(bool plotMode)
   if(plotMode)
     painter_->saveImage(iter, hpwl_, overflow_, false); // no Filler
 
-  std::clock_t end = std::clock();
+  auto t2 = std::chrono::high_resolution_clock::now();
+  std::chrono::duration<double> runtime = t2 - t1;
 
-  nesterovTime_ = (double)(end - start);
+  nesterovTime_ = runtime.count();
 
   Stat finalStat 
     = {!isDiverge_, 
@@ -378,8 +381,8 @@ NesterovOptimizer::moveForward(const float stepLength,
                                                  dieLy_, 
                                                  dieUx_, 
                                                  dieUy_,
-                                                 d_cellWidth_, 
-                                                 d_cellHeight_,
+                                                 d_ptr_cellWidth_, 
+                                                 d_ptr_cellHeight_,
                                                  d_ptr_curCoordiX, 
                                                  d_ptr_curCoordiY, 
                                                  d_ptr_curPreCoordiX, 
@@ -410,8 +413,8 @@ NesterovOptimizer::moveBackward(const float  stepLength,
                                                   dieLy_, 
                                                   dieUx_, 
                                                   dieUy_,
-                                                  d_cellWidth_, 
-                                                  d_cellHeight_,
+                                                  d_ptr_cellWidth_, 
+                                                  d_ptr_cellHeight_,
                                                   d_ptr_curCoordiX, 
                                                   d_ptr_curCoordiY, 
                                                   d_ptr_directionX,
@@ -493,24 +496,11 @@ NesterovOptimizer::initForCUDAKernel()
     h_cellArea_[cellID]   = cell->area();
   }
 
-  size_t numCellfloat  = sizeof(float) * numCell_;
-
-  CUDA_CHECK(cudaMalloc((void**)&d_cellWidth_,  numCellfloat));
-  CUDA_CHECK(cudaMalloc((void**)&d_cellHeight_, numCellfloat));
-
-  // Host -> Device
-  CUDA_CHECK(cudaMemcpy(d_cellWidth_, 
-                        h_cellWidth_.data(),
-                         numCellfloat,
-                        cudaMemcpyHostToDevice));
-
-  CUDA_CHECK(cudaMemcpy(d_cellHeight_, 
-                        h_cellHeight_.data(),
-                         numCellfloat,
-                        cudaMemcpyHostToDevice));
-
   // Step #1. Resize Thrust Vector and get raw_pointer
   d_workSpaceForStepLength_.resize(numCell_);
+
+  d_ptr_cellWidth_             = setThrustVector(numCell_, d_cellWidth_);
+  d_ptr_cellHeight_            = setThrustVector(numCell_, d_cellHeight_);
 
   d_ptr_prevPreX_              = setThrustVector(numCell_, d_prevPreX_);
   d_ptr_prevPreTotalGradX_     = setThrustVector(numCell_, d_prevPreTotalGradX_);
@@ -543,6 +533,10 @@ NesterovOptimizer::initForCUDAKernel()
   d_curPreY_  = h_cellCy_;
   d_curY_     = h_cellCy_;
   // We don't have to initialize Previous X / Y
+
+  // Host -> Device
+  d_cellWidth_  = h_cellWidth_;
+  d_cellHeight_ = h_cellHeight_;
 
   printf("[CUDA-Nesterov] Finish Initialization.\n");
 }
@@ -690,8 +684,6 @@ NesterovOptimizer::copyDensityGrad2db()
 void
 NesterovOptimizer::freeDeviceMemory()
 {
-  CUDA_CHECK(cudaFree(d_cellWidth_));
-  CUDA_CHECK(cudaFree(d_cellHeight_));
 }
 
 }; // namespace skyplace

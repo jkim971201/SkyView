@@ -9,7 +9,6 @@ set(THREADS_PREFER_PTHREAD_FLAG ON) # For CImg
 set(Placer_HOME ${CMAKE_CURRENT_SOURCE_DIR})
 set(CIMG_HOME ${CMAKE_CURRENT_SOURCE_DIR}/extern/CImg)
 set(Louvain_HOME ${CMAKE_CURRENT_SOURCE_DIR}/extern/Louvain)
-set(EIGEN_HOME ${CMAKE_CURRENT_SOURCE_DIR}/extern/eigen-git-mirror)
 
 add_subdirectory(${Louvain_HOME})
 
@@ -17,6 +16,7 @@ add_subdirectory(${Louvain_HOME})
 find_package(X11 REQUIRED)
 find_package(JPEG REQUIRED)
 find_package(Threads REQUIRED)
+find_package(Eigen3 REQUIRED)
 
 # Source Code
 add_library(skyplace)
@@ -37,10 +37,7 @@ target_include_directories(skyplace
   PRIVATE
   ${X11_INCLUDE_DIR}
   ${CIMG_HOME}
-  ${EIGEN_HOME}
   ${Louvain_HOME}
-  /tool/cplex/install/2211/cplex/include
-  /tool/cplex/install/2211/concert/include
   /home/jkim/mosek/10.1/tools/platform/linux64x86/h
 )
 
@@ -51,6 +48,7 @@ target_link_libraries(skyplace
   ${X11_LIBRARIES}
   Threads::Threads
   Louvain
+	Eigen3::Eigen
   /home/jkim/mosek/10.1/tools/platform/linux64x86/bin/libmosek64.so.10.1
   /home/jkim/mosek/10.1/tools/platform/linux64x86/bin/libfusion64.so.10.1
 )

@@ -46,25 +46,25 @@ SkyPlace::setTargetOverflow(float val)
 void 
 SkyPlace::setInitLambda(float val) 
 { 
-  targetFunc_->setInitLambda(val);   
+  param_->initLambda = val;
 }
 
 void 
 SkyPlace::setMaxPhiCoef(float val) 
 { 
-  targetFunc_->setMaxPhiCoef(val);   
+  param_->maxPhiCoef = val;
 }
 
 void 
 SkyPlace::setRefHpwl(float val) 
 { 
-  targetFunc_->setRefHpwl(val);      
+  param_->referenceHpwl = val;
 }
 
 void 
 SkyPlace::setInitGammaInv(float val) 
 { 
-  targetFunc_->setInitGammaInv(val); 
+  param_->initGammaInvCoef = val;
 }
 
 void 
@@ -227,28 +227,16 @@ SkyPlace::doInitialPlace()
 void
 SkyPlace::printStat(Stat finalStat)
 {
-  float dbTime = dbTime_;
-  float ipTime = initialPlacer_->getRuntime();
+  double dbTime         = dbTime_;
+  double ipTime         = initialPlacer_->getRuntime();
+  double gpTime         = finalStat.totalPlaceTime;
+  double wlGradTime     = finalStat.wlGradTime;
+  double denGradTime    = finalStat.denGradTime;
+  double poissonTime    = finalStat.poissonTime;
+  double binDensityTime = finalStat.binDensityTime;
+  double initTime       = finalStat.initTime;
 
-  float gpTime = 
-    static_cast<float>(finalStat.totalPlaceTime) / CLOCKS_PER_SEC;
-
-  float wlGradTime = 
-    static_cast<float>(finalStat.wlGradTime) / CLOCKS_PER_SEC;
-
-  float denGradTime = 
-    static_cast<float>(finalStat.denGradTime) / CLOCKS_PER_SEC;
-
-  float poissonTime = 
-    static_cast<float>(finalStat.poissonTime) / CLOCKS_PER_SEC;
-
-  float binDensityTime = 
-    static_cast<float>(finalStat.binDensityTime) / CLOCKS_PER_SEC;
-
-  float initTime = 
-    static_cast<float>(finalStat.initTime) / CLOCKS_PER_SEC;
-
-  float totalTime = totalTime_ + dbTime + ipTime;
+  double totalTime = totalTime_ + dbTime + ipTime;
 
   printf(" ==================================================\n");
   printf(" Final Statistic\n");
