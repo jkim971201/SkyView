@@ -486,8 +486,10 @@ dbDesign::writeBookShelf(const char* path) const
   for(auto& inst : insts_)
   {
     pl_output << inst->name() << " ";
-    pl_output << inst->lx() / dbu << " ";
-    pl_output << inst->ly() / dbu << " : N";
+    pl_output << static_cast<float>(inst->lx()) 
+			         / static_cast<float>(dbu) << " ";
+    pl_output << static_cast<float>(inst->ly())
+			         / static_cast<float>(dbu) << " : N";
     if(inst->isFixed())
       pl_output << " /FIXED";
     pl_output << std::endl;

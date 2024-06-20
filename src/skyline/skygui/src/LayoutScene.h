@@ -22,12 +22,13 @@ class LayoutScene : public QGraphicsScene
     LayoutScene(QObject* parent = nullptr);
 
     void setDatabase(std::shared_ptr<dbDatabase> db) { db_ = db; }
-		void createGuiDie();
-		void createGuiRow();
-		void createGuiInst();
-		void createGuiIO();
+    void createGuiDie();
+    void createGuiRow();
+    void createGuiInst();
+    void createGuiIO();
+    void createGuiPin();
 
-		void expandScene();
+    void expandScene();
 
   private:
 

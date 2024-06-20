@@ -8,6 +8,7 @@
 #include "db/dbNet.h"
 #include "db/dbITerm.h"
 #include "db/dbBTerm.h"
+#include "db/dbMTerm.h"
 #include "db/dbRow.h"
 
 #include "LayoutScene.h"
@@ -15,6 +16,7 @@
 #include "gui_item/GuiRow.h"
 #include "gui_item/GuiInst.h"
 #include "gui_item/GuiIO.h"
+#include "gui_item/GuiPin.h"
 
 namespace gui
 {
@@ -85,38 +87,68 @@ LayoutScene::createGuiIO()
 {
   double dbu = static_cast<double>(db_->getTech()->getDbu());
 
-  int coreLx_micron = db_->getDesign()->coreLx();
-  int coreLy_micron = db_->getDesign()->coreLy();
-  int coreUx_micron = db_->getDesign()->coreUx();
-  int coreUy_micron = db_->getDesign()->coreUy();
+  int coreLx_dbu = db_->getDesign()->coreLx();
+  int coreLy_dbu = db_->getDesign()->coreLy();
+  int coreUx_dbu = db_->getDesign()->coreUx();
+  int coreUy_dbu = db_->getDesign()->coreUy();
 
   for(auto bterm : db_->getDesign()->getBTerms())
   {
     GuiIO* io_gui = new GuiIO(bterm);
   
-    int ioLx_micron = bterm->lx();
-    int ioLy_micron = bterm->ly();
-		int ioUx_micron = bterm->ux();
-		int ioUy_micron = bterm->uy();
-    int ioDx_micron = bterm->dx();
-    int ioDy_micron = bterm->dy();
+    int ioLx_dbu = bterm->lx();
+    int ioLy_dbu = bterm->ly();
+    int ioUx_dbu = bterm->ux();
+    int ioUy_dbu = bterm->uy();
+    int ioDx_dbu = bterm->dx();
+    int ioDy_dbu = bterm->dy();
 
-		if(ioLx_micron <= coreLx_micron)
-			io_gui->setLeft();
-		else if(ioLy_micron <= coreLy_micron)
-			io_gui->setBottom();
-		else if(ioUx_micron >= coreUx_micron)
-			io_gui->setRight();
-		else if(ioUy_micron >= coreUy_micron)
-			io_gui->setTop();
+    if(ioLx_dbu <= coreLx_dbu)
+      io_gui->setLeft();
+    else if(ioLy_dbu <= coreLy_dbu)
+      io_gui->setBottom();
+    else if(ioUx_dbu >= coreUx_dbu)
+      io_gui->setRight();
+    else if(ioUy_dbu >= coreUy_dbu)
+      io_gui->setTop();
 
-    double ioLx_dbu = ioLx_micron / dbu;
-    double ioLy_dbu = ioLy_micron / dbu;
-    double ioDx_dbu = ioDx_micron / dbu;
-    double ioDy_dbu = ioDy_micron / dbu;
+    double ioLx_micron = ioLx_dbu / dbu;
+    double ioLy_micron = ioLy_dbu / dbu;
+    double ioDx_micron = ioDx_dbu / dbu;
+    double ioDy_micron = ioDy_dbu / dbu;
   
-    io_gui->setRect( QRectF(ioLx_dbu, ioLy_dbu, ioDx_dbu, ioDy_dbu) );
+    io_gui->setRect( QRectF(ioLx_micron, 
+                            ioLy_micron, 
+                            ioDx_micron, 
+                            ioDy_micron) );
     this->addItem(io_gui);
+  }
+}
+
+void
+LayoutScene::createGuiPin()
+{
+  double dbu = static_cast<double>(db_->getTech()->getDbu());
+
+  for(auto iterm : db_->getDesign()->getITerms())
+  {
+		if(!iterm->isSignal())
+			continue;
+
+    GuiPin* io_pin = new GuiPin(iterm);
+  
+    const auto itermRect = iterm->getRect();
+
+    double pinLx_micron = static_cast<double>(itermRect.lx) / dbu;
+    double pinLy_micron = static_cast<double>(itermRect.ly) / dbu;
+    double pinUx_micron = static_cast<double>(itermRect.ux) / dbu;
+    double pinUy_micron = static_cast<double>(itermRect.uy) / dbu;
+
+    io_pin->setRect( QRectF(pinLx_micron, 
+                            pinLy_micron,
+                            pinUx_micron - pinLx_micron,
+                            pinUy_micron - pinLy_micron) );
+    this->addItem(io_pin);
   }
 }
 
@@ -127,11 +159,11 @@ LayoutScene::expandScene()
   double sceneW = rect.width();
   double sceneH = rect.height();
 
-	// Make 10% blank margin along boundary
+  // Make 10% blank margin along boundary
   rect.adjust(-0.1 * sceneW, -0.1 * sceneH, 
               +0.1 * sceneW, +0.1 * sceneH);
 
-	this->setSceneRect(rect);
+  this->setSceneRect(rect);
 }
 
 }

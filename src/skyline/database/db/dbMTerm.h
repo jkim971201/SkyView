@@ -40,6 +40,8 @@ class dbMTerm
     int ly() const { return ly_; }
     int ux() const { return ux_; }
     int uy() const { return uy_; }
+    int dx() const { return ux_ - lx_; }
+    int dy() const { return uy_ - ly_; }
     int cx() const { return (ux_ + lx_) / 2; } // this works as offsetX
     int cy() const { return (uy_ + ly_) / 2; } // this works as offsetY
 

@@ -1,9 +1,9 @@
 #ifndef DB_ITERM_H
 #define DB_ITERM_H
 
-#include "dbNet.h"
-
 #include <string>
+
+#include "dbRect.h"
 
 namespace db
 {
@@ -19,7 +19,10 @@ class dbITerm
     dbITerm();
     dbITerm(const std::string& name, dbInst* inst, dbMTerm* mterm);
 
+    bool isSignal() const;
     void print() const;
+
+    const dbRect getRect() const;
 
     // Setters
     void setNet   (dbNet*     net) { net_    = net;    }

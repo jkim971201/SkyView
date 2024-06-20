@@ -475,7 +475,7 @@ AdamOptimizer::updateOneIteration(int iter)
   macroOverflow_ = targetFunction_->getMacroOverflow();
 
   printf("[Adam] [Iter%04d] HPWL : %-6.3f  Overflow : %-3.3f\n", 
-                      iter,      hpwl_ / 1e6 / 2,         overflow_); 
+                      iter,      hpwl_ / 1e6 / db_->getDbu(),         overflow_); 
 
   //printf("[Adam] [Iter%04d] HPWL : %-6.3f  Overflow : %-3.3f MacroOverflow : %-4.4f\n", 
   //                    iter,      hpwl_ / 1e6,         overflow_,          macroOverflow_); 

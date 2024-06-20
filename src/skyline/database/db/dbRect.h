@@ -19,7 +19,6 @@ class dbRect
   dbRect(int lx, int ly, int ux, int uy, dbLayer* _layer)
     : lx(lx), ly(ly), ux(ux), uy(uy), layer (_layer) 
   {
-    assert(_layer != nullptr);
   }
 
   int lx;

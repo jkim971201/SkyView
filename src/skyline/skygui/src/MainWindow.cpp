@@ -146,6 +146,7 @@ MainWindow::createItem()
   layout_scene_->createGuiRow();
   layout_scene_->createGuiInst();
   layout_scene_->createGuiIO();
+  layout_scene_->createGuiPin();
   layout_scene_->expandScene();
 }
 
