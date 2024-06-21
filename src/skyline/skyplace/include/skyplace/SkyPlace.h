@@ -70,7 +70,6 @@ class SkyPlace
     void setAdamBeta2       (float val);
     void setMacroWeight     (float val);
     void setTargetDensity   (float density);
-    void setOutputDir       (const std::string& outputDir) { outputDir_ = outputDir; }
 
   private:
 
@@ -107,8 +106,6 @@ class SkyPlace
     void printStat(Stat finalStat);
     bool plotMode_;
     bool localLambdaMode_;
-
-    std::string outputDir_;
 
     // RunTime
     double dbTime_;

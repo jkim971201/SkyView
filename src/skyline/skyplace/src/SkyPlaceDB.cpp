@@ -68,10 +68,12 @@ Cell::Cell()
     dDx_           (      0), 
     dDy_           (      0),
     densityScale_  (      1),
+    isIO_          (  false),
     isMacro_       (  false), 
     isFixed_       (  false),
     isFiller_      (  false),
-    dbInst_        (nullptr)
+    dbInst_        (nullptr),
+    dbBTerm_       (nullptr)
 {}
 
 Cell::Cell(dbInst* inst) : Cell()
@@ -94,6 +96,19 @@ Cell::Cell(dbInst* inst) : Cell()
     cx_ = static_cast<float>(inst->lx() - inst->haloL() + dx_ / 2);
     cy_ = static_cast<float>(inst->ly() - inst->haloB() + dy_ / 2);
   }
+}
+
+Cell::Cell(dbBTerm* bterm) : Cell()
+{
+  dbBTerm_ = bterm;
+	isIO_    = true;
+  isFixed_ = true;
+
+  dx_ = static_cast<float>(bterm->dx());
+  dy_ = static_cast<float>(bterm->dy());
+
+  cx_ = static_cast<float>(bterm->cx());
+  cy_ = static_cast<float>(bterm->cy());
 }
 
 // Constructor for Filler Cell
@@ -373,7 +388,7 @@ SkyPlaceDB::importDB(std::shared_ptr<dbDatabase> _dbDatabase)
   cellInsts_.resize(numInst);
   cellPtrs_.reserve(numInst);
 
-  for(auto& cellInst : cellInsts_ )
+  for(auto& cellInst : cellInsts_)
   {
     dbInst* inst_ptr = db_insts[cIdx];
     cellInst = Cell(inst_ptr);
@@ -414,6 +429,14 @@ SkyPlaceDB::importDB(std::shared_ptr<dbDatabase> _dbDatabase)
       }
     }
   }
+
+	// Step #1-2: Make Cells for IOs
+  // We should make "Cell" for both insts and bterms
+	int startIdxOfBTermCell = 0;
+  for(auto& bterm : db_bterms)
+	{
+    Cell newCellfromIO(bterm);
+	}
 
   // Step #3: Initialize Net
   int numNets = db_nets.size();
@@ -465,6 +488,7 @@ SkyPlaceDB::importDB(std::shared_ptr<dbDatabase> _dbDatabase)
       pinInstanceB.setNet(netPtr);
       netPtr->addNewPin(&pinInstanceB);
       pinPtrs_.push_back(&pinInstanceB);
+			dbBTerm2Pin_[bterm] = &pinInstanceB;
       pIdx++;
     }
 
@@ -479,6 +503,7 @@ SkyPlaceDB::importDB(std::shared_ptr<dbDatabase> _dbDatabase)
       pinInstanceI.setNet(netPtr);
       netPtr->addNewPin(&pinInstanceI);
       pinPtrs_.push_back(&pinInstanceI);
+			dbITerm2Pin_[iterm] = &pinInstanceI;
       dbInstPtr = iterm->getInst();
       pIdx++;
 

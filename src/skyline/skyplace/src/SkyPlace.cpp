@@ -27,7 +27,6 @@ SkyPlace::SkyPlace(std::shared_ptr<dbDatabase> db)
     density_           (nullptr),
     localLambdaMode_   (false  ),
     plotMode_          (false  ),
-    outputDir_         (""     ),
     dbTime_            (0.0    )
 {
   opt_   = OptimizerType::Nesterov;

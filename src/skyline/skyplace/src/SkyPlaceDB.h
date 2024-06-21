@@ -47,6 +47,7 @@ class Cell
 
     Cell();
     Cell(dbInst* inst);
+    Cell(dbBTerm* bterm);
     Cell(float cx, float cy, float dx, float dy);
     // Contructor for Filler Cell
 
@@ -72,7 +73,7 @@ class Cell
     float area() const { return dx_ * dy_; }
     float densityScale() const { return densityScale_; }
 
-    bool isIO     () const { return isIO_    ;   }
+    bool isIO     () const { return isIO_;       }
     bool isFixed  () const { return isFixed_ ;   }
     bool isMacro  () const { return isMacro_ ;   }
     bool isFiller () const { return isFiller_;   }
@@ -84,6 +85,10 @@ class Cell
     // These will return nullptr,
     // if there is no corresponding dbInst (e.g. fillerCell)
     dbInst* dbInstPtr() const { return dbInst_;  }
+
+    // If this cell is from dbInst,
+    // this will return nullptr
+    dbBTerm* dbBTermPtr() const { return dbBTerm_;  }
 
     // Setters
     void setID       (int id) { id_  = id; }
@@ -97,7 +102,8 @@ class Cell
 
   private:
 
-    dbInst* dbInst_;
+    dbInst*  dbInst_;
+    dbBTerm* dbBTerm_;
 
     // ID is required to compute Laplacian
     // Fixed and Movables seperately
@@ -557,7 +563,9 @@ class SkyPlaceDB
     std::vector<Row>   rowInsts_;
 
     std::unordered_map<dbInst*, Cell*> dbInst2Cell_;
-    std::unordered_map<dbNet*, Net*>   dbNet2Net_;
+    std::unordered_map<dbNet*,   Net*> dbNet2Net_;
+		std::unordered_map<dbITerm*, Pin*> dbITerm2Pin_;
+		std::unordered_map<dbBTerm*, Pin*> dbBTerm2Pin_;
 
     Die  die_;
     Die* diePtr_;

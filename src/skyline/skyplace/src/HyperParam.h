@@ -13,14 +13,15 @@ class HyperParam
     {
       maxOptIter        =      5000;
       maxBackTrackIter  =        10;
-      initLambda        =      0.01; // 0.01
-      initGammaInvCoef  =      0.01;
+      initLambda        =      0.0007; // 0.01
+      initGammaInvCoef  =      0.0125;
       targetOverflow    =      0.07;
       minPhiCoef        =      0.95;
       maxPhiCoef        =      1.05; // 1.03
       minPrecond        =       1.0;
       initOptCoef       =       100;
-      referenceHpwl     = 446000000;
+      referenceHpwl     =    350000;
+      //referenceHpwl     = 446000000;
       minStepLength     =       1.0;
       adam_alpha        =     100.0;
       adam_beta1        =      0.90;

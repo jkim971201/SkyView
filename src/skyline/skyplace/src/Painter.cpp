@@ -453,7 +453,7 @@ Painter::drawNets(CImgObj* img)
     {
       if(pin->cell()->isMacro()) 
         num_macro++;
-      if(pin->cell()->isIO()) 
+      if(pin->cell() == nullptr)
         num_io++;
     }
 
@@ -654,11 +654,11 @@ Painter::drawCells(CImgObj *img,
   {
     if( c->isFixed() )
     {
-      if( c->isIO() )
-			{
-        drawIO(img, c, dieLx, dieLy, dieUx, dieUy);
-			}
-      else
+//      if( c->isIO() )
+//			{
+//        drawIO(img, c, dieLx, dieLy, dieUx, dieUy);
+//			}
+//      else
         drawFixed(img, c);
     }
     else if( c->isFiller() )

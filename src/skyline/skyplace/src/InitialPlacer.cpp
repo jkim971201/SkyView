@@ -80,7 +80,7 @@ InitialPlacer::doInitialPlace()
 {
   auto t1 = std::chrono::high_resolution_clock::now();
 
-  if(randomInit_)
+  if(!randomInit_)
     doRandomInit();
   else
     doClusterQuadratic();
@@ -117,7 +117,7 @@ InitialPlacer::doRandomInit()
 {
   printf("[InitialPlacer] Place all movable cells in the center with Gaussian Noise.\n");
 
-  // See DREAMPlace TCAD21 Paper for details
+  // See DREAMPlace TCAD`21 for details
   // The authors argue that random center initiailization
   // does not degrade the placement quality
   float dieCx = db_->die()->cx();
@@ -391,9 +391,12 @@ InitialPlacer::doClustering()
       Pin*   pin1 = net->pins()[p1];
       Cell* cell1 = pin1->cell(); 
 
+      if(cell1 == nullptr) // pin1 is PI/PO
+			  continue;
+
       int v1 = cell1->id();
 
-      if( cell1->isIO() || cell1->isFixed() )
+      if(cell1->isFixed())
         continue;
 
       for(int p2 = p1 + 1; p2 < net->deg(); p2++)
@@ -401,9 +404,13 @@ InitialPlacer::doClustering()
         Pin*   pin2 = net->pins()[p2];
         Cell* cell2 = pin2->cell(); 
         
+
+        if(cell2 == nullptr) // pin2 is PI/PO
+			    continue;
+
         int v2 = cell2->id();
 
-        if( v1 == v2 || cell2->isIO() || cell2-> isFixed() )
+        if( v1 == v2 || cell2-> isFixed() )
           continue;
 
         hostStructures.communityWeight[v1] += cliqueWeight;
@@ -487,8 +494,6 @@ InitialPlacer::createClusterLaplacian(SMatrix& Lmm, Vector& Lmf_xf, Vector& Lmf_
   {
     // Since we are ignoring too large nets,
     // there can be some clusters that are not connected to any other vertex
-    // If there are no objectives, it will make a cplex error.
-    // Because we can not get value from the variable whose coefficient is 0.0
     if( net->deg() < 2 || net->deg() > 200 ) // 25?
       continue;
 
@@ -498,7 +503,7 @@ InitialPlacer::createClusterLaplacian(SMatrix& Lmm, Vector& Lmf_xf, Vector& Lmf_
       Cell* cell1 = pin1->cell(); 
 
       int v1 = 0;
-      if( cell1->isFixed() )
+      if(cell1->isFixed())
         v1 = cell1->id() + numCluster_;
       else
         v1 = cell1->clusterID();

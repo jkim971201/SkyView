@@ -50,7 +50,7 @@ dbBookShelfReader::convert2db()
   // (but this has be an even number because
   // all the numbers of bookshelf files are
   // multiplies of 0.5)
-  constexpr int dbuBookShelf = 2000;
+  constexpr int dbuBookShelf = 2;
   assert(dbuBookShelf >= 2);
   dbuBookShelf_ = dbuBookShelf;
 
