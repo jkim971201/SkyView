@@ -41,7 +41,7 @@ static float getOverlapArea(const Bin* bin, const Cell* cell)
 }
 
 // getOverlapArea should use int64_t ideally,
-// but runtime will be doubled (OpenROAD comment)
+// but runtime will be doubled (referred to OpenROAD comment)
 static float getOverlapAreaWithDensitySize(const Bin* bin, const Cell* cell)
 {
   float rectLx = std::max(bin->lx(), cell->dLx());
@@ -101,7 +101,7 @@ Cell::Cell(dbInst* inst) : Cell()
 Cell::Cell(dbBTerm* bterm) : Cell()
 {
   dbBTerm_ = bterm;
-	isIO_    = true;
+  isIO_    = true;
   isFixed_ = true;
 
   dx_ = static_cast<float>(bterm->dx());
@@ -342,7 +342,11 @@ SkyPlaceDB::reset()
   rowInsts_.clear();
 
   dbInst2Cell_.clear();
+  dbBTerm2Cell_.clear();
+
   dbNet2Net_.clear();
+  dbITerm2Pin_.clear();
+  dbBTerm2Pin_.clear();
 }
 
 void
@@ -379,17 +383,20 @@ SkyPlaceDB::importDB(std::shared_ptr<dbDatabase> _dbDatabase)
   diePtr_ = &die_;
 
   // Step #2: Initialize Cell
-  int numInst = db_insts.size();
+  int numInst  = db_insts.size();
+  int numBTerm = db_bterms.size();
 
   int cIdx = 0;
   int fixedIdx   = 0;
   int movableIdx = 0;
 
-  cellInsts_.resize(numInst);
-  cellPtrs_.reserve(numInst);
+  // We should make "Cell" for both insts and bterms
+  cellInsts_.resize(numInst + numBTerm);
+  cellPtrs_.reserve(numInst + numBTerm);
 
-  for(auto& cellInst : cellInsts_)
+  for(int iterI = 0; iterI < numInst; iterI++)
   {
+    Cell& cellInst = cellInsts_[iterI];
     dbInst* inst_ptr = db_insts[cIdx];
     cellInst = Cell(inst_ptr);
 
@@ -430,13 +437,18 @@ SkyPlaceDB::importDB(std::shared_ptr<dbDatabase> _dbDatabase)
     }
   }
 
-	// Step #1-2: Make Cells for IOs
-  // We should make "Cell" for both insts and bterms
-	int startIdxOfBTermCell = 0;
-  for(auto& bterm : db_bterms)
-	{
-    Cell newCellfromIO(bterm);
-	}
+  // Step #1-2: Make Cells for IOs
+  for(int iterB = 0; iterB < numBTerm; iterB++)
+  {
+    Cell& cellInst = cellInsts_[numInst + iterB];
+    dbBTerm* bterm = db_bterms[iterB];
+    
+    cellInst = Cell(bterm);
+    cellInst.setID(fixedPtrs_.size());
+    cellPtrs_.push_back(&cellInst);
+    fixedPtrs_.push_back(&cellInst);
+    dbBTerm2Cell_[bterm] = &cellInst;
+  }
 
   // Step #3: Initialize Net
   int numNets = db_nets.size();
@@ -481,6 +493,7 @@ SkyPlaceDB::importDB(std::shared_ptr<dbDatabase> _dbDatabase)
     }
 
     // For dbBTerm
+    Cell* cellFromBTerm = nullptr;
     for(auto& bterm : dbNetPtr->getBTerms())
     {
       Pin& pinInstanceB = pinInsts_[pIdx];
@@ -488,8 +501,16 @@ SkyPlaceDB::importDB(std::shared_ptr<dbDatabase> _dbDatabase)
       pinInstanceB.setNet(netPtr);
       netPtr->addNewPin(&pinInstanceB);
       pinPtrs_.push_back(&pinInstanceB);
-			dbBTerm2Pin_[bterm] = &pinInstanceB;
+      dbBTerm2Pin_[bterm] = &pinInstanceB;
       pIdx++;
+
+      auto findBTermCell = dbBTerm2Cell_.find(bterm);
+      if(findBTermCell != dbBTerm2Cell_.end())
+      {
+        cellFromBTerm = findBTermCell->second;
+        pinInstanceB.setCell(cellFromBTerm);
+        cellFromBTerm->addNewPin(&pinInstanceB);
+      }
     }
 
     dbInst* dbInstPtr = nullptr;
@@ -503,7 +524,7 @@ SkyPlaceDB::importDB(std::shared_ptr<dbDatabase> _dbDatabase)
       pinInstanceI.setNet(netPtr);
       netPtr->addNewPin(&pinInstanceI);
       pinPtrs_.push_back(&pinInstanceI);
-			dbITerm2Pin_[iterm] = &pinInstanceI;
+      dbITerm2Pin_[iterm] = &pinInstanceI;
       dbInstPtr = iterm->getInst();
       pIdx++;
 

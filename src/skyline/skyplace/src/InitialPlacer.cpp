@@ -56,7 +56,7 @@ InitialPlacer::InitialPlacer()
 {}
 
 InitialPlacer::InitialPlacer(std::shared_ptr<SkyPlaceDB> db)
-	: InitialPlacer()
+  : InitialPlacer()
 {
   db_ = db;
 
@@ -72,7 +72,7 @@ InitialPlacer::InitialPlacer(std::shared_ptr<SkyPlaceDB> db)
 
 InitialPlacer::~InitialPlacer()
 {
-	// Default Destructor
+  // Default Destructor
 }
 
 void
@@ -391,26 +391,19 @@ InitialPlacer::doClustering()
       Pin*   pin1 = net->pins()[p1];
       Cell* cell1 = pin1->cell(); 
 
-      if(cell1 == nullptr) // pin1 is PI/PO
-			  continue;
+      if( cell1->isIO() || cell1->isFixed() )
+        continue;
 
       int v1 = cell1->id();
-
-      if(cell1->isFixed())
-        continue;
 
       for(int p2 = p1 + 1; p2 < net->deg(); p2++)
       {
         Pin*   pin2 = net->pins()[p2];
         Cell* cell2 = pin2->cell(); 
         
-
-        if(cell2 == nullptr) // pin2 is PI/PO
-			    continue;
-
         int v2 = cell2->id();
 
-        if( v1 == v2 || cell2-> isFixed() )
+        if( v1 == v2 || cell2->isIO() || cell2-> isFixed() )
           continue;
 
         hostStructures.communityWeight[v1] += cliqueWeight;
@@ -617,9 +610,9 @@ InitialPlacer::solveQCQP(const SMatrix& A, const Vector& b, const Vector& v, dou
     M_3.coeffRef(0,     i + 1) = v(i); // v(i)
     M_3.coeffRef(i + 1,     0) = v(i); // v(i)
 
-		//M_2.coeffRef(i + 1, i + 1) = 1.0;
-		//	M_3.coeffRef(0,     i + 1) = 1.0; // v(i)
-		//	M_3.coeffRef(i + 1,     0) = 1.0; // v(i)
+    //M_2.coeffRef(i + 1, i + 1) = 1.0;
+    //  M_3.coeffRef(0,     i + 1) = 1.0; // v(i)
+    //  M_3.coeffRef(i + 1,     0) = 1.0; // v(i)
   }
 
   auto M_1_fusion = eigen2fusion(M_1);
@@ -810,24 +803,24 @@ InitialPlacer::doClusterQuadratic()
   //float Kx = 0.25 * avgClusterArea_ * numCluster_ * (dieUx - dieLx) * (dieUx - dieLx);
   //float Ky = 0.25 * avgClusterArea_ * numCluster_ * (dieUy - dieLy) * (dieUy - dieLy);
 
-//	double Kx = 0.25 * static_cast<double>(dieUx - dieLx) 
-//									 * static_cast<double>(dieUx - dieLx);
+//  double Kx = 0.25 * static_cast<double>(dieUx - dieLx) 
+//                   * static_cast<double>(dieUx - dieLx);
 //
-//	double Ky = 0.25 * static_cast<double>(dieUy - dieLy) 
-//									 * static_cast<double>(dieUy - dieLy);
+//  double Ky = 0.25 * static_cast<double>(dieUy - dieLy) 
+//                   * static_cast<double>(dieUy - dieLy);
 
-	double Kx = 0.4 * static_cast<double>(dieUx - dieLx) 
-								  * static_cast<double>(dieUx - dieLx)
-									* static_cast<double>(avgClusterArea_)
-									* static_cast<double>(numCluster_);
+  double Kx = 0.4 * static_cast<double>(dieUx - dieLx) 
+                  * static_cast<double>(dieUx - dieLx)
+                  * static_cast<double>(avgClusterArea_)
+                  * static_cast<double>(numCluster_);
 
-	double Ky = 0.4 * static_cast<double>(dieUy - dieLy) 
-									* static_cast<double>(dieUy - dieLy)
-									* static_cast<double>(avgClusterArea_)
-									* static_cast<double>(numCluster_);
+  double Ky = 0.4 * static_cast<double>(dieUy - dieLy) 
+                  * static_cast<double>(dieUy - dieLy)
+                  * static_cast<double>(avgClusterArea_)
+                  * static_cast<double>(numCluster_);
 
-	std::cout << "Kx : " << Kx << std::endl;
-	std::cout << "Ky : " << Ky << std::endl;
+  std::cout << "Kx : " << Kx << std::endl;
+  std::cout << "Ky : " << Ky << std::endl;
 
   solX = solveQCQP(Lmm, Lmf_xf, areaVector_, Kx);
   solY = solveQCQP(Lmm, Lmf_yf, areaVector_, Ky);
@@ -836,22 +829,22 @@ InitialPlacer::doClusterQuadratic()
   //  std::cout << "Debug newX newY : " << solX(i) << " " << solY(i) << std::endl;
 
   // Step #4
-	float dieLxLL = db_->die()->lx();
-	float dieLyLL = db_->die()->ly();
+  float dieLxLL = db_->die()->lx();
+  float dieLyLL = db_->die()->ly();
 
-	float dieUxLL = db_->die()->ux();
-	float dieUyLL = db_->die()->uy();
+  float dieUxLL = db_->die()->ux();
+  float dieUyLL = db_->die()->uy();
 
-	float dieCxLL = db_->die()->cx();
-	float dieCyLL = db_->die()->cy();
+  float dieCxLL = db_->die()->cx();
+  float dieCyLL = db_->die()->cy();
 
-	float dieDxLL = db_->die()->dx();
-	float dieDyLL = db_->die()->dy();
+  float dieDxLL = db_->die()->dx();
+  float dieDyLL = db_->die()->dy();
 
   float meanX = dieCxLL;  
   float meanY = dieCyLL;  
 
-	// 0.3?
+  // 0.3?
   float devX = dieDxLL * 0.3;
   float devY = dieDyLL * 0.3;
 
@@ -862,43 +855,43 @@ InitialPlacer::doClusterQuadratic()
   float newX = 0.0;
   float newY = 0.0;
 
-	int numMacro = db_->numMacro();
+  int numMacro = db_->numMacro();
 
-	std::normal_distribution<float> noiseGen1(0.0, 2 * 500.0);
-	std::normal_distribution<float> noiseGen2(0.0, 2 * 200.0);
+  std::normal_distribution<float> noiseGen1(0.0, 2 * 500.0);
+  std::normal_distribution<float> noiseGen2(0.0, 2 * 200.0);
 
   for(auto& cell : db_->movableCells() )
   {
     if(cell->isFiller())
-		{
-			float locX = gaussianNoiseX(gen);
-			float locY = gaussianNoiseY(gen);
+    {
+      float locX = gaussianNoiseX(gen);
+      float locY = gaussianNoiseY(gen);
 
-			locX = getMirrorX(locX, dieCxLL, dieLxLL, dieUxLL);
-			locY = getMirrorY(locY, dieCyLL, dieLyLL, dieUyLL);
+      locX = getMirrorX(locX, dieCxLL, dieLxLL, dieUxLL);
+      locY = getMirrorY(locY, dieCyLL, dieLyLL, dieUyLL);
 
-			cell->setCenterLocation( locX, locY );
-			db_->moveCellInsideLayout(cell);
+      cell->setCenterLocation( locX, locY );
+      db_->moveCellInsideLayout(cell);
       continue;
-		}
+    }
 
     int cID = cell->clusterID();
 
     newX = CC2LL_X(solX(cID));
     newY = CC2LL_Y(solY(cID));
 
-		// We have to put some noise to prevent 
-		// macros in the same cluster stick together
-		// ( for macro-heavy designs (e.g. bigblue2) )
-		if(cell->isMacro() && numMacro > 500)
-		{
-			float noiseX = noiseGen1(gen);
-			float noiseY = noiseGen2(gen);
+    // We have to put some noise to prevent 
+    // macros in the same cluster stick together
+    // ( for macro-heavy designs (e.g. bigblue2) )
+    if(cell->isMacro() && numMacro > 500)
+    {
+      float noiseX = noiseGen1(gen);
+      float noiseY = noiseGen2(gen);
 
-			cell->setCenterLocation( newX + noiseX, newY + noiseY );
-		}
-		else
-			cell->setCenterLocation( newX, newY );
+      cell->setCenterLocation( newX + noiseX, newY + noiseY );
+    }
+    else
+      cell->setCenterLocation( newX, newY );
 
     db_->moveCellInsideLayout(cell);
   }
@@ -931,19 +924,19 @@ InitialPlacer::CC2LL_Y(float ccy) const
 float
 InitialPlacer::getMirrorX(float locX, float dieCx, float dieLx, float dieUx) const
 {
-	if(locX <= dieCx) 
-		return dieLx + (dieCx - locX);
-	else
-		return dieUx - (locX - dieCx);
+  if(locX <= dieCx) 
+    return dieLx + (dieCx - locX);
+  else
+    return dieUx - (locX - dieCx);
 }
 
 float
 InitialPlacer::getMirrorY(float locY, float dieCy, float dieLy, float dieUy) const
 {
-	if(locY <= dieCy) 
-		return dieLy + (dieCy - locY);
-	else
-		return dieUy - (locY - dieCy);
+  if(locY <= dieCy) 
+    return dieLy + (dieCy - locY);
+  else
+    return dieUy - (locY - dieCy);
 }
 
 }; // namespace skyplace 

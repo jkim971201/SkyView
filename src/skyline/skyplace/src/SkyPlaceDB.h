@@ -87,7 +87,7 @@ class Cell
     dbInst* dbInstPtr() const { return dbInst_;  }
 
     // If this cell is from dbInst,
-    // this will return nullptr
+    // this function will return nullptr
     dbBTerm* dbBTermPtr() const { return dbBTerm_;  }
 
     // Setters
@@ -562,10 +562,11 @@ class SkyPlaceDB
     std::vector<Row*>  rowPtrs_;
     std::vector<Row>   rowInsts_;
 
-    std::unordered_map<dbInst*, Cell*> dbInst2Cell_;
-    std::unordered_map<dbNet*,   Net*> dbNet2Net_;
-		std::unordered_map<dbITerm*, Pin*> dbITerm2Pin_;
-		std::unordered_map<dbBTerm*, Pin*> dbBTerm2Pin_;
+    std::unordered_map<dbInst*,  Cell*> dbInst2Cell_;
+		std::unordered_map<dbBTerm*, Cell*> dbBTerm2Cell_;
+    std::unordered_map<dbNet*,    Net*> dbNet2Net_;
+		std::unordered_map<dbITerm*,  Pin*> dbITerm2Pin_;
+		std::unordered_map<dbBTerm*,  Pin*> dbBTerm2Pin_;
 
     Die  die_;
     Die* diePtr_;
